@@ -1,0 +1,208 @@
+/*********************************************************************************/
+/* Basic                                                                         */
+/*********************************************************************************/
+
+	body
+	{
+		font-size: 9.5pt;
+	}
+
+	.blocks
+	{
+	}
+
+		.blocks a
+		{
+			padding: 2em 7em 2em 2em;
+			margin: 0 0 0.5em 0;
+		}
+
+		.blocks a:after
+		{
+			right: 1.75em;
+			bottom: 1.75em;
+		}
+
+		.blocks p
+		{
+			font-size: 1em;
+			margin: 0;
+		}
+		
+		.blocks h2
+		{
+			font-size: 2em;
+			margin: 0 0 0.5em 0;
+		}
+	
+/*********************************************************************************/
+/* Wrappers                                                                      */
+/*********************************************************************************/
+
+	#banner-wrapper
+	{
+		padding: 2em 0 2em 0;
+	}
+	
+	#banner-wrapper:before
+	{
+		background-size: 1400px 100%;
+	}
+
+	#search-wrapper
+	{
+		padding: 1.5em 0 1.5em 0;
+	}
+
+	#main-wrapper
+	{
+		padding: 3em 0 4em 0;
+	}
+
+	#footer-wrapper
+	{
+		padding: 4em 0 3em 0;
+	}
+
+/*********************************************************************************/
+/* Header                                                                        */
+/*********************************************************************************/
+
+	#page-header
+	{
+		color: #fff;
+		padding: 1em 0 1em 0;
+		position: relative;
+		height: 2em;
+		line-height: 2em;
+	}
+
+		#page-header h1
+		{
+			font-size: 1.5em;
+			letter-spacing: -1px;
+		}
+
+		#page-header nav
+		{
+			position: absolute;
+			right: 0;
+			top: 1em;
+		}
+		
+			#page-header nav ul
+			{
+			}
+		
+				#page-header nav ul li
+				{
+					margin-left: 1.25em;
+				}
+
+					#page-header nav ul li .arrow:after
+					{
+						top: 1em;
+					}
+
+	.dropotron-level-0
+	{
+		margin-top: 1em;
+	}
+
+/*********************************************************************************/
+/* Banner                                                                        */
+/*********************************************************************************/
+
+	#banner
+	{
+		height: 366px;
+	}
+
+		#banner .nav-next
+		{
+			bottom: 1.5em;
+			right: 1.25em;
+		}
+
+		#banner .nav-previous
+		{
+			bottom: 1.5em;
+			right: 5em;
+		}
+	
+		#banner .captions
+		{
+			padding: 3em 7em 2em 2em;
+			bottom: 1.25em;
+			left: 1.25em;
+			color: #fff;
+			height: 7em;
+			width: 29em;
+		}
+		
+			#banner .captions:after
+			{
+				right: 2em;
+				bottom: 1.8em;
+			}
+		
+			#banner .captions .caption-line-1
+			{
+				font-size: 2.5em;
+				letter-spacing: -2px;
+			}
+		
+			#banner .captions .caption-line-2
+			{
+				font-size: 1.25em;
+				letter-spacing: -1px;
+				line-height: 1.25em;
+			}
+
+		#banner .viewer
+		{
+		}
+		
+		#banner .slide
+		{
+		}
+		
+			#banner .slide img
+			{
+				width: 1001px;
+			}
+
+/*********************************************************************************/
+/* Content                                                                       */
+/*********************************************************************************/
+
+	#content
+	{
+	}
+	
+		#content > section, #content > article
+		{
+			margin-bottom: 4em;
+		}
+
+/*********************************************************************************/
+/* Sidebar                                                                       */
+/*********************************************************************************/
+
+	#sidebar
+	{
+	}
+	
+		#sidebar > section
+		{
+			margin-bottom: 4em;
+		}
+			
+/*********************************************************************************/
+/* Copyright                                                                     */
+/*********************************************************************************/
+
+	#copyright
+	{
+		padding: 3em 0 4em 0;
+	}

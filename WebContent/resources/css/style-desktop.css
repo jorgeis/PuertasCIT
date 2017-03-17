@@ -1,0 +1,538 @@
+/*********************************************************************************/
+/* Basic                                                                         */
+/*********************************************************************************/
+
+	h2
+	{
+		font-size: 2.25em;
+		letter-spacing: -2px;
+		margin: 0 0 1.5em 0;
+	}
+
+	h3
+	{
+		font-size: 1em;
+	}
+
+	.side-padded
+	{
+		padding-left: 2em;
+	}
+
+	.right-sidebar
+	{
+		padding-left: 2em;
+	}
+	
+	.left-sidebar
+	{
+		padding-right: 2em;
+	}
+	
+	section > :last-child, article > :last-child
+	{
+		margin-bottom: 0;
+	}
+
+/*********************************************************************************/
+/* Wrappers                                                                      */
+/*********************************************************************************/
+
+	#header-wrapper
+	{
+		background: #6fb52b;
+	}
+
+	#banner-wrapper
+	{
+		position: relative;
+		background: #2f2f2f url('images/bg1.png');
+		padding: 4em 0 4em 0;
+	}
+	
+	#banner-wrapper:before
+	{
+		content: '';
+		display: block;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: url('images/highlight.png') bottom center no-repeat;
+		background-size: 1800px 100%;
+	}
+	
+	#search-wrapper
+	{
+		background: #f6f6f6;
+		border-bottom: solid 1px #d9d9d9;
+		padding: 2.5em 0 2.5em 0;
+	}
+
+	#main-wrapper
+	{
+		padding: 6em 0 6em 0;
+	}
+
+	#footer-wrapper
+	{
+		background: #f6f6f6;
+		border-top: solid 1px #d9d9d9;
+		padding: 5em 0 5em 0;
+	}
+
+/*********************************************************************************/
+/* Header                                                                        */
+/*********************************************************************************/
+
+	#page-header
+	{
+		color: #fff;
+		padding: 2em 0 2em 0;
+		position: relative;
+		height: 2em;
+		line-height: 2em;
+	}
+
+		#page-header h1
+		{
+			font-size: 2em;
+			letter-spacing: -2px;
+		}
+
+			#page-header h1 a
+			{
+				text-decoration: none;
+			}
+			
+			#page-header h1 span
+			{
+				font-weight: 400;
+			}
+
+		#page-header a
+		{
+			color: #fff;
+		}
+		
+		#page-header nav
+		{
+			position: absolute;
+			right: 0;
+			top: 2em;
+		}
+		
+			#page-header nav ul
+			{
+			}
+		
+				#page-header nav ul li
+				{
+					float: left;
+					margin-left: 2em;
+					font-size: 1.1em;
+				}
+
+					#page-header nav ul li a
+					{
+						outline: 0;
+						position: relative;
+						text-decoration: none;
+						padding: 0.5em 1em 0.5em 1em;
+						transition: background-color .25s ease-in-out;
+						-moz-transition: background-color .25s ease-in-out;
+						-webkit-transition: background-color .25s ease-in-out;
+					}
+
+					#page-header nav ul li.active a, #page-header nav ul li:hover a
+					{
+						background: rgba(0,0,0,0.15);
+					}
+
+					#page-header nav ul li .arrow
+					{
+						padding-right: 2.5em;
+					}
+					
+					#page-header nav ul li .arrow:after
+					{
+						position: absolute;
+						display: inline-block;
+						content: '';
+						border-top: solid 5px #fff;
+						border-left: solid 5px transparent;
+						border-right: solid 5px transparent;
+						top: 1.15em;
+						right: 1em;
+					}
+
+			#page-header nav > ul > li > ul
+			{
+				display: none;
+			}
+	
+	.dropotron
+	{
+		background: #6fb52b;
+		background: #6fb52b;
+		padding: 1em 0.5em 1em 0.5em;
+		line-height: 3em;
+		box-shadow: 0px 3px 3px 0px rgba(0,0,0,0.15);
+	}
+
+		.dropotron a, .dropotron span
+		{
+			position: relative;
+			display: block;
+			text-decoration: none;
+			color: #fff;
+			font-size: 1.1em;
+			padding: 0 3em 0 1em;
+			transition: background-color .25s ease-in-out;
+			-moz-transition: background-color .25s ease-in-out;
+			-webkit-transition: background-color .25s ease-in-out;
+		}
+	
+		.dropotron .arrow:before
+		{
+			content: '';
+			display: block;
+			position: absolute;
+			right: 1em;
+			bottom: 1em;
+			border-left: solid 5px #fff;
+			border-top: solid 5px transparent;
+			border-bottom: solid 5px transparent;			
+		}
+		
+		.dropotron li:hover > a, .dropotron li:hover > span
+		{
+			background: rgba(0,0,0,0.15);
+		}
+	
+	.dropotron-level-0
+	{
+		margin-top: 1.9em;
+	}
+	
+/*********************************************************************************/
+/* Banner                                                                        */
+/*********************************************************************************/
+
+	#banner
+	{
+		position: relative;
+		width: 100%;
+		overflow: hidden;
+		box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.35);
+		height: 440px;
+	}
+	
+		#banner .nav-next, #banner .nav-previous
+		{
+			position: absolute;
+			background: url('images/sprites.png');
+			width: 48px;
+			height: 48px;
+			text-indent: -9999em;
+			z-index: 3;
+			transition: opacity .25s ease-in-out;
+			-moz-transition: opacity .25s ease-in-out;
+			-webkit-transition: opacity .25s ease-in-out;
+			opacity: 0;
+			cursor: pointer;
+		}
+
+		#banner:hover .nav-next, #banner:hover .nav-previous
+		{
+			opacity: 0.45;
+		}
+		
+		#banner .nav-next:hover, #banner .nav-previous:hover
+		{
+			opacity: 1.0;
+		}
+	
+		#banner .nav-next
+		{
+			background-position: -48px 0px;
+			bottom: 2em;
+			right: 1.75em;
+		}
+
+		#banner .nav-previous
+		{
+			background-position: -96px 0px;
+			bottom: 2em;
+			right: 5.3em;
+		}
+	
+		#banner .captions
+		{
+			position: absolute;
+			background: #6fb52b;
+			background: #6fb52b;
+			padding: 4em 7em 2.5em 2.5em;
+			bottom: 1.5em;
+			left: 1.5em;
+			color: #fff;
+			width: 32em;
+			height: 8.5em;
+			z-index: 1;
+		}
+
+			#banner .captions:after
+			{
+				content: '';
+				display: block;
+				width: 48px;
+				height: 48px;
+				background: url('images/sprites.png');
+				position: absolute;
+				right: 2.5em;
+				bottom: 2.75em;
+			}
+		
+			#banner .captions .caption-line-1
+			{
+				display: block;
+				font-size: 3em;
+				letter-spacing: -3px;
+				margin: 0 0 0.75em 0;
+			}
+		
+			#banner .captions .caption-line-2
+			{
+				display: block;
+				font-size: 1.5em;
+				letter-spacing: -1px;
+				line-height: 1.5em;
+				color: rgba(255,255,255,0.8);
+			}
+		
+		#banner .viewer
+		{
+			background: #fff;
+		}
+		
+		#banner .slide
+		{
+		}
+		
+			#banner .slide .caption-1
+			{
+				display: none;
+			}		
+			
+			#banner .slide .caption-2
+			{
+				display: none;
+			}
+			
+			#banner .slide img
+			{
+				display: block;
+				width: 1200px;
+			}
+			
+			#banner .slide .link
+			{
+				position: absolute;
+				text-indent: -9999em;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 2;
+			}
+			
+/*********************************************************************************/
+/* Search                                                                        */
+/*********************************************************************************/
+
+	#search
+	{
+		position: relative;
+	}
+	
+		#search span
+		{
+			position: relative;
+			top: 0.5em;
+		}
+	
+		#search form
+		{
+			overflow: hidden;
+		}
+		
+			#search form input.text
+			{
+				display: block;
+				width: 100%;
+				height: 34px;
+			}
+		
+			#search form input.button
+			{
+				display: block;
+				position: absolute;
+				right: 0;
+				top: 0;
+				padding: 0;
+				border: 0;
+				text-indent: -9999em;
+				width: 34px;
+				height: 34px;
+				background-image: url('images/sprites.png');
+				background-position: -128px -48px;
+			}
+		
+/*********************************************************************************/
+/* Content                                                                       */
+/*********************************************************************************/
+
+	#content
+	{
+	}
+	
+		#content > section, #content > article
+		{
+			margin-bottom: 7.5em;
+		}
+
+		#content > section:last-child, #content > article:last-child
+		{
+			margin-bottom: 0;
+		}
+		
+			#content section header, #content article header
+			{
+				border-top: solid 7px #6fb52b;
+				padding-top: 4em;
+				margin: 0 0 3em 0;
+			}
+			
+				#content section header h2, #content article header h2
+				{
+					margin: 0 0 0.5em 0;
+				}
+				
+				#content section.featured header h2, #content article.featured header h2
+				{
+					font-size: 4em;
+					letter-spacing: -3px;
+					margin: 0.25em 0 0.75em 0;
+				}
+				
+				#content section header .byline, #content article header .byline
+				{
+					display: block;
+					color: #a0a0a0;
+					font-size: 1.25em;
+				}
+				
+				#content section.featured header .byline, #content article.featured header .byline
+				{
+					font-size: 2em;
+					letter-spacing: -2px;
+				}
+				
+				#content section.featured h3, #content article.featured h3
+				{
+					font-size: 1.5em;
+					letter-spacing: -1px;
+					margin: 0 0 1em 0;
+					font-weight: 200;
+				}
+
+		
+/*********************************************************************************/
+/* Sidebar                                                                       */
+/*********************************************************************************/
+
+	#sidebar
+	{
+	}
+	
+		#sidebar h2
+		{
+			font-size: 1.75em;
+			letter-spacing: -1px;
+		}
+	
+		#sidebar > section
+		{
+			margin-bottom: 5em;
+		}
+
+		#sidebar > section:last-child
+		{
+			margin-bottom: 0;
+		}
+		
+			#sidebar section header
+			{
+				border-top: solid 7px #6fb52b;
+				padding-top: 3.5em;
+				margin: 0 0 3em 0;
+			}
+			
+				#sidebar section header h2
+				{
+					margin: 0 0 0.5em 0;
+				}
+				
+				#sidebar section.featured header h2
+				{
+					font-size: 4em;
+					letter-spacing: -3px;
+					margin: 0.25em 0 0.75em 0;
+				}
+
+/*********************************************************************************/
+/* Footer                                                                        */
+/*********************************************************************************/
+
+	#page-footer
+	{
+	}
+
+		#page-footer h2
+		{
+			font-size: 1.75em;
+			letter-spacing: -1px;
+		}
+	
+		#page-footer section
+		{
+			margin: 0 0 5em 0;
+		}
+
+		#page-footer > section:last-child
+		{
+			margin-bottom: 0;
+		}
+		
+			#page-footer section h2
+			{
+				margin: 0 0 1.5em 0;
+			}
+			
+		#page-footer a
+		{
+			color: #474747;
+		}
+
+/*********************************************************************************/
+/* Copyright                                                                     */
+/*********************************************************************************/
+
+	#copyright
+	{
+		border-top: solid 1px #d9d9d9;
+		text-align: center;
+		padding: 5em 0 6em 0;
+		color: #a0a0a0;
+	}

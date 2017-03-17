@@ -1,0 +1,11 @@
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		$("#valid").validationEngine();
+		$("#datepicker").datepicker({
+			changeYear : true,
+			changeMonth : true,
+			dateFormat : "yy-mm-dd",
+			yearRange : "1930:2017"
+		});
+	});
+</script>
