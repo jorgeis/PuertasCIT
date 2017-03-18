@@ -18,7 +18,9 @@
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
 
 	<!-- Article - Formulario -->
-	<article class="featured">			
+	<article class="featured">		
+	
+	<h1>Lista de Usuarios</h1>	
 		
 		<c:forEach var="cliente" items="${clienteList}">
 			${cliente} <br/> ${cliente.persona}<br/>
