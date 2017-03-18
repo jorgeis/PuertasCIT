@@ -3,18 +3,25 @@ package com.citnova.sca.controller;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Persona;
@@ -41,87 +48,213 @@ public class AdminController {
 	private MailManager mailManager;
 	
 	@Autowired
-	private Util util;
+	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private Util util;
+
 	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
-	@RequestMapping("/admin/persona/save")
-	public String showIndex() {
-		return "admin_persona_create";
-	}
-	
-	
+
+	/**
+	 * Controlador para guardar o actualizar datos del Administrador
+	 * */
 	@RequestMapping(value="/admin/save", method=RequestMethod.POST)
 	public String createPersona(Model model, PersonaAdminWrapper personaAdminWrapper,
-			HttpSession session, Principal principal, HttpServletRequest request) {
+			HttpSession session, Principal principal, HttpServletRequest request,
+			RedirectAttributes ra) {
 		
-		Persona persona = new Persona(personaAdminWrapper.getNombrePer(), 
-				personaAdminWrapper.getApPatPer(), 
-				personaAdminWrapper.getApMatPer(), 
-				personaAdminWrapper.getEmailPer(), 
-				personaAdminWrapper.getCurpPer(), time);
-		
-		
-		Admin admin = new Admin(personaAdminWrapper.getAreaAd(),
-				personaAdminWrapper.getCargoAd(),
-				personaAdminWrapper.getTelefonoAd(), 
-				time, 
-				personaAdminWrapper.getRolAd(), 
-				Constants.STATUS_ACTIVE, 
-				principal.getName());
-		
-		
-		// Validar si ya existe la persona
-		Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
-		if(persona2 != null){
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
-			return "admin_queryall";
+		int idAd = personaAdminWrapper.getIdAd();
+		//
+		// Guardar nuevo registro
+		//
+		if(idAd == 0){
+			System.out.println("********* SAVE");
+			
+			Persona persona = new Persona(
+					personaAdminWrapper.getNombrePer(), 
+					personaAdminWrapper.getApPatPer(), 
+					personaAdminWrapper.getApMatPer(), 
+					personaAdminWrapper.getEmailPer(), 
+					personaAdminWrapper.getCurpPer(), time);
+			
+			Admin admin = new Admin(personaAdminWrapper.getAreaAd(),
+					personaAdminWrapper.getCargoAd(),
+					personaAdminWrapper.getTelefonoAd(), 
+					time, 
+					personaAdminWrapper.getRolAd(), 
+					Constants.STATUS_MUST_ACTIVATE, 
+					principal.getName());
+			
+			
+			// Validar si ya existe la persona
+			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
+			if(persona2 != null){
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
+				return "admin_queryall";
+			}
+			
+			// Guardar datos de relación @OneToOne
+			adminService.saveOrUpdate(admin, persona);
+			
+			// Enviar correo electrónico para confirmar cuenta
+			mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
+					util.getRootUrl(request, "/admin/save")
+							.concat("/adminaccount/")
+							.concat(String.valueOf(admin.getIdAd()))
+							.concat("/account/password")
+						);
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_saved", null, Locale.getDefault()));
 		}
-		
-		personaService.save(persona);
-		admin.setPersona(persona);
-		adminService.save(admin);
-		
-		// Enviar correo electrónico para confirmar cuenta
-		mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
-				util.getRootUrl(request, "/admin/save").concat("/admin/confirm"));
-		
+		//
+		// Actualizar registro
+		//
+		else{
+			Admin admin = adminService.findOne(idAd);
+			Persona persona = admin.getPersona();
+			
+			System.out.println("********* UPDATE");
+			
+			persona.setNombrePer(personaAdminWrapper.getNombrePer());
+			persona.setApPatPer(personaAdminWrapper.getApPatPer());
+			persona.setApMatPer(personaAdminWrapper.getApMatPer());
+			persona.setEmailPer(personaAdminWrapper.getEmailPer());
+			persona.setCurpPer(personaAdminWrapper.getCurpPer());
+
+			admin.setAreaAd(personaAdminWrapper.getAreaAd());
+			admin.setCargoAd(personaAdminWrapper.getCargoAd());
+			admin.setTelefonoAd(personaAdminWrapper.getTelefonoAd());
+			admin.setRolAd(personaAdminWrapper.getRolAd());
+			
+			adminService.saveOrUpdate(admin, persona);
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_updated", null, Locale.getDefault()));
+		}
 		return "redirect:/admin/queryall";
-	}
-	
-	
-	@RequestMapping(value="/admin/save.do", method=RequestMethod.POST)
-	public String createAdmin(Model model, Admin admin,
-			HttpSession session, Principal principal) {
-		
-		Persona persona = (Persona) session.getAttribute(Constants.PERSONA_ADMIN);
-		persona.setFhCreaPer(time);
-		personaService.save(persona);
-		
-		admin.setFhCreaAd(time);
-		admin.setStatusAd(Constants.STATUS_ACTIVE);
-		admin.setCreadoAd(principal.getName());
-		
-		admin.setPersona(persona);
-		
-		adminService.save(admin);
-		
-//		return "admin_queryall";
-//		return "redirect:/secure/user/queryall";
-        return "redirect:/admin/queryall";
 	}
 	
 	
 	@RequestMapping("/admin/queryall")
 	public String queryAll(Model model) {
-		
-		List<Admin> adminList = adminService.findAll();
-		System.out.println(adminList);
+		// Consultar sólo los administradores activos
+		List<Admin> adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
 		model.addAttribute("adminList", adminList);
+		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		
 		return "admin_queryall";
 	}
+	
+	
+	@RequestMapping("/admin/update/{idAd}")
+	public String update(Model model, @PathVariable("idAd") int idAd) {
+		Admin admin = adminService.findOne(idAd);
+		Persona persona = admin.getPersona();
+		
+		PersonaAdminWrapper personaAdminWrapper = new PersonaAdminWrapper();
+		
+		personaAdminWrapper.setIdPer(persona.getIdPer());
+		personaAdminWrapper.setNombrePer(persona.getNombrePer());
+		personaAdminWrapper.setApPatPer(persona.getApPatPer());
+		personaAdminWrapper.setApMatPer(persona.getApMatPer());
+		personaAdminWrapper.setEmailPer(persona.getEmailPer());
+		personaAdminWrapper.setCurpPer(persona.getCurpPer());
+		personaAdminWrapper.setFhCreaPer(persona.getFhCreaPer());
+		
+		personaAdminWrapper.setIdAd(admin.getIdAd());
+		personaAdminWrapper.setPassAd(admin.getPassAd());
+		personaAdminWrapper.setAreaAd(admin.getAreaAd());
+		personaAdminWrapper.setCargoAd(admin.getCargoAd());
+		personaAdminWrapper.setTelefonoAd(admin.getTelefonoAd());
+		personaAdminWrapper.setFhCreaAd(admin.getFhCreaAd());
+		personaAdminWrapper.setRolAd(admin.getRolAd());
+		personaAdminWrapper.setStatusAd(admin.getStatusAd());
+		personaAdminWrapper.setCreadoAd(admin.getCreadoAd());
+		personaAdminWrapper.setFhAccesoAd(admin.getFhAccesoAd());
+		
+		model.addAttribute("personaAdminWrapper", personaAdminWrapper);
+		
+		return "admin_queryall";
+	}
+	
+	
+	/**
+	 * Controlador para cambiar status de Administrador a Borrado
+	 * */
+	@RequestMapping("/admin/delete/{idAd}")
+	public String delete(HttpSession session, RedirectAttributes ra,  
+			@PathVariable("idAd") int idAd) {
+		
+		Admin admin = adminService.findOne(idAd);
+		admin.setStatusAd(Constants.STATUS_DELETED);
+		adminService.saveOrUpdate(admin, admin.getPersona());
+		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
+		
+		return "redirect:/admin/queryall";
+	}
+	
 
+	/**
+	 * Vista para una vez creada la cuenta, capturar contraseña 
+	 * */
+	@RequestMapping("/adminaccount/{idAd}/account/password")
+	public String inputPassword(HttpSession session, Model model,  
+			@PathVariable("idAd") int idAd) {
+		
+		session.setAttribute(Constants.ID_AD, idAd);
+		Admin admin = adminService.findOne(idAd);
+		
+		if(admin.getStatusAd().equals(Constants.STATUS_MUST_ACTIVATE)){
+			return "admin_password";
+		}
+		else{
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_was_confirmed", null, Locale.getDefault()));
+			return "notifications";
+		}
+	}
+	
+	
+	/**
+	 * Controlador para guardar contraseña y activar la cuenta de Administrador
+	 * */
+	@RequestMapping("/adminaccount/confirm")
+	public String confirmAccount(Model model, @RequestParam("password") String rawPassword, 
+			HttpSession session) {
+		
+		int idAd = (int) session.getAttribute(Constants.ID_AD);
+		Admin admin = adminService.findOne(idAd);
+		Persona persona = admin.getPersona();
+		
+		admin.setPassAd(passwordEncoder.encode(rawPassword));
+		admin.setStatusAd(Constants.STATUS_ACTIVE);
+		adminService.saveOrUpdate(admin, persona);
+		
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_confirmed", null, Locale.getDefault()));
+		
+		session.invalidate();
+		return "notifications";
+	}
+	
+	
+	/**
+	 * Servidor JSON para búsqueda de Administradores
+	 * */
+	@RequestMapping(value="/json/search/persona", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findAll(@RequestParam("term") String term) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+//		List<Estacion> estaciones = estacionService.findAll();
+//		List<Admin> adminList = adminService.findAllLike("%" + term + "%");
+		List<Persona> personaList = personaService.findAllLike("%" + term + "%");
+		
+		for (int j = 0; j < personaList.size(); j++) {
+			Persona persona = personaList.get(j);
+			map.put(String.valueOf(j), persona);
+		}
+//		System.out.println(map);
+		return map;
+	}
 }

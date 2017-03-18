@@ -13,29 +13,54 @@
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
 <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
-<c:import url="/res/js/dateScript.txt" />
+<script>
+	jQuery(document).ready(function(){
+		jQuery(".confirm").on("click", function() {
+	        return confirm("Si eliminas este elemento no se podrá recuperar. ¿Continuar?");
+	    });
+	});
+</script>
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+
 
 	<!-- Article - Formulario -->
 	<article class="featured">
 	
 		<sf:form method="post" id="valid"
 			action="${pageContext.request.contextPath}/admin/save" 
-	 		commandName="personaAdminWrapper">
+	 		commandName="personaAdminWrapper"> 
 			
 		<h1>Registrar Nuevo Administrador</h1>
 		<h2>${result}</h2>
 			<fieldset>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="nombrePer" placeholder="Nombre(s)"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="apPatPer" placeholder="Apellido Paterno"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="apMatPer" placeholder="Apellido Materno"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="emailPer" placeholder="Correo eléctrico"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="curpPer" placeholder="CURP"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="areaAd" placeholder="Área"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="cargoAd" placeholder="Cargo"/>
-			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="telefonoAd" placeholder="Teléfono"/>		
+			<sf:input type="hidden" path="idAd" />
 			
+			<label >Nombre(s):</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombrePer" />
+			
+			<label >Apellido Paterno</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apPatPer" />
+			
+			<label >Apellido Materno</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apMatPer" />
+			
+			<label >Correo electrónico</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailPer" />
+			
+			<label >CURP</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="curpPer" />
+			
+			<label >Área</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="areaAd" />
+			
+			<label >Cargo</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cargoAd" />
+			
+			<label >Teléfono</label>
+			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="telefonoAd" />		
+			
+			<label >Permisos</label>
 			<sf:select path="rolAd" class="validate[required]">
 				<sf:option value="">Elige una opción</sf:option>
 				<sf:option value="ROLE_ROOT">Super Administrador</sf:option>
@@ -45,16 +70,44 @@
 			
 			<button type="submit">Guardar</button>
 		</sf:form>
+	</article>
+	
+	<article class="featured"> 
+		<div class = "table1">
+			<table>
+				<tr>
+					<td>Nombre(s)</td>
+					<td>Apellido Paterno</td>
+					<td>Apellido Materno</td>
+					<td>Correo electrónico</td>
+					<td>CURP</td>
+					<td>Área</td>
+					<td>Cargo</td>
+					<td>Teléfono</td>
+					<td>Permisos</td>
+				</tr>
+				<c:forEach var="admin" items="${adminList}">
+					<tr>
+						<td>${admin.persona.nombrePer}</td>
+						<td>${admin.persona.apPatPer}</td>
+						<td>${admin.persona.apMatPer}</td>
+						<td>${admin.persona.emailPer}</td>
+						<td>${admin.persona.curpPer}</td>
+						<td>${admin.areaAd}</td>
+						<td>${admin.cargoAd}</td>
+						<td>${admin.telefonoAd}</td>
+						<td>${admin.rolAd}</td>
+						<td>
+							<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
+							<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
+
+						</td>
+					</tr>
+				</c:forEach>
 				
-		<br/><br/>
+			</table>
 		
-		<c:forEach var="admin" items="${adminList}">
-			${admin} <br/> ${admin.persona}<br/>
-			<a href="<c:url value='/secure/cmanage/conyuge/update' />">Modificar</a>  
-			<a href="<c:url value='/secure/cmanage/conyuge/update' />">Eliminar</a>
-			<br/><br/>
-		</c:forEach>
-		
+		</div>
 	</article>
 					
 <c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />	
