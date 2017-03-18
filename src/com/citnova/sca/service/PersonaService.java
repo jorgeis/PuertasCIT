@@ -1,5 +1,7 @@
 package com.citnova.sca.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,10 @@ public class PersonaService {
 
 	public void save(Persona persona) {
 		personaRepository.save(persona);
+	}
+	
+	public List<Persona> findAllLike(String nombreOApellidos) {
+		return personaRepository.findByNombrePerLike(nombreOApellidos);
 	}
 
 }

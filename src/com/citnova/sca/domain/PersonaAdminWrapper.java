@@ -4,16 +4,43 @@ import java.sql.Timestamp;
 
 public class PersonaAdminWrapper {
 
+	// Persona
+	private int idPer;
 	private String nombrePer;
 	private String apPatPer;
 	private String apMatPer;
 	private String emailPer;
 	private String curpPer;
+	private Timestamp fhCreaPer;
 
+	// Admin
+	private int idAd;
+	private String passAd;
 	private String areaAd;
 	private String cargoAd;
 	private String telefonoAd;
+	private Timestamp fhCreaAd;
 	private String rolAd;
+	private String statusAd;
+	private String creadoAd;
+	private Timestamp fhAccesoAd;
+
+	public PersonaAdminWrapper() {
+	}
+
+	public PersonaAdminWrapper(int idPer, String nombrePer, String apPatPer, String apMatPer, String emailPer,
+			String curpPer, String areaAd, String cargoAd, String telefonoAd, String rolAd) {
+		this.idPer = idPer;
+		this.nombrePer = nombrePer;
+		this.apPatPer = apPatPer;
+		this.apMatPer = apMatPer;
+		this.emailPer = emailPer;
+		this.curpPer = curpPer;
+		this.areaAd = areaAd;
+		this.cargoAd = cargoAd;
+		this.telefonoAd = telefonoAd;
+		this.rolAd = rolAd;
+	}
 
 	public String getNombrePer() {
 		return nombrePer;
@@ -55,7 +82,6 @@ public class PersonaAdminWrapper {
 		this.curpPer = curpPer;
 	}
 
-
 	public String getAreaAd() {
 		return areaAd;
 	}
@@ -88,13 +114,77 @@ public class PersonaAdminWrapper {
 		this.rolAd = rolAd;
 	}
 
+	public int getIdPer() {
+		return idPer;
+	}
+
+	public void setIdPer(int idPer) {
+		this.idPer = idPer;
+	}
+
+	public Timestamp getFhCreaPer() {
+		return fhCreaPer;
+	}
+
+	public void setFhCreaPer(Timestamp fhCreaPer) {
+		this.fhCreaPer = fhCreaPer;
+	}
+
+	public int getIdAd() {
+		return idAd;
+	}
+
+	public void setIdAd(int idAd) {
+		this.idAd = idAd;
+	}
+
+	public String getPassAd() {
+		return passAd;
+	}
+
+	public void setPassAd(String passAd) {
+		this.passAd = passAd;
+	}
+
+	public Timestamp getFhCreaAd() {
+		return fhCreaAd;
+	}
+
+	public void setFhCreaAd(Timestamp fhCreaAd) {
+		this.fhCreaAd = fhCreaAd;
+	}
+
+	public String getStatusAd() {
+		return statusAd;
+	}
+
+	public void setStatusAd(String statusAd) {
+		this.statusAd = statusAd;
+	}
+
+	public String getCreadoAd() {
+		return creadoAd;
+	}
+
+	public void setCreadoAd(String creadoAd) {
+		this.creadoAd = creadoAd;
+	}
+
+	public Timestamp getFhAccesoAd() {
+		return fhAccesoAd;
+	}
+
+	public void setFhAccesoAd(Timestamp fhAccesoAd) {
+		this.fhAccesoAd = fhAccesoAd;
+	}
+
 	@Override
 	public String toString() {
-		return "PersonaAdminWrapper [nombrePer=" + nombrePer + ", apPatPer=" + apPatPer + ", apMatPer=" + apMatPer
-				+ ", emailPer=" + emailPer + ", curpPer=" + curpPer + ", areaAd=" + areaAd + ", cargoAd=" + cargoAd
-				+ ", telefonoAd=" + telefonoAd + ", rolAd=" + rolAd + "]";
+		return "PersonaAdminWrapper [idPer=" + idPer + ", nombrePer=" + nombrePer + ", apPatPer=" + apPatPer
+				+ ", apMatPer=" + apMatPer + ", emailPer=" + emailPer + ", curpPer=" + curpPer + ", fhCreaPer="
+				+ fhCreaPer + ", idAd=" + idAd + ", passAd=" + passAd + ", areaAd=" + areaAd + ", cargoAd=" + cargoAd
+				+ ", telefonoAd=" + telefonoAd + ", fhCreaAd=" + fhCreaAd + ", rolAd=" + rolAd + ", statusAd="
+				+ statusAd + ", creadoAd=" + creadoAd + ", fhAccesoAd=" + fhAccesoAd + "]";
 	}
-	
-	
 
 }
