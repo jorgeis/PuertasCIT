@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -94,7 +95,7 @@ public class AdminController {
 			// Validar si ya existe la persona
 			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
 			if(persona2 != null){
-				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
+				model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
 				return "admin_queryall";
 			}
 			
@@ -133,17 +134,30 @@ public class AdminController {
 			adminService.saveOrUpdate(admin, persona);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_updated", null, Locale.getDefault()));
 		}
-		return "redirect:/admin/queryall";
+		ra.addFlashAttribute(Constants.SHOW_PAGES, true);
+		return "redirect:/admin/queryall/1";
 	}
 	
 	
-	@RequestMapping("/admin/queryall")
-	public String queryAll(Model model) {
+	@RequestMapping("/admin/queryall/{index}")
+	public String queryAll(Model model, @PathVariable("index") int index) {
 		// Consultar sólo los administradores activos
-		List<Admin> adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
-		model.addAttribute("adminList", adminList);
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		Page<Admin> page = adminService.getPage(index - 1);
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("adminList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "admin_queryall";
 	}
@@ -175,9 +189,21 @@ public class AdminController {
 		personaAdminWrapper.setCreadoAd(admin.getCreadoAd());
 		personaAdminWrapper.setFhAccesoAd(admin.getFhAccesoAd());
 		
-		List<Admin> adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
-		model.addAttribute("adminList", adminList);
 		model.addAttribute("personaAdminWrapper", personaAdminWrapper);
+		
+		Page<Admin> page = adminService.getPage(0);
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("adminList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "admin_queryall";
 	}
@@ -196,7 +222,7 @@ public class AdminController {
 		
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
 		
-		return "redirect:/admin/queryall";
+		return "redirect:/admin/queryall/1";
 	}
 	
 	
@@ -229,8 +255,11 @@ public class AdminController {
 			adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
 		}
 		
-		model.addAttribute("adminList", adminList);
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		model.addAttribute("adminList", adminList);
+		
+		model.addAttribute(Constants.SHOW_PAGES, false);
 		
 		return "admin_queryall";
 	}

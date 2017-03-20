@@ -118,12 +118,56 @@
 						<td>
 							<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
 							<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
-
 						</td>
 					</tr>
 				</c:forEach>
-				
 			</table>
+			
+			
+			<c:if test="${showPages == true}">
+				<c:url var="firstUrl" value="/admin/queryall/1" />
+				<c:url var="lastUrl" value="/admin/queryall/${totalPages}" />
+				<c:url var="prevUrl" value="/admin/queryall/${currentIndex - 1}" />
+				<c:url var="nextUrl" value="/admin/queryall/${currentIndex + 1}" />
+				<c:choose>
+					<%-- Si la página actual es 1 deshabilitar botones << y < --%>
+					<c:when test="${currentIndex == 1}">
+						<a href="#">&lt;&lt;</a>
+						<a href="#">&lt;</a>
+					</c:when>
+					<%-- Si no entonces colocarlos con sus urls correspondientes --%>
+					<c:otherwise>
+						<a href="${firstUrl}">&lt;&lt;</a>
+						<a href="${prevUrl}">&lt;</a>
+					</c:otherwise>
+				</c:choose>
+				<c:forEach var="i" begin="${beginIndex}" end="${endIndex}">
+					<%-- Construir links a partir de los índices --%>
+					<c:url var="pageUrl" value="/admin/queryall/${i}" />
+					<c:choose>
+						<%-- Remarcar el índice actual --%>
+						<c:when test="${i == currentIndex}">
+							<span style="font-weight: bold;"><a href="${pageUrl}">${i}</a></span>
+						</c:when>
+						<c:otherwise>
+							<a href="${pageUrl}">${i}</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+				<c:choose>
+					<%-- Si el índide actual es igual al total de páginas --%>
+					<c:when test="${currentIndex == totalPages}">
+						<a href="#">&gt;</a>
+						<a href="#">&gt;&gt;</a>
+					</c:when>
+					<c:otherwise>
+						<a href="${nextUrl}">&gt;</a>
+						<a href="${lastUrl}">&gt;&gt;</a>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+			
+			
 		
 		</div>
 	</article>
