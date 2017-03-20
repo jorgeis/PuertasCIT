@@ -2,11 +2,13 @@ package com.citnova.sca.controller;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
@@ -172,6 +175,8 @@ public class AdminController {
 		personaAdminWrapper.setCreadoAd(admin.getCreadoAd());
 		personaAdminWrapper.setFhAccesoAd(admin.getFhAccesoAd());
 		
+		List<Admin> adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
+		model.addAttribute("adminList", adminList);
 		model.addAttribute("personaAdminWrapper", personaAdminWrapper);
 		
 		return "admin_queryall";
@@ -192,6 +197,42 @@ public class AdminController {
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
 		
 		return "redirect:/admin/queryall";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar los resultados de la búsqueda de un
+	 * administador
+	 * */
+	@RequestMapping(value="/admin/search", method=RequestMethod.POST)
+	public String search(@RequestParam("busqueda") String  busqueda,
+			RedirectAttributes ra, Model model) {
+		
+		List<Admin> adminList = new ArrayList<>();
+		Admin admin = null;
+		int id = 0;
+		try{
+			id = Integer.parseInt(busqueda.replaceAll("[A-Za-z. ]+", "")); 
+		}
+		catch(Exception e){}
+		
+		admin = adminService.findOne(id);
+		System.out.println("********* " + admin);
+		
+		if(admin != null){
+			adminList.add(admin);
+		}
+		else{
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+					new Object[]{busqueda}, Locale.getDefault()));
+			
+			adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
+		}
+		
+		model.addAttribute("adminList", adminList);
+		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		return "admin_queryall";
 	}
 	
 
@@ -240,21 +281,26 @@ public class AdminController {
 	/**
 	 * Servidor JSON para búsqueda de Administradores
 	 * */
-	@RequestMapping(value="/json/search/persona", produces="application/json")
+	@RequestMapping(value="/json/search/admin", produces="application/json")
 	@ResponseBody
 	public Map<String, Object> findAll(@RequestParam("term") String term) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-//		List<Estacion> estaciones = estacionService.findAll();
-//		List<Admin> adminList = adminService.findAllLike("%" + term + "%");
-		List<Persona> personaList = personaService.findAllLike("%" + term + "%");
+		List<Admin> adminList = adminService.findAllLikeNombreOApellido("%" + term + "%");
 		
-		for (int j = 0; j < personaList.size(); j++) {
-			Persona persona = personaList.get(j);
-			map.put(String.valueOf(j), persona);
+		for (int j = 0; j < adminList.size(); j++) {
+			Admin admin = adminList.get(j);
+			map.put(String.valueOf(admin.getIdAd()), 
+										admin.getIdAd() + ". " + 
+										admin.getPersona().getNombrePer() + "  " +
+										admin.getPersona().getApPatPer() + "  " +
+										admin.getPersona().getApMatPer());
 		}
-//		System.out.println(map);
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
 		return map;
 	}
 }

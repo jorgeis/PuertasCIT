@@ -70,4 +70,19 @@ public class AdminService {
 		
 	}
 
+	public Admin findByNombreAndApellidos(String nombres, String apellidoPat, String apellidoMat) {
+		QAdmin admin = QAdmin.admin;
+		QPersona persona = QPersona.persona;
+		
+		return new JPAQuery(entityManager)
+				.from(admin)
+				.join(admin.persona, persona)
+				.where(
+						persona.nombrePer.like("%" + nombres + "%")
+						.and(persona.apPatPer.like("%" + apellidoPat + "%")
+							.and(persona.apMatPer.like("%" + apellidoMat + "%")))
+						)
+				.uniqueResult(admin);
+	}
+
 }

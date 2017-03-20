@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
 
 	<bean id="jspViewResolver"
@@ -13,15 +14,20 @@
 		<property name="suffix" value=".jsp"></property>
 	</bean>
 	<context:component-scan base-package="com.citnova.sca.controller"></context:component-scan>
+
+<!-- 	<mvc:annotation-driven></mvc:annotation-driven> -->
+<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+    <property name="favorPathExtension" value="false" />
+</bean>
+<mvc:annotation-driven content-negotiation-manager="contentNegotiationManager"/>
 	
-	<mvc:annotation-driven></mvc:annotation-driven>
-	<mvc:resources location="/resources/" mapping="/res/**"/>
-	
+	<mvc:resources location="/resources/" mapping="/res/**" />
+
 	<!-- ======================== Habilitar anotaciones en paquete util ======================== -->
 	<context:annotation-config></context:annotation-config>
 	<context:component-scan base-package="com.citnova.sca.util"></context:component-scan>
-	
-	
+
+
 	<!-- ======================== Envío de emails ======================== -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="mail.novellius.com" />
@@ -35,9 +41,10 @@
 			</props>
 		</property>
 	</bean>
-	
+
 	<!-- ======================== Bundle Message Source ======================== -->
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
 				<value>com.citnova.sca.message.commons</value>
