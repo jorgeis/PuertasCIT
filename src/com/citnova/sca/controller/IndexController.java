@@ -70,7 +70,6 @@ public class IndexController {
 		return "account_mail";
 	}
 	
-	
 	/**
 	 * Controlador para enviar correo electrónico de recuperación de contraseña 
 	 * */
