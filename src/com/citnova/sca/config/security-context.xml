@@ -12,6 +12,8 @@
 		<security:intercept-url pattern="/logout" access="permitAll" />
 		<security:intercept-url pattern="/account/**" access="permitAll" />
 		
+		<security:intercept-url pattern="/formex" access="permitAll" />
+		
 		<security:intercept-url pattern="/adminaccount/**" access="permitAll" />
 		<security:intercept-url pattern="/clienteform" access="permitAll" />
 		<security:intercept-url pattern="/clientesave" access="permitAll" />

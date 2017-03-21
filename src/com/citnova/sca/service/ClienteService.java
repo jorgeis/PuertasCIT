@@ -14,6 +14,9 @@ import com.citnova.sca.domain.QCliente;
 import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.ClienteRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.citnova.sca.domain.Persona;
+import com.citnova.sca.repository.ClienteRepository;
+import com.citnova.sca.repository.PersonaRepository;
 
 @Service
 public class ClienteService {
@@ -23,6 +26,9 @@ public class ClienteService {
 	
 	@Autowired
 	private EntityManager entityManager;
+
+	@Autowired
+	private PersonaRepository personaRepository;
 	
 	public void save(Cliente cliente){
 		clienteRepository.save(cliente);
@@ -44,5 +50,10 @@ public class ClienteService {
 						)
 				.uniqueResult(cliente);
 	}
-
+	
+	public void saveOrUpdate(Cliente cliente, Persona persona){
+		personaRepository.save(persona);
+		cliente.setPersona(persona);
+		clienteRepository.save(cliente);
+	}
 }

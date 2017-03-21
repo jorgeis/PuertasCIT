@@ -4,15 +4,8 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
-
-<!-- Main -->
-<div id="main-wrapper">
-	<div class="5grid-layout">
-		<div class="row">
-			<div class="12u mobileUI-main-content">
-
-				<!-- Content -->
-				<div id="content">
+<c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
+<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
 
 					<!-- Article - Formulario -->
 					<article class="featured">
@@ -67,11 +60,7 @@
 								<button type="submit">Registro</button>
 							</form>
 					</article>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+				
 
-
+<c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />
 <c:import url="/WEB-INF/views/headfoot/footerm.jsp" />

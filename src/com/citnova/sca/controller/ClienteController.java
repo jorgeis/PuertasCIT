@@ -1,24 +1,24 @@
 package com.citnova.sca.controller;
 
-
-
-import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.citnova.sca.domain.Cliente;
+import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.domain.PersonaClienteWrapper;
+import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.ClienteService;
+import com.citnova.sca.service.EstadoService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.PassGen;
@@ -32,22 +32,39 @@ public class ClienteController {
 	@Autowired
 	private ClienteService clienteService;
 	
+	@Autowired
+	private EstadoService estadoService;
+	
+	@Autowired
+	private MessageSource messageSource;
+	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
 	@RequestMapping("/clienteform")
 	public String showClientForm(Model model) {
-		model.addAttribute("personaClienteWrapper", new PersonaClienteWrapper());
-		return "client_form";
+		model.addAttribute("personaClienteWrapper", new PersonaClienteDireccionWrapper());
+		
+		// Consulta los Estados de Direccion
+		List<Estado> estadoList = estadoService.findAll();
+		System.out.println(estadoList.size());
+		for(Estado estado : estadoList) {
+            System.out.println(estado);
+        }
+		model.addAttribute("estadoList", estadoList);
+		
+		return "cliente_form";
 	}
 	
-	@RequestMapping("/clientesave")
-	public String createCliente(Model model, PersonaClienteWrapper personaClienteWrapper, 
-			HttpSession session, Principal principal, HttpServletRequest request) {
+	
+	@RequestMapping(value="/clientesave", method=RequestMethod.POST)
+	public String createCliente(Model model, PersonaClienteDireccionWrapper personaClienteWrapper, 
+			@RequestParam("otroOcupacion") String otroOcupacion) {
 		
-		boolean passUsed;
 		List<Cliente> clienteList = clienteService.findAll();
-		String passArea;
 		
+		// Genera un nuevo pass para passArea
+		boolean passUsed;
+		String passArea;
 		do {
 			passUsed = false;
 			passArea = PassGen.generatePass();
@@ -62,7 +79,14 @@ public class ClienteController {
 		}
 		while (passUsed == true);
 		
-		
+		// Revisa si la ocupación fue seleccionada como "Otro" para tratarla
+		String ocupacion;
+		if(otroOcupacion != null) {
+			ocupacion = otroOcupacion;
+		} else {
+			ocupacion = personaClienteWrapper.getOcupacionCli();
+		}
+		System.out.println(ocupacion);
 
 		
 		Persona persona = new Persona(personaClienteWrapper.getNombrePer(),
@@ -78,16 +102,25 @@ public class ClienteController {
 				personaClienteWrapper.getTelMovilCli(),
 				personaClienteWrapper.getfNacCli(),
 				time,
-				personaClienteWrapper.getOcupacionCli(),
+				ocupacion,
 				personaClienteWrapper.getObjetivoCli(),
 				personaClienteWrapper.getAvatarCli(),
 				Constants.STATUS_MUST_ACTIVATE,
 				passArea);
 		
-		String a = null;
+		Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
+		if(persona2 != null){
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
+			return "cliente_queryall";
+		}
 		
-		return "redirect:cliente/queryall";
+		clienteService.saveOrUpdate(cliente, persona);
+		
+		return "cliente_queryall";
 	}
+	
+	
+	
 	
 	@RequestMapping("/cliente/queryall")
 	public String queryAll(Model model) {
@@ -97,7 +130,7 @@ public class ClienteController {
             System.out.println(cliente);
         }
 		model.addAttribute("clienteList", clienteList);
-		model.addAttribute("personaClienteWrapper", new PersonaClienteWrapper());
+		model.addAttribute("personaClienteWrapper", new PersonaClienteDireccionWrapper());
 		
 		return "cliente_queryall";
 	}
@@ -124,7 +157,7 @@ public class ClienteController {
 //		Admin admin = new Admin(personaAdminWrapper.getAreaAd(),
 //				personaAdminWrapper.getCargoAd(),
 //				personaAdminWrapper.getTelefonoAd(), 
-//				time, 
+//				time,
 //				personaAdminWrapper.getRolAd(), 
 //				Constants.STATUS_ACTIVE, 
 //				principal.getName());

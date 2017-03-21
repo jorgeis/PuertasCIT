@@ -35,6 +35,20 @@ public class Direccion {
 	
 	@OneToMany(mappedBy = "direccion")
 	private Set<Cliente> clienteSet = new HashSet<Cliente>();
+	
+	public Direccion(int idDir, String calleDir, String numExtDir, String numIntDir, String coloniaDir, String cpDir) {
+		super();
+		this.idDir = idDir;
+		this.calleDir = calleDir;
+		this.numExtDir = numExtDir;
+		this.numIntDir = numIntDir;
+		this.coloniaDir = coloniaDir;
+		this.cpDir = cpDir;
+	}
+	
+	public Direccion() {
+		
+	}
 
 	public int getIdDir() {
 		return idDir;

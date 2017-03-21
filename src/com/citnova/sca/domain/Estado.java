@@ -44,6 +44,11 @@ public class Estado {
 		this.municipioSet = municipioSet;
 	}
 
+	@Override
+	public String toString() {
+		return "Estado [idEst=" + idEst + ", nombreEst=" + nombreEst + "]";
+	}
+
 	
 
 }

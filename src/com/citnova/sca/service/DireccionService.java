@@ -15,4 +15,8 @@ public class DireccionService {
 	public Direccion findOne(int id){
 		return direccionRepository.findOne(id);
 	}
+	
+	public void save(Direccion direccion){
+		direccionRepository.save(direccion);
+	}
 }
