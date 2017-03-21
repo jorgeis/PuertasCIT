@@ -10,5 +10,6 @@ public class Constants {
 	public static final String ID_AD = "ID_AD";
 	public static final int ITEMS_PER_PAGE = 2;
 	public static final String SHOW_PAGES = "showPages";
+	public static final String RECOVERY_MAIL = "RECOVERY_MAIL";
 	
 }

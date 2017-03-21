@@ -5,8 +5,8 @@
 
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
- <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
- 
+<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
+
  
 					<article class="featured">
 						<c:if test="${param.error != null}">
@@ -26,6 +26,8 @@
 									
 								<input type='checkbox' name='_spring_security_remember_me' checked="checked"><label class="light"
 										for="business">Recordar</label>
+								<br/>	
+								<a href="<c:url value='/account/forgot' />">He olvidado mi contraseña</a>
 							</fieldset>
 
 							<button name="submit" type="submit" value="Aceptar">Iniciar Sesión</button>

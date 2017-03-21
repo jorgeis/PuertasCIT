@@ -51,11 +51,11 @@ public class MailManager {
 			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
-			helper.setSubject("Cambio de contrase��a");
-			String htmlText = "<h1>Has solicitado el cambio de tu contrase��a</h1>"
+			helper.setSubject("Cambio de contraseña");
+			String htmlText = "<h1>Has solicitado el cambio de tu clave de acceso</h1>"
 					+ "<br/>"
-					+ "Pulsa sobre este link para establecer una nueva contrase��a para tu cuenta: "
-					+ "<a href=\"" + url + "\">Cambiar contrase��a</a>";
+					+ "Pulsa sobre este link para establecer una nueva contraseña para tu cuenta: "
+					+ "<a href=\"" + url + "\">Cambiar contraseña</a>";
 			helper.setText(htmlText, true);
 			mailSender.send(mime);
 			return true;

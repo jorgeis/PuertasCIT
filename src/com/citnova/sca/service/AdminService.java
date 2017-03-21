@@ -78,7 +78,8 @@ public class AdminService {
 		
 	}
 
-	public Admin findByNombreAndApellidos(String nombres, String apellidoPat, String apellidoMat) {
+
+	public Admin findByEmail(String email) {
 		QAdmin admin = QAdmin.admin;
 		QPersona persona = QPersona.persona;
 		
@@ -86,9 +87,7 @@ public class AdminService {
 				.from(admin)
 				.join(admin.persona, persona)
 				.where(
-						persona.nombrePer.like("%" + nombres + "%")
-						.and(persona.apPatPer.like("%" + apellidoPat + "%")
-							.and(persona.apMatPer.like("%" + apellidoMat + "%")))
+						persona.emailPer.eq(email)
 						)
 				.uniqueResult(admin);
 	}
