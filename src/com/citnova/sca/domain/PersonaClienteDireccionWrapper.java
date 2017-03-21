@@ -3,8 +3,9 @@ package com.citnova.sca.domain;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-public class PersonaClienteWrapper {
+public class PersonaClienteDireccionWrapper {
 
+	// Persona
 	private int idPer;
 	private String nombrePer;
 	private String apPatPer;
@@ -13,6 +14,7 @@ public class PersonaClienteWrapper {
 	private String curpPer;
 	private Timestamp fhCreaPer;
 	
+	// Cliente
 	private int idCli;
 	private String emailAltCli;
 	private String passCli;
@@ -27,6 +29,13 @@ public class PersonaClienteWrapper {
 	private String statusCli;
 	private String passAreaCli;
 	
+	// Direccion
+	private int idDir;
+	private String calleDir;
+	private String numExtDir;
+	private String numIntDir;
+	private String coloniaDir;
+	private String cpDir;
 	public int getIdPer() {
 		return idPer;
 	}
@@ -147,15 +156,54 @@ public class PersonaClienteWrapper {
 	public void setPassAreaCli(String passAreaCli) {
 		this.passAreaCli = passAreaCli;
 	}
-	
+	public int getIdDir() {
+		return idDir;
+	}
+	public void setIdDir(int idDir) {
+		this.idDir = idDir;
+	}
+	public String getCalleDir() {
+		return calleDir;
+	}
+	public void setCalleDir(String calleDir) {
+		this.calleDir = calleDir;
+	}
+	public String getNumExtDir() {
+		return numExtDir;
+	}
+	public void setNumExtDir(String numExtDir) {
+		this.numExtDir = numExtDir;
+	}
+	public String getNumIntDir() {
+		return numIntDir;
+	}
+	public void setNumIntDir(String numIntDir) {
+		this.numIntDir = numIntDir;
+	}
+	public String getColoniaDir() {
+		return coloniaDir;
+	}
+	public void setColoniaDir(String coloniaDir) {
+		this.coloniaDir = coloniaDir;
+	}
+	public String getCpDir() {
+		return cpDir;
+	}
+	public void setCpDir(String cpDir) {
+		this.cpDir = cpDir;
+	}
 	@Override
 	public String toString() {
-		return "PersonaClienteWrapper [idPer=" + idPer + ", nombrePer=" + nombrePer + ", apPatPer=" + apPatPer
+		return "PersonaClienteDireccionWrapper [idPer=" + idPer + ", nombrePer=" + nombrePer + ", apPatPer=" + apPatPer
 				+ ", apMatPer=" + apMatPer + ", emailPer=" + emailPer + ", curpPer=" + curpPer + ", fhCreaPer="
 				+ fhCreaPer + ", idCli=" + idCli + ", emailAltCli=" + emailAltCli + ", passCli=" + passCli
 				+ ", sexoCli=" + sexoCli + ", telFijoCli=" + telFijoCli + ", telMovilCli=" + telMovilCli + ", fNacCli="
 				+ fNacCli + ", fhCreaCli=" + fhCreaCli + ", ocupacionCli=" + ocupacionCli + ", objetivoCli="
 				+ objetivoCli + ", avatarCli=" + avatarCli + ", statusCli=" + statusCli + ", passAreaCli=" + passAreaCli
-				+ "]";
+				+ ", idDir=" + idDir + ", calleDir=" + calleDir + ", numExtDir=" + numExtDir + ", numIntDir="
+				+ numIntDir + ", coloniaDir=" + coloniaDir + ", cpDir=" + cpDir + "]";
 	}
+	
+	
+	
 }

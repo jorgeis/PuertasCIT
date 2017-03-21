@@ -37,7 +37,7 @@ public class IndexController {
 		return "/";
 	}
 	
-	@RequestMapping("/admin/form")
+	@RequestMapping("/formex")
 	public String showOneColumn() {
 		return "formResp";
 	}
@@ -50,10 +50,5 @@ public class IndexController {
 	@RequestMapping("/twocolumn2")
 	public String showTwoColumn2() {
 		return "twocolumn2";
-	}
-	
-	@RequestMapping("/cadmin")
-	public String showAdminLogin() {
-		return "adminLogin";
 	}
 }
