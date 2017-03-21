@@ -115,14 +115,15 @@ public class Persona {
 	public void setAdmin(Admin admin) {
 		this.admin = admin;
 	}
-	
-	
 
 	@Override
 	public String toString() {
 		return "Persona [idPer=" + idPer + ", nombrePer=" + nombrePer + ", apPatPer=" + apPatPer + ", apMatPer="
-				+ apMatPer + ", emailPer=" + emailPer + ", curpPer=" + curpPer + ", fhCreaPer=" + fhCreaPer
-				+ ", cliente=" + cliente + ", admin=" + admin + "]";
+				+ apMatPer + ", emailPer=" + emailPer + ", curpPer=" + curpPer + ", fhCreaPer=" + fhCreaPer + "]";
 	}
+	
+	
+
+	
 
 }

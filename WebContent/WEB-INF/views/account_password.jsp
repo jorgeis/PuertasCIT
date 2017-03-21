@@ -103,18 +103,18 @@ function maskPassword(e) {
 	
 	
 		<form method="post" id="valid"
-			action="${pageContext.request.contextPath}/adminaccount/confirm" > 
+			action="${pageContext.request.contextPath}/account/confirm" > 
 			
 		<h1>Reestablecer Contraseña</h1>
 		<h2>${result}</h2>
 			<fieldset>
-			
 			<label >Captura tu nueva contraseña</label>
+<!-- 			<input type="password"  id="inputEmail" data-prompt-position="bottomLeft:20,5"  /> -->
 			<input type="text" class="validate[required]" id="txtpwd" name="passwordShow"  />
 			<input type="hidden" id="txthidden" name="password" />
 			</fieldset>
 			
-			<button type="submit">Guardar</button>
+			<button type="submit">Reestablecer</button>
 		</form>
 	</article>
 				
