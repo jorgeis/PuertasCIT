@@ -5,6 +5,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.citnova.sca.domain.Admin;
@@ -13,6 +16,7 @@ import com.citnova.sca.domain.QAdmin;
 import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.AdminRepository;
 import com.citnova.sca.repository.PersonaRepository;
+import com.citnova.sca.util.Constants;
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Service
@@ -38,6 +42,10 @@ public class AdminService {
 
 	public List<Admin> findAll() {
 		return (List<Admin>) adminRepository.findAll();
+	}
+	
+	public Page<Admin> getPage(int index) {
+		return adminRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
 	}
 
 	public Admin findOne(int idAd) {
@@ -68,6 +76,20 @@ public class AdminService {
 						)
 				.list(admin);
 		
+	}
+
+
+	public Admin findByEmail(String email) {
+		QAdmin admin = QAdmin.admin;
+		QPersona persona = QPersona.persona;
+		
+		return new JPAQuery(entityManager)
+				.from(admin)
+				.join(admin.persona, persona)
+				.where(
+						persona.emailPer.eq(email)
+						)
+				.uniqueResult(admin);
 	}
 
 }

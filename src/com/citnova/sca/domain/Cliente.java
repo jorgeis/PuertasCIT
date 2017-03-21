@@ -230,6 +230,7 @@ public class Cliente {
 		this.contratacionSet = contratacionSet;
 	}
 
+	
 
 	public Set<Uso> getUsoSet() {
 		return usoSet;

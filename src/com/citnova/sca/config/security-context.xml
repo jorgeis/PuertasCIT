@@ -10,6 +10,9 @@
 		<security:intercept-url pattern="/res/**" access="permitAll" />
 		<security:intercept-url pattern="/login" access="permitAll" />
 		<security:intercept-url pattern="/logout" access="permitAll" />
+		<security:intercept-url pattern="/account/**" access="permitAll" />
+		
+		<security:intercept-url pattern="/formex" access="permitAll" />
 		
 		<security:intercept-url pattern="/formex" access="permitAll" />
 		

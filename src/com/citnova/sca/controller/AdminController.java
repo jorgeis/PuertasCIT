@@ -2,17 +2,20 @@ package com.citnova.sca.controller;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
@@ -91,7 +95,7 @@ public class AdminController {
 			// Validar si ya existe la persona
 			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
 			if(persona2 != null){
-				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
+				model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
 				return "admin_queryall";
 			}
 			
@@ -130,17 +134,30 @@ public class AdminController {
 			adminService.saveOrUpdate(admin, persona);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_updated", null, Locale.getDefault()));
 		}
-		return "redirect:/admin/queryall";
+		ra.addFlashAttribute(Constants.SHOW_PAGES, true);
+		return "redirect:/admin/queryall/1";
 	}
 	
 	
-	@RequestMapping("/admin/queryall")
-	public String queryAll(Model model) {
+	@RequestMapping("/admin/queryall/{index}")
+	public String queryAll(Model model, @PathVariable("index") int index) {
 		// Consultar sólo los administradores activos
-		List<Admin> adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
-		model.addAttribute("adminList", adminList);
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		Page<Admin> page = adminService.getPage(index - 1);
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("adminList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "admin_queryall";
 	}
@@ -174,6 +191,20 @@ public class AdminController {
 		
 		model.addAttribute("personaAdminWrapper", personaAdminWrapper);
 		
+		Page<Admin> page = adminService.getPage(0);
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("adminList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
+		
 		return "admin_queryall";
 	}
 	
@@ -191,7 +222,46 @@ public class AdminController {
 		
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
 		
-		return "redirect:/admin/queryall";
+		return "redirect:/admin/queryall/1";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar los resultados de la búsqueda de un
+	 * administador
+	 * */
+	@RequestMapping(value="/admin/search", method=RequestMethod.POST)
+	public String search(@RequestParam("busqueda") String  busqueda,
+			RedirectAttributes ra, Model model) {
+		
+		List<Admin> adminList = new ArrayList<>();
+		Admin admin = null;
+		int id = 0;
+		try{
+			id = Integer.parseInt(busqueda.replaceAll("[A-Za-z. ]+", "")); 
+		}
+		catch(Exception e){}
+		
+		admin = adminService.findOne(id);
+		System.out.println("********* " + admin);
+		
+		if(admin != null){
+			adminList.add(admin);
+		}
+		else{
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+					new Object[]{busqueda}, Locale.getDefault()));
+			
+			adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
+		}
+		
+		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		model.addAttribute("adminList", adminList);
+		
+		model.addAttribute(Constants.SHOW_PAGES, false);
+		
+		return "admin_queryall";
 	}
 	
 
@@ -240,21 +310,26 @@ public class AdminController {
 	/**
 	 * Servidor JSON para búsqueda de Administradores
 	 * */
-	@RequestMapping(value="/json/search/persona", produces="application/json")
+	@RequestMapping(value="/json/search/admin", produces="application/json")
 	@ResponseBody
 	public Map<String, Object> findAll(@RequestParam("term") String term) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-//		List<Estacion> estaciones = estacionService.findAll();
-//		List<Admin> adminList = adminService.findAllLike("%" + term + "%");
-		List<Persona> personaList = personaService.findAllLike("%" + term + "%");
+		List<Admin> adminList = adminService.findAllLikeNombreOApellido("%" + term + "%");
 		
-		for (int j = 0; j < personaList.size(); j++) {
-			Persona persona = personaList.get(j);
-			map.put(String.valueOf(j), persona);
+		for (int j = 0; j < adminList.size(); j++) {
+			Admin admin = adminList.get(j);
+			map.put(String.valueOf(admin.getIdAd()), 
+										admin.getIdAd() + ". " + 
+										admin.getPersona().getNombrePer() + "  " +
+										admin.getPersona().getApPatPer() + "  " +
+										admin.getPersona().getApMatPer());
 		}
-//		System.out.println(map);
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
 		return map;
 	}
 }
