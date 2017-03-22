@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ page import="java.io.*,java.util.*"%>
+<%@ page import="java.text.*"%>
 
 <!DOCTYPE>
 <html>
@@ -72,7 +77,33 @@
 											</li>
 											<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
 											<li><a href='<c:url value="/admin/persona/save"/>'>Regístrate</a></li>
-											<li><a href='<c:url value="/login"/>'>Inicia Sesión</a></li>
+											
+											<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Notificaciones</a></li>
+											
+											<!-- Mostrar nombre de usuario si inició sesión automáticamente -->
+											<sec:authorize access="isRememberMe()">
+												<sec:authentication var="principal" property="principal" />
+												<c:set var="username" value="${principal.username}" />
+												<li> ${principal.username} </li>
+											</sec:authorize>
+											
+											<!-- Mostrar nombre de usuario si acaba inició sesión -->
+											<sec:authorize access="isFullyAuthenticated()">
+												<sec:authentication var="principal" property="principal" />
+												<c:set var="username" value="${principal}" />
+												<li> ${principal} </li>
+											</sec:authorize>
+											
+											<!-- Mostrar link de login -->
+											<sec:authorize access="!isAuthenticated()">
+												<li><a href='<c:url value="/login" />'>Iniciar Sesión</a> </li>
+											</sec:authorize>
+											
+											<!-- Mostrar link de logout -->
+											<sec:authorize access="isAuthenticated()">
+												<li><a href='<c:url value="/logout" />'>Cerrar Sesión</a> </li>
+											</sec:authorize>
+											
 										</ul>
 									</nav>
 									<br />
