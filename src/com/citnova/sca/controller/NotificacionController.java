@@ -3,6 +3,10 @@ package com.citnova.sca.controller;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -11,13 +15,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
+import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Notificacion;
 import com.citnova.sca.service.AdminService;
+import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.NotificacionService;
 import com.citnova.sca.util.Constants;
+import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.Util;
 
 @Controller
@@ -31,6 +40,12 @@ public class NotificacionController {
 	
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private ClienteService clienteService;
+	
+	@Autowired
+	private MailManager mailManager;
 	
 	@Autowired
 	private Util util;
@@ -70,14 +85,55 @@ public class NotificacionController {
 				
 		Admin admin = adminService.findByEmail(principal.getName());
 		
-		
 		notificacion.setFhCreaNot(time);
 		notificacion.setFhPubNot(time);
 		notificacion.setStatus(Constants.STATUS_ACTIVE);
 		
 		notificacionService.save(admin, notificacion);
 		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("notification_saved", null, Locale.getDefault()));
 		
 		return "redirect:/admin/notificacion/queryall/1";
+	}
+	
+
+	/**
+	 * Servidor JSON para envío de correos asíncronamente
+	 * */
+	@RequestMapping(value="/admin/notificacion/send", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findAll(
+			@RequestParam("tituloNot") String tituloNot,
+			@RequestParam("contenidoNot") String contenidoNot,
+			@RequestParam("visibilidadNot") String visibilidadNot
+			) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("Key ", messageSource.getMessage("notifications_sent", null, Locale.getDefault()));
+		
+		if(visibilidadNot.equals(Constants.ADMIN)){
+			List<Admin> adminList = adminService.findAll();
+			
+			for (Admin admin : adminList) {
+				System.out.println("******  enviando email Admin: " + admin.getPersona().getEmailPer());
+				mailManager.sendEmailInfo(admin.getPersona().getEmailPer(), 
+						tituloNot, 
+						contenidoNot);
+			}
+		}
+		else if(visibilidadNot.equals(Constants.CLIENTE)){
+			List<Cliente> clienteList = clienteService.findAll();
+			
+			for (Cliente cliente : clienteList) {
+				System.out.println("******  enviando email Cliente: " + cliente.getPersona().getEmailPer());
+				mailManager.sendEmailInfo(cliente.getPersona().getEmailPer(), 
+						tituloNot, 
+						contenidoNot);
+			}
+		}
+		
+		// Respuesta exitosa a la función AJAX
+		return map;
 	}
 }

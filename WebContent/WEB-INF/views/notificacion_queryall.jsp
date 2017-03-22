@@ -18,6 +18,7 @@
 
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+<script type="text/javascript" src='<c:url value="/res/js/jquery.loading.block.js" />'></script>
 <script>
 	jQuery(document).ready(function(){
 		jQuery(".confirm").on("click", function() {
@@ -30,44 +31,81 @@
 		});
 		jQuery("#valid").validationEngine();
 		jQuery("#valid2").validationEngine();
+		
+		// Prevenir form para ser enviado
+	    jQuery("#valid").submit(function(e){
+	        e.preventDefault();
+	    });
+	    
+	    jQuery('#ajaxTask').click(function(event) {
+	           var url = path + "/admin/notificacion/send";
+	           $.ajax({ 
+	        	    beforeSend: function() {
+	        	    	$.loadingBlockShow({
+	        	    		imgPath: path +'/res/images/default.svg',
+       	    			 	text: 'Enviando notificaciones, espera...'
+       	    			});
+	        		},
+	                url: url, 
+	                data: { 
+	                	tituloNot: $("#tituloNot").val(),
+	                	contenidoNot: $("#contenidoNot").val(),
+	                	visibilidadNot: $("#visibilidadNot").val()
+	                }, 
+	                complete: function(){
+	                	$.loadingBlockHide();
+	                },
+	                success: function (data) { 
+	                	$.loadingBlockHide();
+	                	$('#ajaxResult').empty();
+	                    $.each(data, function(index, element) {
+	                    	$('#ajaxResult').append(': <h2>' + element + '</h2><br/>');
+	                    });
+	                }
+	            });
+	        });
 	});
 </script>
 
 	<!-- Article - Formulario -->
 	<article class="featured">
 	
-		<sf:form method="post" id="valid"
-			action="${pageContext.request.contextPath}/admin/notificacion/save" 
-	 		commandName="notificacion"> 
+		<form id="valid"> 
 			
 		<h1>Crear Notificación</h1>
 		<h2>${result}</h2>
 			<fieldset>
-			<sf:input type="hidden" path="idNot" />
 			
 			<label >Título</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="tituloNot" />
+			<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="tituloNot" />
 			
 			<label >Contenido</label>
-			<sf:textarea type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="contenidoNot" ></sf:textarea>
+			<textarea type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="contenidoNot" ></textarea>
 			
 			<label >Visibilidad</label>
-			<sf:select path="visibilidadNot" class="validate[required]">
-				<sf:option value="">Elige una opción</sf:option>
-				<sf:option value="ROLE_ROOT">Super Administrador</sf:option>
-				<sf:option value="ROLE_ADMIN">Administrador</sf:option>
-			</sf:select>
+			<select id="visibilidadNot" class="validate[required]">
+				<option value="">Elige una opción</option>
+				<option value="Admin">Administradores</option>
+				<option value="Cliente">Clientes</option>
+			</select>
 			</fieldset>
 			
-			<button type="submit">Guardar</button>
-		</sf:form>
+			<button type="submit" id="ajaxTask">Enviar</button>
+		</form>
+		<div id="ajaxResult"> </div>
 	</article>
 	
 	<article class="featured"> 
 		<form method="post" id="valid2" action="${pageContext.request.contextPath}/admin/search" >
 			<h1>Buscar Notificaciones</h1>
+			
+			<label >Fecha</label>
 			<input type="hidden" id="path" value="${pageContext.request.contextPath}"/>
 			<input type="text" name="busqueda" id="busqueda" class="validate[required]" />
+			
+			<label >Visibilidad</label>
+			<input type="radio" name="visibilidad" checked="checked" value="Admin"> Administradores
+			<input type="radio" name="visibilidad" value="Cliente"> Clientes
 			<button type="submit">Buscar</button>
 		</form>	
 		
@@ -91,20 +129,16 @@
 						<td>${notif.fhCreaNot}</td>
 						<td>${notif.fhPubNot}</td>
 						<td>${notif.status}</td>
-						<td>
-							<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
-							<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
-						</td>
 					</tr>
 				</c:forEach>
 			</table>
 			
 			
 			<c:if test="${showPages == true}">
-				<c:url var="firstUrl" value="/notificacion/queryall/1" />
-				<c:url var="lastUrl" value="/notificacion/queryall/${totalPages}" />
-				<c:url var="prevUrl" value="/notificacion/queryall/${currentIndex - 1}" />
-				<c:url var="nextUrl" value="/notificacion/queryall/${currentIndex + 1}" />
+				<c:url var="firstUrl" value="/admin/notificacion/queryall/1" />
+				<c:url var="lastUrl" value="/admin/notificacion/queryall/${totalPages}" />
+				<c:url var="prevUrl" value="/admin/notificacion/queryall/${currentIndex - 1}" />
+				<c:url var="nextUrl" value="/admin/notificacion/queryall/${currentIndex + 1}" />
 				<c:choose>
 					<%-- Si la página actual es 1 deshabilitar botones << y < --%>
 					<c:when test="${currentIndex == 1}">
@@ -119,7 +153,7 @@
 				</c:choose>
 				<c:forEach var="i" begin="${beginIndex}" end="${endIndex}">
 					<%-- Construir links a partir de los índices --%>
-					<c:url var="pageUrl" value="/notificacion/queryall/${i}" />
+					<c:url var="pageUrl" value="/admin/notificacion/queryall/${i}" />
 					<c:choose>
 						<%-- Remarcar el índice actual --%>
 						<c:when test="${i == currentIndex}">

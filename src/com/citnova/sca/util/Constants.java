@@ -11,5 +11,7 @@ public class Constants {
 	public static final int ITEMS_PER_PAGE = 2;
 	public static final String SHOW_PAGES = "showPages";
 	public static final String RECOVERY_MAIL = "RECOVERY_MAIL";
+	public static final String ADMIN = "Admin";
+	public static final String CLIENTE = "Cliente";
 	
 }
