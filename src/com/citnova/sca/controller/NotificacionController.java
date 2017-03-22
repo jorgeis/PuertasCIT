@@ -1,5 +1,6 @@
 package com.citnova.sca.controller;
 
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Notificacion;
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.NotificacionService;
@@ -57,5 +60,24 @@ public class NotificacionController {
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "notificacion_queryall";
+	}
+	
+	
+	@RequestMapping("/admin/notificacion/save")
+	public String save(Model model, Principal principal,
+			RedirectAttributes ra,
+			Notificacion notificacion){
+				
+		Admin admin = adminService.findByEmail(principal.getName());
+		
+		
+		notificacion.setFhCreaNot(time);
+		notificacion.setFhPubNot(time);
+		notificacion.setStatus(Constants.STATUS_ACTIVE);
+		
+		notificacionService.save(admin, notificacion);
+		
+		
+		return "redirect:/admin/notificacion/queryall/1";
 	}
 }
