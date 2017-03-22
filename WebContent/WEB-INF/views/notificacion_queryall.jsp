@@ -43,7 +43,7 @@
 		<h1>Crear Notificación</h1>
 		<h2>${result}</h2>
 			<fieldset>
-			<sf:input type="hidden" path="id" />
+			<sf:input type="hidden" path="idNot" />
 			
 			<label >Título</label>
 			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="tituloNot" />
@@ -90,7 +90,7 @@
 						<td>${notif.visibilidadNot}</td>
 						<td>${notif.fhCreaNot}</td>
 						<td>${notif.fhPubNot}</td>
-						<td>${notif.statusNot}</td>
+						<td>${notif.status}</td>
 						<td>
 							<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
 							<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
