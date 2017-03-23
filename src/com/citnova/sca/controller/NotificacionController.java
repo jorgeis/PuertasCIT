@@ -103,12 +103,24 @@ public class NotificacionController {
 		Timestamp tsFrom = new java.sql.Timestamp(parsedDateFrom.getTime());
 		Timestamp tsTo = new java.sql.Timestamp(parsedDateTo.getTime());
 	
-		List<Notificacion> notificacionList = notificacionService.findByFhCreaBetween(tsFrom, tsTo, visibilidad);
-		System.out.println("****** " + notificacionList.size());
-		System.out.println("****** " + notificacionList);
+		int index = 1;
+		Page<Notificacion> page = notificacionService.findByFhCreaBetween(tsFrom, tsTo, visibilidad, index - 1);
 		
 		model.addAttribute(Constants.RESULT, messageSource.getMessage("notification_search_results", 
-				new Object[]{visibilidad, dateFrom, dateTo}, Locale.getDefault()));
+				new Object[]{page.getTotalElements(), visibilidad, dateFrom, dateTo}, Locale.getDefault()));
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		
+		model.addAttribute("notificacionList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "notificacion_queryall";
 	}
