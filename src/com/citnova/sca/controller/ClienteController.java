@@ -2,8 +2,10 @@ package com.citnova.sca.controller;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,13 +14,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Cliente;
+import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
+import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
+import com.citnova.sca.service.MunicipioService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.PassGen;
@@ -36,31 +43,37 @@ public class ClienteController {
 	private EstadoService estadoService;
 	
 	@Autowired
+	private MunicipioService municipioService;
+	
+	@Autowired
 	private MessageSource messageSource;
 	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
 	@RequestMapping("/clienteform")
 	public String showClientForm(Model model) {
-		model.addAttribute("personaClienteWrapper", new PersonaClienteDireccionWrapper());
+		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
-		// Consulta los Estados de Direccion
+		// Consulta los Estados
 		List<Estado> estadoList = estadoService.findAll();
-		System.out.println(estadoList.size());
-		for(Estado estado : estadoList) {
-            System.out.println(estado);
-        }
 		model.addAttribute("estadoList", estadoList);
 		
 		return "cliente_form";
 	}
 	
 	
+	/**
+	 * Guardar nuevo cliente en BD
+	 * */
 	@RequestMapping(value="/clientesave", method=RequestMethod.POST)
-	public String createCliente(Model model, PersonaClienteDireccionWrapper personaClienteWrapper, 
+	public String createCliente(Model model, PersonaClienteDireccionWrapper personaClienteDireccionWrapper, 
 			@RequestParam("otroOcupacion") String otroOcupacion) {
 		
 		List<Cliente> clienteList = clienteService.findAll();
+		
+		// Consulta los Estados
+		List<Estado> estadoList = estadoService.findAll();
+		model.addAttribute("estadoList", estadoList);
 		
 		// Genera un nuevo pass para passArea
 		boolean passUsed;
@@ -68,7 +81,7 @@ public class ClienteController {
 		do {
 			passUsed = false;
 			passArea = PassGen.generatePass();
-			System.out.println("Pass generado: " + passArea);
+			System.out.println("\nPass generado: " + passArea);
 			for(Cliente cliente : clienteList) {
 	            if(passArea.equals(cliente.getPassAreaCli())) {
 	            	System.out.println("La contraseña ya existe");
@@ -81,68 +94,102 @@ public class ClienteController {
 		
 		// Revisa si la ocupación fue seleccionada como "Otro" para tratarla
 		String ocupacion;
-		if(otroOcupacion != null) {
+		if(personaClienteDireccionWrapper.getOcupacionCli().equals("Otro")) {
+			model.addAttribute("otroOcup", otroOcupacion);
 			ocupacion = otroOcupacion;
 		} else {
-			ocupacion = personaClienteWrapper.getOcupacionCli();
+			ocupacion = personaClienteDireccionWrapper.getOcupacionCli();
 		}
-		System.out.println(ocupacion);
+		System.out.println("\nOcupación: " + ocupacion + "\n");
 
 		
-		Persona persona = new Persona(personaClienteWrapper.getNombrePer(),
-				personaClienteWrapper.getApPatPer(),
-				personaClienteWrapper.getApMatPer(),
-				personaClienteWrapper.getEmailPer(),
-				personaClienteWrapper.getCurpPer(),
+		Persona persona = new Persona(personaClienteDireccionWrapper.getNombrePer(),
+				personaClienteDireccionWrapper.getApPatPer(),
+				personaClienteDireccionWrapper.getApMatPer(),
+				personaClienteDireccionWrapper.getEmailPer(),
+				personaClienteDireccionWrapper.getCurpPer(),
 				time);
 		
-		Cliente cliente = new Cliente(personaClienteWrapper.getEmailAltCli(),
-				personaClienteWrapper.getSexoCli(),
-				personaClienteWrapper.getTelFijoCli(),
-				personaClienteWrapper.getTelMovilCli(),
-				personaClienteWrapper.getfNacCli(),
+		Cliente cliente = new Cliente(personaClienteDireccionWrapper.getEmailAltCli(),
+				personaClienteDireccionWrapper.getPassCli(),
+				personaClienteDireccionWrapper.getSexoCli(),
+				personaClienteDireccionWrapper.getTelFijoCli(),
+				personaClienteDireccionWrapper.getTelMovilCli(),
+				personaClienteDireccionWrapper.getfNacCli(),
 				time,
 				ocupacion,
-				personaClienteWrapper.getObjetivoCli(),
-				personaClienteWrapper.getAvatarCli(),
+				personaClienteDireccionWrapper.getObjetivoCli(),
+				personaClienteDireccionWrapper.getAvatarCli(),
 				Constants.STATUS_MUST_ACTIVATE,
 				passArea);
 		
+		Direccion direccion = new Direccion(personaClienteDireccionWrapper.getCalleDir(),
+				personaClienteDireccionWrapper.getNumExtDir(),
+				personaClienteDireccionWrapper.getNumIntDir(),
+				personaClienteDireccionWrapper.getColoniaDir(),
+				personaClienteDireccionWrapper.getCpDir());
+		
+		Municipio municipio = municipioService.findByIdMun(personaClienteDireccionWrapper.getIdMun());
+		
 		Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
 		if(persona2 != null){
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
-			return "cliente_queryall";
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("client_exists", null, Locale.getDefault()));
+			return "/cliente_form";
 		}
 		
-		clienteService.saveOrUpdate(cliente, persona);
+		System.out.println(persona);
+		System.out.println(cliente);
+		System.out.println(direccion);
 		
-		return "cliente_queryall";
+		clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
+		
+		return "redirect:/cliente/queryall";
 	}
 	
 	
 	
-	
+	/**
+	 * Consulta de todos los clientes
+	 * */
 	@RequestMapping("/cliente/queryall")
 	public String queryAll(Model model) {
 		List<Cliente> clienteList = clienteService.findAll();
-		System.out.println(clienteList.size());
-		for(Cliente cliente : clienteList) {
-            System.out.println(cliente);
-        }
+//		System.out.println(clienteList.size());
+//		for(Cliente cliente : clienteList) {
+//            System.out.println(cliente);
+//        }
 		model.addAttribute("clienteList", clienteList);
-		model.addAttribute("personaClienteWrapper", new PersonaClienteDireccionWrapper());
+		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
 		return "cliente_queryall";
 	}
 	
 	
+	/**
+	 * Servidor JSON para búsqueda de Municipios
+	 * */
+	@RequestMapping(value="/json/search/mun", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findMunicipio(@RequestParam("term") String idEstado) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		Estado estado = new Estado();
+		if(idEstado == "") {
+			estado.setIdEst(0);
+		} else {
+			estado.setIdEst(Integer.parseInt(idEstado));
+		}
+		
+		List<Municipio> municipios = municipioService.findByEstado(estado);
+		
+		for (int i = 0; i < municipios.size(); i++) {
+			Municipio municipio = municipios.get(i);
+			map.put(Integer.toString(municipio.getIdMun()), municipio.getNombreMun());
+		}
+		return map;
+	}
 	
-	
-	
-	
-	
-	
-	
+
 //	@RequestMapping(value="/admin/save", method=RequestMethod.POST)
 //	public String createPersona(Model model, PersonaAdminWrapper personaAdminWrapper,
 //			HttpSession session, Principal principal, HttpServletRequest request) {
