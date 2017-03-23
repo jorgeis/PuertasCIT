@@ -249,16 +249,13 @@ public class AdminController {
 			adminList.add(admin);
 		}
 		else{
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
-			adminList = adminService.findAllByStatusAd(Constants.STATUS_ACTIVE);
+			return "redirect:/admin/queryall/1";
 		}
-		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
-		
 		model.addAttribute("adminList", adminList);
-		
 		model.addAttribute(Constants.SHOW_PAGES, false);
 		
 		return "admin_queryall";
