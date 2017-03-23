@@ -14,4 +14,6 @@ public class Constants {
 	public static final String ADMIN = "Admin";
 	public static final String CLIENTE = "Cliente";
 	
+	public static final String ID_CLI = "ID_CLI";
+	
 }

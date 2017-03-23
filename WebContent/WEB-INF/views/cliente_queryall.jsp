@@ -21,13 +21,35 @@
 	<article class="featured">		
 	
 	<h1>Lista de Usuarios</h1>	
+	<h2>${result}</h2>
+	
 		
-		<c:forEach var="cliente" items="${clienteList}">
-			${cliente} <br/> ${cliente.persona}<br/>
-<%-- 			<a href="<c:url value='/secure/cmanage/conyuge/update' />">Modificar</a>   --%>
-<%-- 			<a href="<c:url value='/secure/cmanage/conyuge/update' />">Eliminar</a> --%>
-			<br/><br/>
-		</c:forEach>
+		
+		
+		<div class = "table1">
+			<table>
+				<tr>
+					<td>Nombre(s)</td>
+					<td>Apellido Paterno</td>
+					<td>Apellido Materno</td>
+					<td>Correo electrónico</td>
+				</tr>
+				<c:forEach var="cliente" items="${clienteList}">
+					<tr>
+						<td>${cliente.persona.nombrePer}</td>
+						<td>${cliente.persona.apPatPer}</td>
+						<td>${cliente.persona.apMatPer}</td>
+						<td>${cliente.persona.emailPer}</td>
+						<td>
+							<a href="<c:url value='/cliente/update/${cliente.idCli}' />">Modificar</a> &nbsp;  
+							<a class="confirm" href="<c:url value='/cliente/delete' />">Eliminar</a><br/>
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		
+		</div>
+		
 		
 	</article>
 					
