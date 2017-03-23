@@ -36,6 +36,24 @@ public class PersonaClienteDireccionWrapper {
 	private String numIntDir;
 	private String coloniaDir;
 	private String cpDir;
+	
+	//Municipio
+	private int idEstado;
+	
+	public int getIdEstado() {
+		return idEstado;
+	}
+	public void setIdEstado(int idEstado) {
+		this.idEstado = idEstado;
+	}
+	private int idMun;
+	
+	public int getIdMun() {
+		return idMun;
+	}
+	public void setIdMun(int idMun) {
+		this.idMun = idMun;
+	}
 	public int getIdPer() {
 		return idPer;
 	}

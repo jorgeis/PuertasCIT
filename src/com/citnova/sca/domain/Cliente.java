@@ -70,10 +70,11 @@ public class Cliente {
 		
 	}
 	
-	public Cliente(String emailAltCli, String sexoCli, String telFijoCli, String telMovilCli,
+	public Cliente(String emailAltCli, String passCli, String sexoCli, String telFijoCli, String telMovilCli,
 			Date fNacCli, Timestamp fhCreaCli, String ocupacionCli, String objetivoCli, String avatarCli,
 			String statusCli, String passAreaCli) {
 		this.emailAltCli = emailAltCli;
+		this.passCli = passCli;
 		this.sexoCli = sexoCli;
 		this.telFijoCli = telFijoCli;
 		this.telMovilCli = telMovilCli;

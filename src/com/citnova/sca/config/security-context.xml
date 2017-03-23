@@ -13,8 +13,7 @@
 		<security:intercept-url pattern="/account/**" access="permitAll" />
 		
 		<security:intercept-url pattern="/formex" access="permitAll" />
-		
-		<security:intercept-url pattern="/formex" access="permitAll" />
+		<security:intercept-url pattern="/json/search/mun" access="permitAll" />
 		
 		<security:intercept-url pattern="/adminaccount/**" access="permitAll" />
 		<security:intercept-url pattern="/clienteform" access="permitAll" />

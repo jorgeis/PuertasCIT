@@ -56,6 +56,12 @@ public class Municipio {
 	public void setDireccionSet(Set<Direccion> direccionSet) {
 		this.direccionSet = direccionSet;
 	}
+
+	@Override
+	public String toString() {
+		return "Municipio [idMun=" + idMun + ", nombreMun=" + nombreMun + ", estado=" + estado + ", direccionSet="
+				+ direccionSet + "]";
+	}
 	
 	
 
