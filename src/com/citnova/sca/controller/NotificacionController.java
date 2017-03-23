@@ -2,6 +2,8 @@ package com.citnova.sca.controller;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +96,38 @@ public class NotificacionController {
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("notification_saved", null, Locale.getDefault()));
 		
 		return "redirect:/admin/notificacion/queryall/1";
+	}
+	
+	
+	@RequestMapping("/admin/notificacion/search")
+	public String search(
+			@RequestParam("dateFrom") String dateFrom,
+			@RequestParam("dateTo") String dateTo,
+			@RequestParam("visibilidad") String visibilidad
+			){
+		
+		// Convertir String a Timestamp
+		dateFrom += " 12:00:00";
+		dateTo += " 12:00:00";
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	    
+		Date parsedDateFrom = null;
+		Date parsedDateTo = null;
+		try {
+			parsedDateFrom = dateFormat.parse(dateFrom);
+			parsedDateTo = dateFormat.parse(dateTo);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    
+		Timestamp tsFrom = new java.sql.Timestamp(parsedDateFrom.getTime());
+		Timestamp tsTo = new java.sql.Timestamp(parsedDateTo.getTime());
+	
+		
+		
+		return "notificacion_queryall";
 	}
 	
 
