@@ -87,7 +87,7 @@ public class NotificacionController {
 				
 		Admin admin = adminService.findByEmail(principal.getName());
 		
-		notificacion.setFhCreaNot(time);
+		notificacion.setFhCrea(time);
 		notificacion.setFhPubNot(time);
 		notificacion.setStatus(Constants.STATUS_ACTIVE);
 		

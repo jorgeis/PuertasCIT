@@ -1,5 +1,8 @@
 package com.citnova.sca.service;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,5 +28,9 @@ public class NotificacionService {
 	public void save(Admin admin, Notificacion notificacion){
 		notificacion.setAdmin(admin);
 		notificacionRepository.save(notificacion);
+	}
+	
+	public List<Notificacion> findByFhCreaBetween(Timestamp from, Timestamp to){
+		return notificacionRepository.findByFhCreaBetween(from, to);
 	}
 }
