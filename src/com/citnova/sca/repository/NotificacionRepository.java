@@ -12,5 +12,5 @@ import com.citnova.sca.domain.Notificacion;
 public interface NotificacionRepository extends JpaRepository<Notificacion, Integer>{
 
 	public Page<Notificacion> findByStatus(String statusNot, Pageable pageable);
-	public List<Notificacion> findByFhCreaBetween(Timestamp from, Timestamp to);
+	public Page<Notificacion> findByFhCreaBetweenAndVisibilidad(Timestamp from, Timestamp to, String visibilidad, Pageable pageable);
 }

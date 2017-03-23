@@ -137,8 +137,8 @@
 					<tr>
 						<td>${notif.tituloNot}</td>
 						<td>${notif.contenidoNot}</td>
-						<td>${notif.visibilidadNot}</td>
-						<td>${notif.fhCreaNot}</td>
+						<td>${notif.visibilidad}</td>
+						<td>${notif.fhCrea}</td>
 						<td>${notif.fhPubNot}</td>
 						<td>${notif.status}</td>
 					</tr>

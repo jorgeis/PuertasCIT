@@ -30,7 +30,7 @@ public class NotificacionService {
 		notificacionRepository.save(notificacion);
 	}
 	
-	public List<Notificacion> findByFhCreaBetween(Timestamp from, Timestamp to){
-		return notificacionRepository.findByFhCreaBetween(from, to);
+	public Page<Notificacion> findByFhCreaBetween(Timestamp from, Timestamp to, String visibilidad, int index){
+		return notificacionRepository.findByFhCreaBetweenAndVisibilidad(from, to, visibilidad, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idNot"));
 	}
 }
