@@ -106,7 +106,7 @@ public class MailManager {
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
 			helper.setSubject(asunto);
-			String htmlText =  "<br/> ... <br/>"
+			String htmlText =  "<h1>Notificación</h1> <br/> <br/>"
 					+ " " + mensaje + "<br/>"
 					;
 			helper.setText(htmlText, true);
