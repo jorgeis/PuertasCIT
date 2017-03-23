@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Municipio;
@@ -61,5 +62,9 @@ public class ClienteService {
 		cliente.setPersona(persona);
 		cliente.setDireccion(direccion);
 		clienteRepository.save(cliente);
+	}
+	
+	public Cliente findOne(int idCli) {
+		return clienteRepository.findOne(idCli);
 	}
 }

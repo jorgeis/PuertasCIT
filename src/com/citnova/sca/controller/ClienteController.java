@@ -7,16 +7,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -28,7 +33,9 @@ import com.citnova.sca.service.EstadoService;
 import com.citnova.sca.service.MunicipioService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
+import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.PassGen;
+import com.citnova.sca.util.Util;
 
 @Controller
 public class ClienteController {
@@ -47,6 +54,12 @@ public class ClienteController {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private MailManager mailManager;
+	
+	@Autowired
+	private Util util;
 	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
@@ -67,7 +80,8 @@ public class ClienteController {
 	 * */
 	@RequestMapping(value="/clientesave", method=RequestMethod.POST)
 	public String createCliente(Model model, PersonaClienteDireccionWrapper personaClienteDireccionWrapper, 
-			@RequestParam("otroOcupacion") String otroOcupacion) {
+			@RequestParam("otroOcupacion") String otroOcupacion, HttpServletRequest request,
+			RedirectAttributes ra) {
 		
 		List<Cliente> clienteList = clienteService.findAll();
 		
@@ -102,6 +116,7 @@ public class ClienteController {
 		}
 		System.out.println("\nOcupación: " + ocupacion + "\n");
 
+		// Guardar nuevo registro
 		
 		Persona persona = new Persona(personaClienteDireccionWrapper.getNombrePer(),
 				personaClienteDireccionWrapper.getApPatPer(),
@@ -131,6 +146,8 @@ public class ClienteController {
 		
 		Municipio municipio = municipioService.findByIdMun(personaClienteDireccionWrapper.getIdMun());
 		
+		// Revisa una la persona ya existe con el mismo email
+		
 		Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
 		if(persona2 != null){
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("client_exists", null, Locale.getDefault()));
@@ -141,7 +158,16 @@ public class ClienteController {
 		System.out.println(cliente);
 		System.out.println(direccion);
 		
+		// Guardar los datos a través del servicio
 		clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
+		
+		// Enviar correo electrónico para confirmar cuenta
+		mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
+				util.getRootUrl(request, "/clientesave")
+						.concat("/clienteaccount/")
+						.concat(String.valueOf(cliente.getIdCli()))
+					);
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
 		
 		return "redirect:/cliente/queryall";
 	}
@@ -189,43 +215,34 @@ public class ClienteController {
 		return map;
 	}
 	
+	
+	
+	@RequestMapping("/clienteaccount/{idCli}/confirm")
+	public String inputPassword(HttpSession session, Model model,  
+			@PathVariable("idCli") int idCli) {
+		
+		session.setAttribute(Constants.ID_CLI, idCli);
+		Cliente cliente = clienteService.findOne(idCli);
+		
+		if(cliente.getStatusCli().equals(Constants.STATUS_MUST_ACTIVATE)){
+			Persona persona = cliente.getPersona();
+			Direccion direccion = cliente.getDireccion();
+			Municipio municipio = cliente.getDireccion().getMunicipio();
+			
+			cliente.setStatusCli(Constants.STATUS_ACTIVE);
+			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
+			
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_confirmed", null, Locale.getDefault()));
+			
+			session.invalidate();
+			return "notifications";
+		}
+		else{
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_was_confirmed", null, Locale.getDefault()));
+			return "notifications";
+		}
+	}
+	
 
-//	@RequestMapping(value="/admin/save", method=RequestMethod.POST)
-//	public String createPersona(Model model, PersonaAdminWrapper personaAdminWrapper,
-//			HttpSession session, Principal principal, HttpServletRequest request) {
-//		
-//		Persona persona = new Persona(personaAdminWrapper.getNombrePer(), 
-//				personaAdminWrapper.getApPatPer(), 
-//				personaAdminWrapper.getApMatPer(), 
-//				personaAdminWrapper.getEmailPer(), 
-//				personaAdminWrapper.getCurpPer(), time);
-//		
-//		
-//		Admin admin = new Admin(personaAdminWrapper.getAreaAd(),
-//				personaAdminWrapper.getCargoAd(),
-//				personaAdminWrapper.getTelefonoAd(), 
-//				time,
-//				personaAdminWrapper.getRolAd(), 
-//				Constants.STATUS_ACTIVE, 
-//				principal.getName());
-//		
-//		
-//		// Validar si ya existe la persona
-//		Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
-//		if(persona2 != null){
-//			model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
-//			return "admin_queryall";
-//		}
-//		
-//		personaService.save(persona);
-//		admin.setPersona(persona);
-//		adminService.save(admin);
-//		
-//		// Enviar correo electrónico para confirmar cuenta
-//		mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
-//				util.getRootUrl(request, "/admin/save").concat("/admin/confirm"));
-//		
-//		return "redirect:/admin/queryall";
-//	}
-
+	
 }
