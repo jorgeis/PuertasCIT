@@ -36,6 +36,16 @@
 	    jQuery("#valid").submit(function(e){
 	        e.preventDefault();
 	    });
+		
+	    $("#datepickerFrom").datepicker({
+	    	dateFormat: "yy-mm-dd",
+	        changeYear: true
+	    });
+	    
+	    $("#datepickerTo").datepicker({
+	    	dateFormat: "yy-mm-dd",
+	        changeYear: true
+	    });
 	    
 	    jQuery('#ajaxTask').click(function(event) {
 	           var url = path + "/admin/notificacion/send";
@@ -96,16 +106,18 @@
 	</article>
 	
 	<article class="featured"> 
-		<form method="post" id="valid2" action="${pageContext.request.contextPath}/admin/search" >
+		<form method="post" id="valid2" action="${pageContext.request.contextPath}/admin/notificacion/search" >
 			<h1>Buscar Notificaciones</h1>
+			<input type="hidden" id="path" value="${pageContext.request.contextPath}"/>
 			
 			<label >Fecha</label>
-			<input type="hidden" id="path" value="${pageContext.request.contextPath}"/>
-			<input type="text" name="busqueda" id="busqueda" class="validate[required]" />
+			<input type="text" id="datepickerFrom" name="dateFrom" placeholder="Desde"/>
+			<input type="text" id="datepickerTo" name="dateTo" placeholder="Hasta"/>
 			
 			<label >Visibilidad</label>
 			<input type="radio" name="visibilidad" checked="checked" value="Admin"> Administradores
 			<input type="radio" name="visibilidad" value="Cliente"> Clientes
+			
 			<button type="submit">Buscar</button>
 		</form>	
 		
@@ -125,8 +137,8 @@
 					<tr>
 						<td>${notif.tituloNot}</td>
 						<td>${notif.contenidoNot}</td>
-						<td>${notif.visibilidadNot}</td>
-						<td>${notif.fhCreaNot}</td>
+						<td>${notif.visibilidad}</td>
+						<td>${notif.fhCrea}</td>
 						<td>${notif.fhPubNot}</td>
 						<td>${notif.status}</td>
 					</tr>

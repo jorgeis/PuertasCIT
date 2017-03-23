@@ -19,8 +19,12 @@ public class Notificacion {
 	private int idNot;
 	private String tituloNot;
 	private String contenidoNot;
-	private String visibilidadNot;
-	private Timestamp fhCreaNot;
+
+	@Column(name = "visibilidadNot")
+	private String visibilidad;
+
+	@Column(name = "fhCreaNot")
+	private Timestamp fhCrea;
 	private Timestamp fhPubNot;
 
 	@Column(name = "statusNot")
@@ -54,20 +58,20 @@ public class Notificacion {
 		this.contenidoNot = contenidoNot;
 	}
 
-	public String getVisibilidadNot() {
-		return visibilidadNot;
+	public String getVisibilidad() {
+		return visibilidad;
 	}
 
-	public void setVisibilidadNot(String visibilidadNot) {
-		this.visibilidadNot = visibilidadNot;
+	public void setVisibilidad(String visibilidad) {
+		this.visibilidad = visibilidad;
 	}
 
-	public Timestamp getFhCreaNot() {
-		return fhCreaNot;
+	public Timestamp getFhCrea() {
+		return fhCrea;
 	}
 
-	public void setFhCreaNot(Timestamp fhCreaNot) {
-		this.fhCreaNot = fhCreaNot;
+	public void setFhCrea(Timestamp fhCrea) {
+		this.fhCrea = fhCrea;
 	}
 
 	public Timestamp getFhPubNot() {
@@ -97,7 +101,7 @@ public class Notificacion {
 	@Override
 	public String toString() {
 		return "Notificacion [idNot=" + idNot + ", tituloNot=" + tituloNot + ", contenidoNot=" + contenidoNot
-				+ ", visibilidadNot=" + visibilidadNot + ", fhCreaNot=" + fhCreaNot + ", fhPubNot=" + fhPubNot
+				+ ", visibilidadNot=" + visibilidad + ", fhCreaNot=" + fhCrea + ", fhPubNot=" + fhPubNot
 				+ ", status=" + status + "]";
 	}
 

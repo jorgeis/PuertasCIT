@@ -2,6 +2,8 @@ package com.citnova.sca.controller;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +59,6 @@ public class NotificacionController {
 	public String queryAll(Model model,
 			@PathVariable("index") int index){
 		
-		model.addAttribute("notificacion", new Notificacion());
-		
 		Page<Notificacion> page = notificacionService.getPage(index - 1);
 		
 		int currentIndex = page.getNumber() + 1;
@@ -78,22 +78,51 @@ public class NotificacionController {
 	}
 	
 	
-	@RequestMapping("/admin/notificacion/save")
-	public String save(Model model, Principal principal,
-			RedirectAttributes ra,
-			Notificacion notificacion){
-				
-		Admin admin = adminService.findByEmail(principal.getName());
+	@RequestMapping("/admin/notificacion/search")
+	public String search(Model model,
+			@RequestParam("dateFrom") String dateFrom,
+			@RequestParam("dateTo") String dateTo,
+			@RequestParam("visibilidad") String visibilidad
+			){
 		
-		notificacion.setFhCreaNot(time);
-		notificacion.setFhPubNot(time);
-		notificacion.setStatus(Constants.STATUS_ACTIVE);
+		// Convertir String a Timestamp
+		dateFrom += " 12:00:00";
+		dateTo += " 12:00:00";
 		
-		notificacionService.save(admin, notificacion);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date parsedDateFrom = null;
+		Date parsedDateTo = null;
+		try {
+			parsedDateFrom = dateFormat.parse(dateFrom);
+			parsedDateTo = dateFormat.parse(dateTo);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    
+		Timestamp tsFrom = new java.sql.Timestamp(parsedDateFrom.getTime());
+		Timestamp tsTo = new java.sql.Timestamp(parsedDateTo.getTime());
+	
+		int index = 1;
+		Page<Notificacion> page = notificacionService.findByFhCreaBetween(tsFrom, tsTo, visibilidad, index - 1);
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("notification_saved", null, Locale.getDefault()));
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("notification_search_results", 
+				new Object[]{page.getTotalElements(), visibilidad, dateFrom, dateTo}, Locale.getDefault()));
 		
-		return "redirect:/admin/notificacion/queryall/1";
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		
+		model.addAttribute("notificacionList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
+		
+		return "notificacion_queryall";
 	}
 	
 
@@ -102,21 +131,35 @@ public class NotificacionController {
 	 * */
 	@RequestMapping(value="/admin/notificacion/send", produces="application/json")
 	@ResponseBody
-	public Map<String, Object> findAll(
+	public Map<String, Object> findAll(Principal principal,
 			@RequestParam("tituloNot") String tituloNot,
 			@RequestParam("contenidoNot") String contenidoNot,
 			@RequestParam("visibilidadNot") String visibilidadNot
 			) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+		// Mensaje JSON dummy para mostrar éxito en la operación
 		map.put("Key ", messageSource.getMessage("notifications_sent", null, Locale.getDefault()));
 		
+		// Salvar en BD registro del envío de las notificaciones (emails)
+		Admin admin = adminService.findByEmail(principal.getName());
+		
+		Notificacion notificacion = new Notificacion();
+		notificacion.setFhCrea(time);
+		notificacion.setFhPubNot(time);
+		notificacion.setStatus(Constants.STATUS_ACTIVE);
+		notificacion.setTituloNot(tituloNot);
+		notificacion.setContenidoNot(contenidoNot);
+		notificacion.setVisibilidad(visibilidadNot);
+		
+		notificacionService.save(admin, notificacion);
+		
+		// Enviar correos electrónicos a Admin o Cliente
 		if(visibilidadNot.equals(Constants.ADMIN)){
 			List<Admin> adminList = adminService.findAll();
 			
-			for (Admin admin : adminList) {
-				System.out.println("******  enviando email Admin: " + admin.getPersona().getEmailPer());
+			for (Admin admin2 : adminList) {
+				System.out.println("******  enviando email Admin: " + admin2.getPersona().getEmailPer());
 				mailManager.sendEmailInfo(admin.getPersona().getEmailPer(), 
 						tituloNot, 
 						contenidoNot);
