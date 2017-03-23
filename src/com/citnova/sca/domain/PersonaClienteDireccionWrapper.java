@@ -38,22 +38,10 @@ public class PersonaClienteDireccionWrapper {
 	private String cpDir;
 	
 	//Municipio
+	private int idMun;
 	private int idEstado;
 	
-	public int getIdEstado() {
-		return idEstado;
-	}
-	public void setIdEstado(int idEstado) {
-		this.idEstado = idEstado;
-	}
-	private int idMun;
 	
-	public int getIdMun() {
-		return idMun;
-	}
-	public void setIdMun(int idMun) {
-		this.idMun = idMun;
-	}
 	public int getIdPer() {
 		return idPer;
 	}
@@ -209,6 +197,20 @@ public class PersonaClienteDireccionWrapper {
 	}
 	public void setCpDir(String cpDir) {
 		this.cpDir = cpDir;
+	}
+	
+	public int getIdEstado() {
+		return idEstado;
+	}
+	public void setIdEstado(int idEstado) {
+		this.idEstado = idEstado;
+	}
+	
+	public int getIdMun() {
+		return idMun;
+	}
+	public void setIdMun(int idMun) {
+		this.idMun = idMun;
 	}
 	@Override
 	public String toString() {
