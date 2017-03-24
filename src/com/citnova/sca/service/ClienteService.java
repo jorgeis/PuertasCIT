@@ -72,7 +72,11 @@ public class ClienteService {
 		return clienteRepository.findOne(idCli);
 	}
 	
-	public Page<Cliente> getPage(int index) {
+	public Page<Cliente> getAllClientesPage(int index) {
 		return clienteRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
+	}
+	
+	public Page<Cliente> getActiveClientesPage(int index) {
+		return clienteRepository.findByStatusCli(Constants.STATUS_ACTIVE, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
 	}
 }

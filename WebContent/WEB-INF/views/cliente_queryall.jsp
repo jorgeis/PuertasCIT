@@ -13,9 +13,18 @@
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
 <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
+<script>
+	jQuery(document).ready(function(){
+		jQuery(".confirmDelete").on("click", function() {
+	        return confirm("Si eliminas este elemento no se podrá recuperar. ¿Continuar?");
+	    });
+	});
+</script>
 <c:import url="/res/js/dateScript.txt" />
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+
+
 
 	<!-- Article - Formulario -->
 	<article class="featured">		
@@ -42,7 +51,7 @@
 						<td>${cliente.persona.emailPer}</td>
 						<td>
 							<a href="<c:url value='/cliente/update/${cliente.idCli}' />">Modificar</a> &nbsp;  
-							<a class="confirm" href="<c:url value='/cliente/delete' />">Eliminar</a><br/>
+							<a class="confirmDelete" href="<c:url value='/cliente/delete/${cliente.idCli}' />">Eliminar</a><br/>
 						</td>
 					</tr>
 				</c:forEach>

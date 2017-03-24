@@ -225,12 +225,14 @@ public class ClienteController {
 	public String queryAll(Model model, @PathVariable("index") int index) {
 		
 		// Busca todos los clientes, activos o inactivos
-		List<Cliente> clienteList = clienteService.findAll();
-
-		model.addAttribute("clienteList", clienteList);
+		//Page<Cliente> page = clienteService.getAllClientesPage(index - 1);
+		
+		// Busca solo los clientes cuyo estado es Activo
+		Page<Cliente> page = clienteService.getActiveClientesPage(index - 1);
+		
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
-		Page<Cliente> page = clienteService.getPage(index - 1);
+		
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -327,27 +329,19 @@ public class ClienteController {
 	
 	
 	/**
-	 * Servidor JSON para búsqueda de Municipios
+	 * Controlador para cambiar status de Cliente a Borrado
 	 * */
-	@RequestMapping(value="/json/search/mun", produces="application/json")
-	@ResponseBody
-	public Map<String, Object> findMunicipio(@RequestParam("term") String idEstado) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
+	@RequestMapping("/cliente/delete/{idCli}")
+	public String delete(HttpSession session, RedirectAttributes ra,  
+			@PathVariable("idCli") int idCli) {
 		
-		Estado estado = new Estado();
-		if(idEstado == "") {
-			estado.setIdEst(0);
-		} else {
-			estado.setIdEst(Integer.parseInt(idEstado));
-		}
+		Cliente cliente = clienteService.findOne(idCli);
+		cliente.setStatusCli(Constants.STATUS_DELETED);
+		clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), cliente.getDireccion().getMunicipio());
 		
-		List<Municipio> municipios = municipioService.findByEstado(estado);
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_deleted", null, Locale.getDefault()));
 		
-		for (int i = 0; i < municipios.size(); i++) {
-			Municipio municipio = municipios.get(i);
-			map.put(Integer.toString(municipio.getIdMun()), municipio.getNombreMun());
-		}
-		return map;
+		return "redirect:/cliente/queryall/1";
 	}
 	
 	
@@ -380,6 +374,30 @@ public class ClienteController {
 		}
 	}
 	
+	
+	/**
+	 * Servidor JSON para búsqueda de Municipios
+	 * */
+	@RequestMapping(value="/json/search/mun", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findMunicipio(@RequestParam("term") String idEstado) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		Estado estado = new Estado();
+		if(idEstado == "") {
+			estado.setIdEst(0);
+		} else {
+			estado.setIdEst(Integer.parseInt(idEstado));
+		}
+		
+		List<Municipio> municipios = municipioService.findByEstado(estado);
+		
+		for (int i = 0; i < municipios.size(); i++) {
+			Municipio municipio = municipios.get(i);
+			map.put(Integer.toString(municipio.getIdMun()), municipio.getNombreMun());
+		}
+		return map;
+	}
 
 	
 }

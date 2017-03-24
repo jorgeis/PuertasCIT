@@ -9,5 +9,6 @@ import com.citnova.sca.domain.Cliente;
 public interface ClienteRepository extends CrudRepository<Cliente, Integer>{
 	
 	public Page<Cliente> findAll(Pageable pageable);
+	public Page<Cliente> findByStatusCli(String statusCli, Pageable pageable);
 
 }
