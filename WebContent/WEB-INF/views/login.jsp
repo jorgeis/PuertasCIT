@@ -16,6 +16,7 @@
 						<form name='f' action="j_spring_security_check" method='POST'>
 
 							<h1>Inicio de Sesión</h1>
+							<h2>${result}</h2>
 
 							<fieldset>
 								<label for="name">Correo Electrónico:</label> 

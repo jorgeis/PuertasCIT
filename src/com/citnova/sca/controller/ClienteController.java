@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,6 +63,9 @@ public class ClienteController {
 	
 	@Autowired
 	private Util util;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
@@ -134,7 +138,7 @@ public class ClienteController {
 					time);
 			
 			Cliente cliente = new Cliente(personaClienteDireccionWrapper.getEmailAltCli(),
-					personaClienteDireccionWrapper.getPassCli(),
+					passwordEncoder.encode(personaClienteDireccionWrapper.getPassCli()),
 					personaClienteDireccionWrapper.getSexoCli(),
 					personaClienteDireccionWrapper.getTelFijoCli(),
 					personaClienteDireccionWrapper.getTelMovilCli(),
@@ -213,7 +217,7 @@ public class ClienteController {
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_updated", null, Locale.getDefault()));
 		}
 		
-		return "redirect:/cliente/queryall";
+		return "redirect:/login";
 	}
 	
 	
@@ -350,7 +354,7 @@ public class ClienteController {
 	 * */
 	@RequestMapping("/clienteaccount/{idCli}/confirm")
 	public String inputPassword(HttpSession session, Model model,  
-			@PathVariable("idCli") int idCli) {
+			@PathVariable("idCli") int idCli, RedirectAttributes ra) {
 		
 		session.setAttribute(Constants.ID_CLI, idCli);
 		Cliente cliente = clienteService.findOne(idCli);
@@ -363,14 +367,15 @@ public class ClienteController {
 			cliente.setStatusCli(Constants.STATUS_ACTIVE);
 			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
 			
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_confirmed", null, Locale.getDefault()));
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_confirmed", null, Locale.getDefault()));
+			
 			
 			session.invalidate();
-			return "notifications";
+			return "redirect:/login";
 		}
 		else{
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_was_confirmed", null, Locale.getDefault()));
-			return "notifications";
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_was_confirmed", null, Locale.getDefault()));
+			return "redirect:/login";
 		}
 	}
 	
