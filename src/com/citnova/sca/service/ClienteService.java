@@ -5,6 +5,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.citnova.sca.domain.Admin;
@@ -17,6 +20,7 @@ import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.ClienteRepository;
 import com.citnova.sca.repository.DireccionRepository;
 import com.citnova.sca.repository.PersonaRepository;
+import com.citnova.sca.util.Constants;
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Service
@@ -66,5 +70,9 @@ public class ClienteService {
 	
 	public Cliente findOne(int idCli) {
 		return clienteRepository.findOne(idCli);
+	}
+	
+	public Page<Cliente> getPage(int index) {
+		return clienteRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
 	}
 }

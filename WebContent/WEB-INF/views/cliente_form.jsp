@@ -224,9 +224,9 @@ $(function() {
 				<label class="light">Código Postal</label>
 					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cpDir" />
 					
-				<sf:input type="text" path="idMun" class="persistMun" />
-				<sf:input type="text" path="idEstado" class="persistEst" />
-				<sf:input type="text" path="idCli" />
+				<sf:input type="hidden" path="idMun" class="persistMun" />
+				<sf:input type="hidden" path="idEstado" class="persistEst" />
+				<sf:input type="hidden" path="idCli" />
 					
 			</fieldset>
 			

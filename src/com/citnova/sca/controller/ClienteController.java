@@ -221,15 +221,28 @@ public class ClienteController {
 	/**
 	 * Consulta de todos los clientes
 	 * */
-	@RequestMapping("/cliente/queryall")
-	public String queryAll(Model model) {
+	@RequestMapping("/cliente/queryall/{index}")
+	public String queryAll(Model model, @PathVariable("index") int index) {
+		
+		// Busca todos los clientes, activos o inactivos
 		List<Cliente> clienteList = clienteService.findAll();
-//		System.out.println(clienteList.size());
-//		for(Cliente cliente : clienteList) {
-//            System.out.println(cliente);
-//        }
+
 		model.addAttribute("clienteList", clienteList);
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
+		
+		Page<Cliente> page = clienteService.getPage(index - 1);
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("clienteList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "cliente_queryall";
 	}
@@ -307,20 +320,6 @@ public class ClienteController {
 		}
 		
 		model.addAttribute("otroOcup", otroOcupacion);
-		
-//		Page<Admin> page = adminService.getPage(0);
-//		
-//		int currentIndex = page.getNumber() + 1;
-//		int beginIndex = Math.max(1, currentIndex - 5);
-//		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
-//		
-//		model.addAttribute("beginIndex",beginIndex);
-//		model.addAttribute("endIndex",endIndex);
-//		model.addAttribute("currentIndex",currentIndex);
-//		model.addAttribute("totalPages", page.getTotalPages());
-//		model.addAttribute("adminList", page.getContent());
-//		
-//		model.addAttribute(Constants.SHOW_PAGES, true);
 		
 		return "cliente_form";
 	}
