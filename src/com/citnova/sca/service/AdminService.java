@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,10 @@ public class AdminService {
 		return (List<Admin>) adminRepository.findAll();
 	}
 	
+	public Page<Admin> getPageByNombreOrApellidos(int index, String nombreOApellido) {
+		return adminRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
+	}
+	
 	public Page<Admin> getPage(int index) {
 		return adminRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
 	}
@@ -75,8 +80,15 @@ public class AdminService {
 							.or(persona.apMatPer.like(nombreOApellido)))
 						)
 				.list(admin);
-		
 	}
+	
+	
+	public Page<Admin> findAllLikeNombreOApellido(int index, String nombreOApellido){
+		return adminRepository.
+				findByPersona_NombrePerLikeOrPersona_ApPatPerLikeOrPersona_ApMatPerLike(
+						nombreOApellido, nombreOApellido, nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
+	}
+
 
 
 	public Admin findByEmail(String email) {
