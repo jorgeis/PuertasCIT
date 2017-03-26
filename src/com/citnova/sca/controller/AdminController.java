@@ -243,16 +243,38 @@ public class AdminController {
 		catch(Exception e){}
 		
 		admin = adminService.findOne(id);
-		System.out.println("********* " + admin);
 		
 		if(admin != null){
 			adminList.add(admin);
 		}
 		else{
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+			// Buscar si no se ha usado campo de autocompeltado
+			Page<Admin> page = adminService.findAllLikeNombreOApellido(0, "%" + busqueda + "%");
+			System.out.println("***** " + page.getTotalElements());
+			
+			if(page.getTotalElements() > 0){
+				model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+				
+				int currentIndex = page.getNumber() + 1;
+				int beginIndex = Math.max(1, currentIndex - 5);
+				int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+				
+				model.addAttribute("beginIndex",beginIndex);
+				model.addAttribute("endIndex",endIndex);
+				model.addAttribute("currentIndex",currentIndex);
+				model.addAttribute("totalPages", page.getTotalPages());
+				model.addAttribute("adminList", page.getContent());
+				
+				model.addAttribute(Constants.SHOW_PAGES, true);
+				
+				return "admin_queryall";
+			}
+			else{
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
-			return "redirect:/admin/queryall/1";
+				return "redirect:/admin/queryall/1";
+			}
 		}
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		model.addAttribute("adminList", adminList);
