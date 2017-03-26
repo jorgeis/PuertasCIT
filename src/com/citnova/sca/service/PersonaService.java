@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Persona;
+import com.citnova.sca.projection.PersonaFullNameProjection;
 import com.citnova.sca.repository.ClienteRepository;
 import com.citnova.sca.repository.PersonaRepository;
 
@@ -26,5 +27,9 @@ public class PersonaService {
 	
 	public List<Persona> findAllLike(String nombreOApellidos) {
 		return personaRepository.findByNombrePerLike(nombreOApellidos);
+	}
+	
+	public List<PersonaFullNameProjection> findByNombrePer(String nombrePer) {
+		return personaRepository.findByNombrePer(nombrePer);
 	}
 }

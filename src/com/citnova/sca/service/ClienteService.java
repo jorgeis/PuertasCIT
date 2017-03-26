@@ -15,6 +15,7 @@ import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Persona;
+import com.citnova.sca.domain.QAdmin;
 import com.citnova.sca.domain.QCliente;
 import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.ClienteRepository;
@@ -78,5 +79,21 @@ public class ClienteService {
 	
 	public Page<Cliente> getActiveClientesPage(int index) {
 		return clienteRepository.findByStatusCli(Constants.STATUS_ACTIVE, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
+	}
+
+	public List<Cliente> findAllLikeNombreOApellido(String nombreOApellido) {
+		QCliente cliente = QCliente.cliente;
+		QPersona persona = QPersona.persona;
+		
+		return new JPAQuery(entityManager)
+				.from(cliente)
+				.join(cliente.persona, persona)
+				.where(
+						persona.nombrePer.like(nombreOApellido)
+						.or(persona.apPatPer.like(nombreOApellido)
+							.or(persona.apMatPer.like(nombreOApellido)))
+						)
+				.list(cliente);
+		
 	}
 }

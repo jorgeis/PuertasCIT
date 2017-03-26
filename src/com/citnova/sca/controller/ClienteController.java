@@ -1,13 +1,17 @@
 package com.citnova.sca.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,8 @@ import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.PassGen;
 import com.citnova.sca.util.Util;
+import com.citnova.sca.projection.PersonaFullNameProjection;
+import com.citnova.sca.repository.ClienteRepository;
 
 @Controller
 public class ClienteController {
@@ -380,6 +386,47 @@ public class ClienteController {
 	}
 	
 	
+	
+	/**
+	 * Controlador para mostrar los resultados de la búsqueda de un
+	 * cliente
+	 * @throws UnsupportedEncodingException 
+	 * */
+	@RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
+	public String search(@RequestParam("busqueda") String busqueda,
+			RedirectAttributes ra, Model model){
+		
+		
+		
+		List<PersonaFullNameProjection> pp = personaService.findByNombrePer("Mario");
+		System.out.println("Cosa extraña: " + pp.toString());
+		
+		for(int i=0; i<pp.size(); i++) {
+			System.out.println("Variable extraña: " + pp.get(i).getFullName());	
+		}
+		
+		System.out.println("Parámetro de búsqueda: " + busqueda);
+		
+		List<Cliente> clienteList = clienteService.findAllLikeNombreOApellido("%" + busqueda + "%");
+		
+		if(clienteList.size() == 0){
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_not_found", 
+					new Object[]{busqueda}, Locale.getDefault()));
+			
+			return "redirect:/cliente/queryall/1";
+		}
+		
+		System.out.println(clienteList.size());
+		System.out.println(clienteList.toString());
+		
+		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
+		model.addAttribute("clienteList", clienteList);
+		model.addAttribute(Constants.SHOW_PAGES, false);
+		
+		return "cliente_queryall";
+	}
+	
+	
 	/**
 	 * Servidor JSON para búsqueda de Municipios
 	 * */
@@ -405,4 +452,28 @@ public class ClienteController {
 	}
 
 	
+	/**
+	 * Servidor JSON para búsqueda de Clientes
+	 * */
+	@RequestMapping(value="/json/search/cliente", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findAll(@RequestParam("term") String term) {
+		
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		List<Cliente> clienteList = clienteService.findAllLikeNombreOApellido("%" + term + "%");
+		
+		for (int j = 0; j < clienteList.size(); j++) {
+			Cliente cliente = clienteList.get(j);
+			map.put(String.valueOf(cliente.getIdCli()), 
+										cliente.getPersona().getNombrePer() + " " +
+										cliente.getPersona().getApPatPer() + " " +
+										cliente.getPersona().getApMatPer());
+		}
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
+		return map;
+	}
 }

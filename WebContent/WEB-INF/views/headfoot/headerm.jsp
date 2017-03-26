@@ -76,7 +76,32 @@
 												</ul>
 											</li>
 											<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
-											<li><a href='<c:url value="/admin/persona/save"/>'>Regístrate</a></li>
+											
+											<!-- Menú disponible si estas autenticado como CLiente (REVISAR) -->
+											<sec:authorize access="isFullyAuthenticated()">
+												<sec:authentication var="principal" property="principal" />
+												<c:set var="username" value="${principal}" />
+												<li>
+												<a href="" class="arrow">Cliente</a>
+												<ul>
+													<li><a href="#">XXXXXXXXXX</a></li>
+													<li><a href="#">XXXXXXXXXX</a></li>
+													<li><a href="#">XXXXXXXXXX</a></li>
+													<li>
+														<span class="arrow">Administrar</span>
+														<ul>
+															<li><a href='<c:url value="/cliente/update/"/>'>Cambiar datos personales</a></li>
+															<li><a href='<c:url value="/cliente/delete/"/>'>Borrar cuenta</a></li>
+															<li><a href="#">XXXXXXXXXX</a></li>
+															<li><a href="#">XXXXXXXXXX</a></li>
+															<li><a href="#">XXXXXXXXXX</a></li>
+														</ul>
+													</li>
+												</ul>
+											</li>
+											</sec:authorize>
+											
+											
 											
 											<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Notificaciones</a></li>
 											
