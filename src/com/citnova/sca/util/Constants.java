@@ -16,4 +16,7 @@ public class Constants {
 	
 	public static final String ID_CLI = "ID_CLI";
 	
+	public static final String[] OCUPACIONES = {"Freelancer", "Empresario", "Investigador", "Emprendedor", "Estudiante", 
+			"Servicios Profesionales"};
+	
 }

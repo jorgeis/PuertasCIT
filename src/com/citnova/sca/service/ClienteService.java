@@ -5,9 +5,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Municipio;
@@ -17,6 +19,7 @@ import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.ClienteRepository;
 import com.citnova.sca.repository.DireccionRepository;
 import com.citnova.sca.repository.PersonaRepository;
+import com.citnova.sca.util.Constants;
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Service
@@ -66,5 +69,32 @@ public class ClienteService {
 	
 	public Cliente findOne(int idCli) {
 		return clienteRepository.findOne(idCli);
+	}
+	
+	public Page<Cliente> getAllClientesPage(int index) {
+		return clienteRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
+	}
+	
+	public Page<Cliente> getActiveClientesPage(int index) {
+		return clienteRepository.findByStatusCli(Constants.STATUS_ACTIVE, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
+	}
+
+	public List<Cliente> findAllLikeNombreOApellido(String nombreOApellido) {
+		QCliente cliente = QCliente.cliente;
+		QPersona persona = QPersona.persona;
+		
+		return new JPAQuery(entityManager)
+				.from(cliente)
+				.join(cliente.persona, persona)
+				.where(
+						persona.nombrePer.like(nombreOApellido)
+						.or(persona.apPatPer.like(nombreOApellido)
+							.or(persona.apMatPer.like(nombreOApellido)))
+						)
+				.list(cliente);
+	}
+	
+	public Page<Cliente> findByFullNameLike(int index, String fullName) {
+		return clienteRepository.findByFullNameLike(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
 }

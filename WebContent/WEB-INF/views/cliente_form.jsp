@@ -106,6 +106,21 @@ $(function() {
 });
 </script>
 
+<script>
+$(function() {
+	
+	var perIdCli = $('.persistIdCli').val();
+	
+	if(perIdCli == 0) {
+        $('#accountCli').show(); 
+    } else {
+        $('#accountCli').hide(); 
+    } 
+	
+});
+persistIdCli
+</script>
+
 
 
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
@@ -139,19 +154,21 @@ $(function() {
 			
 		<h1>Registrar Nuevo Cliente</h1>
 		<h2>${result}</h2>
+			<div id="accountCli">
+				<fieldset>
+					<legend>
+						<span class="number">&nbsp;</span>&nbsp;Información de Cuenta
+					</legend>
+					<label class="light">Correo electrónico</label>
+						<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailPer" />
+					
+					<label class="light">Contraseña</label>
+						<sf:input type="password"  class="validate[required]" data-prompt-position="bottomLeft:20,5" path="passCli" />
+				</fieldset>
+			</div>
 			<fieldset>
 				<legend>
-					<span class="number">1</span>Información de Cuenta
-				</legend>
-				<label class="light">Correo electrónico</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailPer" />
-				<label class="light">Contraseña</label>
-					<sf:input type="password" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="passCli" />
-			</fieldset>
-			
-			<fieldset>
-				<legend>
-					<span class="number">2</span>Información Básica
+					<span class="number">&nbsp;</span>&nbsp;Información Básica
 				</legend>
 				<label class="light">Nombre(s)</label>
 					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombrePer" />
@@ -195,7 +212,7 @@ $(function() {
 			
 			<fieldset>
 				<legend>
-					<span class="number">3</span>Dirección
+					<span class="number">&nbsp;</span>&nbsp;Dirección
 				</legend>
 				<label class="light">Calle</label>
 					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="calleDir" />
@@ -226,6 +243,7 @@ $(function() {
 					
 				<sf:input type="hidden" path="idMun" class="persistMun" />
 				<sf:input type="hidden" path="idEstado" class="persistEst" />
+				<sf:input type="hidden" path="idCli" class="persistIdCli"/>
 					
 			</fieldset>
 			

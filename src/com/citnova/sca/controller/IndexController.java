@@ -160,7 +160,8 @@ public class IndexController {
 			}
 			else if(cliente != null){
 				cliente.setPassCli(passwordEncoder.encode(password));
-				// Falta método update o saveOrUpdate
+				clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), 
+						cliente.getDireccion().getMunicipio());
 			}
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("forgot_account_complete", null, Locale.getDefault()));
 			return "notifications";
