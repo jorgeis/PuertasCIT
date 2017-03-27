@@ -88,9 +88,7 @@
 			<input type="text" name="busqueda" id="busqueda" class="validate[required]" />
 			<button type="submit">Buscar</button>
 		</form>	
-		
-		
-		
+
 		<div class = "table1">
 			<table>
 				<tr>
@@ -122,7 +120,6 @@
 					</tr>
 				</c:forEach>
 			</table>
-			
 			
 			<c:if test="${showPages == true}">
 				<c:url var="firstUrl" value="/admin/queryall/1" />
@@ -166,9 +163,6 @@
 					</c:otherwise>
 				</c:choose>
 			</c:if>
-			
-			
-		
 		</div>
 	</article>
 					
