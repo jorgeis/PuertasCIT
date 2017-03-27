@@ -38,7 +38,7 @@ $(function() {
 
 
 <!-- Script para hacer consultas asíncronas a través de JSON. Necesita servidor 
-	 JSON ubicado en controlador, donde url tiene el RequestMappng donde se ubica el servidor -->
+	 JSON ubicado en controlador -->
  <script type="text/javascript">
 // 	jQuery(document).ready(function(){
 //  		$('#ajaxSearch').click(function(event) {
@@ -81,12 +81,7 @@ $(document).ready(function() {
 
 <!-- Script para llenar los select de estado y municipio automáticamente cuando se redirija al mismo formulario y persistir los datos -->
 <script>
-$(function() {
-// 	// Mostrar valor de una opción en <select> al hacer click sobre ella
-// 	$('#estadoSel').on('change', function() {
-// 		alert(this.value);
-// 	});
-	
+$(function() {	
 	var perEst = $('.persistEst').val();
 	var perMun = $('.persistMun').val();
 	
@@ -100,25 +95,18 @@ $(function() {
 	$('#estadoSel').find('option:nth-child(' + perEst + ')').prop('selected',true).trigger('change');
 		
 	setTimeout(function(){
-		//alert(perMun);
 		$('#municipioSel').find('option[value="' + perMun + '"]').prop('selected',true).trigger('change');
 	}, 200); 
 });
 </script>
 
 <script>
-$(function() {
-	
-	var perIdCli = $('.persistIdCli').val();
-	
-	if(perIdCli == 0) {
-        $('#accountCli').show(); 
-    } else {
-        $('#accountCli').hide(); 
-    } 
-	
-});
-persistIdCli
+	jQuery(document).ready(function(){
+		var path = $("#path").val();
+		jQuery("#siglas").autocomplete({
+			source: path + "/json/search/siglasorg",
+		});
+	});
 </script>
 
 
@@ -126,137 +114,98 @@ persistIdCli
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
 
-	<!-- Article - Formulario -->
-	<article class="featured">
+<!-- Article - Formulario -->
+<article class="featured">
 
-		<input type="hidden" id="path" value=${pageContext.request.contextPath} />
+	<input type="hidden" id="path" value=${pageContext.request.contextPath} />
+	
+	<sf:form method="post" id="valid"
+		action="${pageContext.request.contextPath}/gratuitosave"
+ 		commandName="gratuito"> 
 		
-		<!-- Formularios de prueba para JSON y AJAX -->
-<%-- 		<form action="${pageContext.request.contextPath}/findMunicipio"> --%>
-<!-- 			<input type="text" name="term"/> -->
-<!-- 			<input type="submit" value="test json"/> -->
-<!-- 		</form> -->
+	<h1>Solicitud de reserva de espacio gratuito</h1>
+	<h2>${result}</h2>
+		<fieldset>
+			<legend>
+				<span class="number">&nbsp;</span>&nbsp;Datos del Solicitante
+			</legend>
+			<label class="light">Nombre(s)</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombreUsrGra" />
+			<label class="light">Apellido Paterno</label>
+				<sf:input type="text"  class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apPatUsrGra" />
+			<label class="light">Apellido Materno(s)</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apMatUsrGra" />
+			<label class="light">Cargo</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cargoUsrGra" />
+			<label class="light">Teléfono</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="telefonoUsrGra" />
+			<label class="light">Correo electrónico</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailUsrGra" />
+			<label class="light">Sexo</label> <br />		
+				<sf:radiobutton path="sexoUsrGra" value="Masculino" class="validate[required]" data-prompt-position="bottomLeft:20,26" /><label for="Masculino" class="light">Masculino</label><br> 
+				<sf:radiobutton path="sexoUsrGra" value="Femenino" class="validate[required]" /><label for="Femenino" class="light">Femenino</label><br /><br />			
+			</fieldset>
 		
-<!-- 		<br /><br /> -->
-		
-<!-- 		Buscar municipios con AJAX -->
-<!-- 		<input type="hidden" id="path" value=${pageContext.request.contextPath} /> -->
-<!-- 		<input type="text" id="ajaxText"/> -->
-<!-- 		<input type="submit" id="ajaxSearch" value="Buscar asincronamente"/> -->
-<!-- 		<div id="ajaxResult"> -->
-		
-<!-- 		</div> -->
-<!-- 		<br /><br /> -->
-		
-		<sf:form method="post" id="valid"
-			action="${pageContext.request.contextPath}/clientesave"
-	 		commandName="personaClienteDireccionWrapper"> 
-			
-		<h1>Registrar Nuevo Cliente</h1>
-		<h2>${result}</h2>
-			<div id="accountCli">
-				<fieldset>
-					<legend>
-						<span class="number">&nbsp;</span>&nbsp;Información de Cuenta
-					</legend>
-					<label class="light">Correo electrónico</label>
-						<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailPer" />
-					
-					<label class="light">Contraseña</label>
-						<sf:input type="password"  class="validate[required]" data-prompt-position="bottomLeft:20,5" path="passCli" />
-				</fieldset>
-			</div>
 			<fieldset>
 				<legend>
-					<span class="number">&nbsp;</span>&nbsp;Información Básica
+					<span class="number">&nbsp;</span>&nbsp;Datos del Evento
 				</legend>
-				<label class="light">Nombre(s)</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombrePer" />
-				<label class="light">Apellido Paterno</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apPatPer" />
-				<label class="light">Apellido Materno</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apMatPer" />
-				<label class="light">CURP</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="curpPer" />
-				<label class="light">Correo electrónico alterno</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailAltCli" />
-				<label class="light">Sexo</label> <br />		
-					<sf:radiobutton path="sexoCli" value="Masculino" class="validate[required]" data-prompt-position="bottomLeft:20,26" /><label for="Masculino" class="light">Masculino</label><br> 
-					<sf:radiobutton path="sexoCli" value="Femenino" class="validate[required]" /><label for="Femenino" class="light">Femenino</label><br /><br />			
-				<label class="light">Teléfono fijo</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="telFijoCli" />	
-				<label class="light">Teléfono móvil</label>	
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="telMovilCli" />		
-				<label for="fNacCli" class="light">Fecha de Nacimiento</label>
-					<sf:input type="text" id="datepicker" class="validate[required]" data-prompt-position="bottomLeft:20,5" 
-						path="fNacCli" />
-				<label>Ocupación</label> 
-					<sf:select path="ocupacionCli" id="ocupacionCli">
-						<sf:option value="Freelancer">Freelancer</sf:option>
-						<sf:option value="Empresario">Empresario</sf:option>
-						<sf:option value="Investigador">Investigador</sf:option>
-						<sf:option value="Emprendedor">Emprendedor</sf:option>
-						<sf:option value="Estudiante">Estudiante</sf:option>
-						<sf:option value="Servicios Profesionales">Servicios Profesionales</sf:option>
-						<sf:option value="Otro">Otro</sf:option>
-					</sf:select>
-				<div id="otroOcupacion">
-					<label>Escribe tu ocupación</label> 
-					<input type="text" value="<c:out value="${otroOcup}"/>" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="otroOcupacion" />	
-				</div>
-				<label>Objetivo</label> 
-					<sf:textarea class="validate[required]" data-prompt-position="bottomLeft:20,5" path="objetivoCli"></sf:textarea>
-				<label>Avatar</label> 
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="avatarCli" />
+			<label class="light">Nombre del evento</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombreEveGra" />
+			<label class="light">Objetivo</label>	
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="objetivoEveGra" />
+			<label class="light">Impacto</label>	
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="impactoEveGra" />
+			<label>Área solicitada para el evento</label>
+				<sf:select class="validate[required]" data-prompt-position="bottomLeft:20,5" path="area">
+					<c:forEach var="area" items="${areaGratuitaList}"> 
+						<sf:option value="${area.idArea}"> ${area.nombreArea} </sf:option>
+					</c:forEach> 
+				</sf:select>
+			<label class="light">Número de Asistentes</label>	
+				<sf:input type="number" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numAsistEveGra" />
+			<label class="light">Fecha y hora de inicio del Evento</label>
+				<sf:input type="text" id="datepicker" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="fhInicioEveGra" />
+			<label class="light">Fecha y hora de fin del Evento</label>
+				<sf:input type="text" id="datepicker" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="fhFinEveGra" />
+			<label class="light">Población objetivo</label>	
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
 			</fieldset>
-			
-			<fieldset>
-				<legend>
-					<span class="number">&nbsp;</span>&nbsp;Dirección
-				</legend>
-				<label class="light">Calle</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="calleDir" />
-				<label class="light">Número Exterior</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numExtDir" />
-				<label class="light">Número Interior</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numIntDir" />
-				<label class="light">Colonia</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="coloniaDir" />
-				<label>Estado</label> 
-				<div class="select-estado" >
-					<sf:select id="estadoSel" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="idEstado">
-						<c:forEach var="estado" items="${estadoList}"> 
-							<sf:option value="${estado.idEst}"> ${estado.nombreEst} </sf:option> 
-						</c:forEach> 
-					</sf:select>
-				</div>
-					
-				
-				<label>Municipio</label>
-				<div class="select-municipio" >
-					<sf:select name="nombreMun" id="municipioSel" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="idMun">
-					</sf:select>
-				</div>
-				
-				<label class="light">Código Postal</label>
-					<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cpDir" />
-					
-				<sf:input type="hidden" path="idMun" class="persistMun" />
-				<sf:input type="hidden" path="idEstado" class="persistEst" />
-				<sf:input type="hidden" path="idCli" class="persistIdCli"/>
-					
-			</fieldset>
-			
-			
-			
-			<button type="submit">Guardar</button>
-		</sf:form>
-				
-		<br/><br/>
-			
+		
+		<fieldset>
+			<legend>
+				<span class="number">&nbsp;</span>&nbsp;Datos de la organización
+			</legend>
+			<label class="light">Siglas</label>
+				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="siglasOrg" />
+			<label class="light">Nombre</label>
+				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="nombreOrg" />
+		</fieldset>
+		
+		<fieldset>
+			<legend>
+				<span class="number">&nbsp;</span>&nbsp;Datos del Responsable del Evento
+			</legend>
+			<label class="light">Nombre(s)</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombreRespGra" />
+			<label class="light">Apellido Paterno</label>
+				<sf:input type="text"  class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apPatRespGra" />
+			<label class="light">Apellido Materno(s)</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apMatRespGra" />
+			<label class="light">Cargo</label>
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cargoRespGra" />
+		</fieldset>
 		
 		
-	</article>
+		
+		<button type="submit">Guardar</button>
+	</sf:form>
+			
+	<br/><br/>
+		
+	
+	
+</article>
 					
 <c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />	
 <c:import url="/WEB-INF/views/headfoot/footerm.jsp" />
