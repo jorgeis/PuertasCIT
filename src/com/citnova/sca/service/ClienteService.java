@@ -10,12 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.domain.QAdmin;
 import com.citnova.sca.domain.QCliente;
 import com.citnova.sca.domain.QPersona;
 import com.citnova.sca.repository.ClienteRepository;
@@ -94,6 +92,9 @@ public class ClienteService {
 							.or(persona.apMatPer.like(nombreOApellido)))
 						)
 				.list(cliente);
-		
+	}
+	
+	public Page<Cliente> findByFullNameLike(int index, String fullName) {
+		return clienteRepository.findByFullNameLike(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
 }
