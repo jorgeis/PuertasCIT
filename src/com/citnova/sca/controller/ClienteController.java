@@ -391,7 +391,7 @@ public class ClienteController {
 		
 		System.out.println("Parámetro de búsqueda: " + busqueda);
 
-		Page<Cliente> page = clienteService.findByFullNameLike(0, busqueda);
+		Page<Cliente> page = clienteService.findByFullNameLikePage(0, busqueda);
 		
 		if(page.getTotalElements() > 0){
 			
@@ -453,7 +453,7 @@ public class ClienteController {
 		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		
-		List<Cliente> clienteList = clienteService.findAllLikeNombreOApellido("%" + term + "%");
+		List<Cliente> clienteList = clienteService.findByFullNameLike(term);
 		
 		for (int j = 0; j < clienteList.size(); j++) {
 			Cliente cliente = clienteList.get(j);
