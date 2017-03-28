@@ -22,7 +22,9 @@
 		<security:intercept-url pattern="/cliente/queryall" access="permitAll" />
 		
 		<security:intercept-url pattern="/gratuitoform" access="permitAll" />
-		<security:intercept-url pattern="/organizacionform" access="permitAll" />
+		<security:intercept-url pattern="/orgformgra" access="isAuthenticated()" />
+		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
+		<security:intercept-url pattern="/orgsave" access="isAuthenticated()" />
 		
 		<security:intercept-url pattern="/json/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/admin/**" access="isAuthenticated()" />

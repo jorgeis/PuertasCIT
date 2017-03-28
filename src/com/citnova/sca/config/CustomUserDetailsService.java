@@ -33,7 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService{
 	@Autowired
 	private AdminRepository adminRepository;
 	
-	
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
@@ -48,6 +47,11 @@ public class CustomUserDetailsService implements UserDetailsService{
 			admin = persona.getAdmin();
 			cliente = persona.getCliente();
 		}
+		
+		if (persona != null && admin != null && cliente != null) {
+			
+		}
+		
 		if (persona != null && admin != null) {
 			authorities.add(new SimpleGrantedAuthority(admin.getRolAd()));
 			user = new User(persona.getEmailPer(), admin.getPassAd(), authorities);
@@ -62,7 +66,5 @@ public class CustomUserDetailsService implements UserDetailsService{
 		else {
 			throw new UsernameNotFoundException("Usuario no encontrado");
 		}
-		
 	}
-
 }

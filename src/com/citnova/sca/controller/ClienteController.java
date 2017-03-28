@@ -182,6 +182,18 @@ public class ClienteController {
 							.concat("/confirm/")
 						);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
+			
+			if(	ocupacion.equals(Constants.OCUPACIONES[1]) || ocupacion.equals(Constants.OCUPACIONES[2]) ||
+				ocupacion.equals(Constants.OCUPACIONES[3]) || ocupacion.equals(Constants.OCUPACIONES[4])) {
+				
+				ra.addFlashAttribute("cliente", cliente);
+				
+				return "redirect:/orgform";
+			}
+			
+			else {
+				return "redirect:/cliente/queryall/1";
+			}
 		
 		}
 		
@@ -207,6 +219,7 @@ public class ClienteController {
 			cliente.setObjetivoCli(personaClienteDireccionWrapper.getObjetivoCli());
 			cliente.setAvatarCli(personaClienteDireccionWrapper.getAvatarCli());
 			
+			direccion.setCalleDir(personaClienteDireccionWrapper.getCalleDir());
 			direccion.setNumExtDir(personaClienteDireccionWrapper.getNumExtDir());
 			direccion.setNumIntDir(personaClienteDireccionWrapper.getNumIntDir());
 			direccion.setColoniaDir(personaClienteDireccionWrapper.getColoniaDir());
@@ -216,9 +229,11 @@ public class ClienteController {
 			
 			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_updated", null, Locale.getDefault()));
+			
+			return "redirect:/cliente/queryall/1";
 		}
 		
-		return "redirect:/login";
+		
 	}
 	
 	

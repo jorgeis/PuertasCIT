@@ -6,4 +6,6 @@ import com.citnova.sca.domain.SectorEmp;
 
 public interface SectorEmpRepository extends CrudRepository<SectorEmp, Integer> {
 
+	public SectorEmp findByIdSE(int idSE);
+
 }

@@ -132,7 +132,7 @@ persistIdCli
 	<input type="hidden" id="path" value=${pageContext.request.contextPath} />
 	
 	<sf:form method="post" id="valid"
-		action="${pageContext.request.contextPath}/organizacionsave"
+		action="${pageContext.request.contextPath}/orgsave"
  		commandName="organizacionDireccionWrapper"> 
 		
 	<h1>Alta de nueva organización</h1>

@@ -49,6 +49,19 @@ public class Organizacion {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.organizacion", cascade=CascadeType.ALL)
 	private Set<MembresiaOrganizacion> membresiaOrganizacionSet = new HashSet<MembresiaOrganizacion>();
 
+	
+
+	public Organizacion(String nombreOrg, String siglasOrg, String rfcOrg, int numTrabajadoresOrg, String telefonoOrg,
+			String webOrg, String giroOrg) {
+		this.nombreOrg = nombreOrg;
+		this.siglasOrg = siglasOrg;
+		this.rfcOrg = rfcOrg;
+		this.numTrabajadoresOrg = numTrabajadoresOrg;
+		this.telefonoOrg = telefonoOrg;
+		this.webOrg = webOrg;
+		this.giroOrg = giroOrg;
+	}
+
 	public int getIdOrg() {
 		return idOrg;
 	}
@@ -151,6 +164,13 @@ public class Organizacion {
 
 	public void setMembresiaOrganizacionSet(Set<MembresiaOrganizacion> membresiaOrganizacionSet) {
 		this.membresiaOrganizacionSet = membresiaOrganizacionSet;
+	}
+
+	@Override
+	public String toString() {
+		return "Organizacion [idOrg=" + idOrg + ", nombreOrg=" + nombreOrg + ", siglasOrg=" + siglasOrg + ", rfcOrg="
+				+ rfcOrg + ", numTrabajadoresOrg=" + numTrabajadoresOrg + ", telefonoOrg=" + telefonoOrg + ", webOrg="
+				+ webOrg + ", giroOrg=" + giroOrg + ", direccion=" + direccion + ", sectorEmp=" + sectorEmp + "]";
 	}
 
 	

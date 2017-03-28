@@ -20,4 +20,8 @@ public class SectorEmpService {
 	public List<SectorEmp> findAll() {
 		return (List<SectorEmp>) sectorEmpRepository.findAll();
 	}
+
+	public SectorEmp findByIdSE(int seID) {
+		return sectorEmpRepository.findByIdSE(seID);
+	}
 }
