@@ -69,18 +69,7 @@ public class AdminService {
 	}
 
 	public List<Admin> findAllLikeNombreOApellido(String nombreOApellido) {
-		QAdmin admin = QAdmin.admin;
-		QPersona persona = QPersona.persona;
-		
-		return new JPAQuery(entityManager)
-				.from(admin)
-				.join(admin.persona, persona)
-				.where(
-						persona.nombrePer.like(nombreOApellido)
-						.or(persona.apPatPer.like(nombreOApellido)
-							.or(persona.apMatPer.like(nombreOApellido)))
-						)
-				.list(admin);
+		return adminRepository.findByFullNameLike(nombreOApellido);
 	}
 	
 	

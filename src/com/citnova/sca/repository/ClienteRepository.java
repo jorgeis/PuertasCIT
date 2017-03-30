@@ -21,14 +21,13 @@ public interface ClienteRepository extends CrudRepository<Cliente, Integer>{
 		countQuery = "SELECT COUNT(*) FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
 				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
 		nativeQuery = true)
-<<<<<<< HEAD
-	public Page<Cliente> findByFullNameLike(String fullName, Pageable pageable);
-=======
-	public Page<Cliente> findByFullNameLikePage(String fullName, Pageable pageable);
+//<<<<<<< HEAD
+//	public Page<Cliente> findByFullNameLike(String fullName, Pageable pageable);
+//=======
+//	public Page<Cliente> findByFullNameLikePage(String fullName, Pageable pageable);
 	
-	@Query(	value = "SELECT * FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
-		nativeQuery = true)
+//	@Query(	value = "SELECT * FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+//			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+//		nativeQuery = true)
 	public List<Cliente> findByFullNameLike(String fullName);
->>>>>>> jorgeis/master
 }
