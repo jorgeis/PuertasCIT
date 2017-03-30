@@ -48,7 +48,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		if (user != null) {
 			// Comprobar contraseña
 			if (passwordEncoder.matches(credentials, user.getPassword())) {
-				System.out.println("Login correcto");
+				System.out.println("Login correcto" + user.getAuthorities());
 				
 				// Guardar fecha y hora de último acceso
 				Persona persona = personaRepository.findByEmailPer(principal);

@@ -94,7 +94,11 @@ public class ClienteService {
 				.list(cliente);
 	}
 	
-	public Page<Cliente> findByFullNameLike(int index, String fullName) {
-		return clienteRepository.findByFullNameLike(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+	public Page<Cliente> findByFullNameLikePage(int index, String fullName) {
+		return clienteRepository.findByFullNameLikePage(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+	}
+	
+	public List<Cliente> findByFullNameLike(String fullName) {
+		return clienteRepository.findByFullNameLike(fullName);
 	}
 }

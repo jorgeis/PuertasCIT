@@ -120,6 +120,12 @@ public class Direccion {
 	public void setClienteSet(Set<Cliente> clienteSet) {
 		this.clienteSet = clienteSet;
 	}
+
+	@Override
+	public String toString() {
+		return "Direccion [idDir=" + idDir + ", calleDir=" + calleDir + ", numExtDir=" + numExtDir + ", numIntDir="
+				+ numIntDir + ", coloniaDir=" + coloniaDir + ", cpDir=" + cpDir + ", municipio=" + municipio + "]";
+	}
 	
 	
 

@@ -1,7 +1,6 @@
 package com.citnova.sca.repository;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
