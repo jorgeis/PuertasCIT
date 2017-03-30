@@ -19,5 +19,5 @@ public interface ClienteRepository extends CrudRepository<Cliente, Integer>{
 		countQuery = "SELECT COUNT(*) FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
 				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
 		nativeQuery = true)
-public Page<Cliente> findByFullNameLike(String fullName, Pageable pageable);
+	public Page<Cliente> findByFullNameLike(String fullName, Pageable pageable);
 }

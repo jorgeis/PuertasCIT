@@ -1,6 +1,7 @@
 package com.citnova.sca.service;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
@@ -84,6 +85,9 @@ public class AdminService {
 	
 	
 	public Page<Admin> findAllLikeNombreOApellido(int index, String nombreOApellido){
+		
+		
+		
 		return adminRepository.
 				findByPersona_NombrePerLikeOrPersona_ApPatPerLikeOrPersona_ApMatPerLike(
 						nombreOApellido, nombreOApellido, nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
