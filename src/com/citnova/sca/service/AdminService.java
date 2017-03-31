@@ -73,15 +73,9 @@ public class AdminService {
 	}
 	
 	
-	public Page<Admin> findAllLikeNombreOApellido(int index, String nombreOApellido){
-		
-		
-		
-		return adminRepository.
-				findByPersona_NombrePerLikeOrPersona_ApPatPerLikeOrPersona_ApMatPerLike(
-						nombreOApellido, nombreOApellido, nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
+	public Page<Admin> findByFullNameLike(int index, String nombreOApellido){
+		return adminRepository.findByFullNameLike(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
-
 
 
 	public Admin findByEmail(String email) {
