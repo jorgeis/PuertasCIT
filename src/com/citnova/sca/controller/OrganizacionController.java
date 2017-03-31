@@ -24,14 +24,17 @@ import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
+import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.OrganizacionDireccionWrapper;
-import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.SectorEmp;
+import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
 import com.citnova.sca.service.MunicipioService;
+import com.citnova.sca.service.OrganizacionClienteService;
 import com.citnova.sca.service.OrganizacionService;
 import com.citnova.sca.service.SectorEmpService;
 import com.citnova.sca.util.Constants;
+import com.citnova.sca.util.PassGen;
 
 @Controller
 public class OrganizacionController {
@@ -41,6 +44,12 @@ public class OrganizacionController {
 	
 	@Autowired
 	private SectorEmpService sectorEmpService;
+	
+	@Autowired
+	private ClienteService clienteService;
+	
+	@Autowired
+	private OrganizacionClienteService organizacionClienteService;
 	
 	@Autowired
 	private OrganizacionService organizacionService;
@@ -68,14 +77,12 @@ public class OrganizacionController {
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
 		
-		Cliente cliente = (Cliente) model.asMap().get("cliente");
-	
-		if(cliente != null) {
-			System.out.println("El cliente es: " + cliente);
+		int idCli = 0;
+		
+		if(model.asMap().get("idCli") != null){
+			idCli = (int) model.asMap().get("idCli");
 		}
-		else {
-			System.out.println("No existe cliente alguno al cual asociar esta organizatione");
-		}
+		model.addAttribute("idCli", idCli);
 		
 		model.addAttribute("organizacionDireccionWrapper", new OrganizacionDireccionWrapper());
 		
@@ -109,8 +116,7 @@ public class OrganizacionController {
 	 * */
 	@RequestMapping(value="/orgsave", method=RequestMethod.POST)
 	public String createOrganizacion(Model model, OrganizacionDireccionWrapper organizacionDireccionWrapper, 
-			HttpServletRequest request,	RedirectAttributes ra) {
-		
+			@RequestParam("idCli") int idCliente, HttpServletRequest request, RedirectAttributes ra) {
 		
 		int idOrg = organizacionDireccionWrapper.getIdOrg();
 		//
@@ -154,6 +160,43 @@ public class OrganizacionController {
 			organizacionService.saveOrUpdate(organizacion, direccion, municipio, sectorEmp);
 			
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_saved", null, Locale.getDefault()));
+			
+			
+			if(idCliente != 0) { // Se da de alta una organización para un cliente ya existente.
+				System.out.println("El id del cliente es: " + idCliente);
+				
+				// Genera un nuevo pass para passArea
+				List<Cliente> clienteList = clienteService.findAll();
+				List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
+				boolean passUsed;
+				String passOC;
+				do {
+					passUsed = false;
+					passOC = PassGen.generatePass();
+					System.out.println("\nPass generado: " + passOC);
+					for(Cliente cliente : clienteList) {
+			            if(passOC.equals(cliente.getPassAreaCli())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsed = true;
+			            }
+			        }
+					for(OrganizacionCliente orgClie : orgCliList) {
+			            if(passOC.equals(orgClie.getPassOC())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsed = true;
+			            }
+			        }
+					System.out.println(passUsed);
+				}
+				while (passUsed == true);
+				
+				OrganizacionCliente orgCli = new OrganizacionCliente("Activo", "Responsable", passOC);
+				
+			}
+			else {
+				System.out.println("En save no hay cliente");
+			}
+			
 			
 			return "redirect:/cliente/queryall/1";
 			
