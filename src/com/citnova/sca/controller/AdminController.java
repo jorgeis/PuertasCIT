@@ -140,7 +140,8 @@ public class AdminController {
 	
 	
 	@RequestMapping("/admin/queryall/{index}")
-	public String queryAll(Model model, @PathVariable("index") int index) {
+	public String queryAll(Model model, @PathVariable("index") int index,
+			HttpSession session) {
 		// Consultar sólo los administradores activos
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
@@ -158,13 +159,15 @@ public class AdminController {
 		model.addAttribute("adminList", page.getContent());
 		
 		model.addAttribute(Constants.SHOW_PAGES, true);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
 		return "admin_queryall";
 	}
 	
 	
 	@RequestMapping("/admin/update/{idAd}")
-	public String update(Model model, @PathVariable("idAd") int idAd) {
+	public String update(Model model, @PathVariable("idAd") int idAd,
+			HttpSession session) {
 		Admin admin = adminService.findOne(idAd);
 		Persona persona = admin.getPersona();
 		
@@ -204,6 +207,7 @@ public class AdminController {
 		model.addAttribute("adminList", page.getContent());
 		
 		model.addAttribute(Constants.SHOW_PAGES, true);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
 		return "admin_queryall";
 	}
@@ -227,12 +231,43 @@ public class AdminController {
 	
 	
 	/**
+	 * Paginación como resultado de la búsqueda
+	 * */
+	@RequestMapping(value="/admin/search/{index}")
+	public String searchPages(@PathVariable("index") int  index,
+			HttpSession session, Model model) {
+		
+		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
+		
+		Page<Admin> page = adminService.findByFullNameLike(index - 1, "%" + searchKeyword + "%");
+		System.out.println("/admin/search/" + index  + " ****** " + page.getTotalElements());
+		
+		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("adminList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, false);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+		
+		return "admin_queryall";
+	}
+	
+	
+	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un
 	 * administador
 	 * */
 	@RequestMapping(value="/admin/search", method=RequestMethod.POST)
 	public String search(@RequestParam("busqueda") String  busqueda,
-			RedirectAttributes ra, Model model) {
+			RedirectAttributes ra, Model model, HttpSession session) {
 		
 		List<Admin> adminList = new ArrayList<>();
 		Admin admin = null;
@@ -249,8 +284,8 @@ public class AdminController {
 		}
 		else{
 			// Buscar si no se ha usado campo de autocompeltado
-			Page<Admin> page = adminService.findAllLikeNombreOApellido(0, "%" + busqueda + "%");
-			System.out.println("***** " + page.getTotalElements());
+			Page<Admin> page = adminService.findByFullNameLike(0, "%" + busqueda + "%");
+			System.out.println("/admin/search ***** " + page.getTotalElements());
 			
 			if(page.getTotalElements() > 0){
 				model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
@@ -265,7 +300,9 @@ public class AdminController {
 				model.addAttribute("totalPages", page.getTotalPages());
 				model.addAttribute("adminList", page.getContent());
 				
-				model.addAttribute(Constants.SHOW_PAGES, true);
+				model.addAttribute(Constants.SHOW_PAGES, false);
+				session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+				session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
 				
 				return "admin_queryall";
 			}
@@ -279,6 +316,7 @@ public class AdminController {
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		model.addAttribute("adminList", adminList);
 		model.addAttribute(Constants.SHOW_PAGES, false);
+		
 		
 		return "admin_queryall";
 	}
@@ -332,6 +370,7 @@ public class AdminController {
 	@RequestMapping(value="/json/search/admin", produces="application/json")
 	@ResponseBody
 	public Map<String, Object> findAll(@RequestParam("term") String term) {
+
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		

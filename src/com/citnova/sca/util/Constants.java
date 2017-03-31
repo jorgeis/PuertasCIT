@@ -19,4 +19,7 @@ public class Constants {
 	public static final String[] OCUPACIONES = {"Freelancer", "Empresario", "Investigador", "Emprendedor", "Estudiante", 
 			"Servicios Profesionales"};
 	
+	public static final String SHOW_PAGES_FROM_SEARCH = "showPagesFromSearch";
+	public static final String ADMIN_SEARCH_KEYWORD = "adminSearchKeyword";
+	
 }

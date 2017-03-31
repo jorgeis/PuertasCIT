@@ -1,6 +1,7 @@
 package com.citnova.sca.service;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
@@ -68,27 +69,13 @@ public class AdminService {
 	}
 
 	public List<Admin> findAllLikeNombreOApellido(String nombreOApellido) {
-		QAdmin admin = QAdmin.admin;
-		QPersona persona = QPersona.persona;
-		
-		return new JPAQuery(entityManager)
-				.from(admin)
-				.join(admin.persona, persona)
-				.where(
-						persona.nombrePer.like(nombreOApellido)
-						.or(persona.apPatPer.like(nombreOApellido)
-							.or(persona.apMatPer.like(nombreOApellido)))
-						)
-				.list(admin);
+		return adminRepository.findByFullNameLike(nombreOApellido);
 	}
 	
 	
-	public Page<Admin> findAllLikeNombreOApellido(int index, String nombreOApellido){
-		return adminRepository.
-				findByPersona_NombrePerLikeOrPersona_ApPatPerLikeOrPersona_ApMatPerLike(
-						nombreOApellido, nombreOApellido, nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
+	public Page<Admin> findByFullNameLike(int index, String nombreOApellido){
+		return adminRepository.findByFullNameLike(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
-
 
 
 	public Admin findByEmail(String email) {
