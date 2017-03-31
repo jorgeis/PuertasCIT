@@ -55,8 +55,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 		if (persona != null && admin != null) {
 			authorities.add(new SimpleGrantedAuthority(admin.getRolAd()));
 			user = new User(persona.getEmailPer(), admin.getPassAd(), authorities);
-			return user;
-			
+			return user;			
 		} 
 		else if(persona != null && cliente != null){
 			authorities.add(new SimpleGrantedAuthority("ROLE_CLIENT"));

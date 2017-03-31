@@ -22,6 +22,12 @@ public class OrganizacionCliente {
 	private String cargoOC;
 	private String passOC;
 
+	public OrganizacionCliente(String statusOC, String cargoOC, String passOC) {
+		this.statusOC = statusOC;
+		this.cargoOC = cargoOC;
+		this.passOC = passOC;
+	}
+
 	@EmbeddedId
 	public OrganizacionClienteId getPk() {
 		return pk;
@@ -72,7 +78,4 @@ public class OrganizacionCliente {
 	public void setPassOC(String passOC) {
 		this.passOC = passOC;
 	}
-	
-	
-
 }
