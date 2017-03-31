@@ -22,6 +22,9 @@
 		<security:intercept-url pattern="/cliente/queryall" access="permitAll" />
 		
 		<security:intercept-url pattern="/gratuitoform" access="permitAll" />
+		
+		<security:intercept-url pattern="/afterlogin" access="isAuthenticated()" />
+		
 		<security:intercept-url pattern="/orgformgra" access="isAuthenticated()" />
 		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
 		<security:intercept-url pattern="/orgsave" access="isAuthenticated()" />
@@ -34,7 +37,8 @@
 		
 		<security:form-login login-page="/login"
 			password-parameter="clave" username-parameter="usuario"
-			authentication-failure-url="/login?error=true" />
+			authentication-failure-url="/login?error=true"
+			default-target-url="/afterlogin" />
 
 		<security:logout invalidate-session="true" logout-url="/logout" />
 		

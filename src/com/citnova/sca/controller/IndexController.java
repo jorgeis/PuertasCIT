@@ -1,5 +1,6 @@
 package com.citnova.sca.controller;
 
+import java.security.Principal;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,21 +8,18 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
-import com.citnova.sca.domain.Direccion;
-import com.citnova.sca.domain.Persona;
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.ClienteService;
-import com.citnova.sca.service.DireccionService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.MailManager;
@@ -113,8 +111,15 @@ public class IndexController {
 	 * */
 	@RequestMapping("/account/{email}/recovery")
 	public String restorePassword(
-			Model model, HttpSession session,
-			@PathVariable("email") String email) {
+			Model model, HttpSession session, RedirectAttributes ra,
+			@PathVariable("email") String email, Principal principal) {
+		
+		
+		
+		if(principal!= null) {
+			System.out.println(principal.getName());
+			session.invalidate();
+		}
 		
 		// Revisar si el correo electrónico tiene una o más cuentas de usuario asociada
 		Admin admin = adminService.findByEmail(email);
@@ -130,7 +135,8 @@ public class IndexController {
 			hasAccount = true;
 		
 		if(hasAccount){
-			session.setAttribute(Constants.RECOVERY_MAIL, email);
+			//session.setAttribute(Constants.RECOVERY_MAIL, email);
+			ra.addFlashAttribute(Constants.RECOVERY_MAIL, email);
 			return "account_password";
 		}
 		else{
@@ -145,10 +151,11 @@ public class IndexController {
 	 * */
 	@RequestMapping("/account/confirm")
 	public String accountConfirm(
-			HttpSession session, Model model,
+			HttpSession session, Model model, RedirectAttributes ra,
 			@RequestParam("password") String password) {
 		
-		String email = (String) session.getAttribute(Constants.RECOVERY_MAIL);
+		//String email = (String) session.getAttribute(Constants.RECOVERY_MAIL);
+		String email = (String) model.asMap().get(Constants.RECOVERY_MAIL);
 		
 		if(email != null){
 			Admin admin = adminService.findByEmail(email);
@@ -170,6 +177,13 @@ public class IndexController {
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("forgot_account_restart_proccess", null, Locale.getDefault()));
 			return "notifications";
 		}
+	}
+	
+	@RequestMapping("/afterlogin")
+	public String showAfterLogin(Model model) {
+		
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("login_msg", null, Locale.getDefault()));
+		return "notifications";
 	}
 	
 	@RequestMapping("/formex")

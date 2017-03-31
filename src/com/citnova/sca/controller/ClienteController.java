@@ -24,17 +24,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Municipio;
+import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.domain.PersonaAdminWrapper;
 import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
 import com.citnova.sca.service.MunicipioService;
+import com.citnova.sca.service.OrganizacionClienteService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.MailManager;
@@ -55,6 +55,9 @@ public class ClienteController {
 	
 	@Autowired
 	private MunicipioService municipioService;
+	
+	@Autowired
+	private OrganizacionClienteService organizacionClienteService;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -113,6 +116,7 @@ public class ClienteController {
 		
 			// Genera un nuevo pass para passArea
 			List<Cliente> clienteList = clienteService.findAll();
+			List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
 			boolean passUsed;
 			String passArea;
 			do {
@@ -121,6 +125,12 @@ public class ClienteController {
 				System.out.println("\nPass generado: " + passArea);
 				for(Cliente cliente : clienteList) {
 		            if(passArea.equals(cliente.getPassAreaCli())) {
+		            	System.out.println("La contraseña ya existe");
+		            	passUsed = true;
+		            }
+		        }
+				for(OrganizacionCliente orgCli : orgCliList) {
+		            if(passArea.equals(orgCli.getPassOC())) {
 		            	System.out.println("La contraseña ya existe");
 		            	passUsed = true;
 		            }
@@ -186,7 +196,7 @@ public class ClienteController {
 			if(	ocupacion.equals(Constants.OCUPACIONES[1]) || ocupacion.equals(Constants.OCUPACIONES[2]) ||
 				ocupacion.equals(Constants.OCUPACIONES[3]) || ocupacion.equals(Constants.OCUPACIONES[4])) {
 				
-				ra.addFlashAttribute("cliente", cliente);
+				ra.addFlashAttribute("idCli", cliente.getIdCli());
 				
 				return "redirect:/orgform";
 			}
