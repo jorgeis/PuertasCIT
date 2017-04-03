@@ -1,6 +1,5 @@
 package com.citnova.sca.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -25,14 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.domain.PersonaAdminWrapper;
 import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
@@ -40,6 +37,7 @@ import com.citnova.sca.service.MunicipioService;
 import com.citnova.sca.service.OrganizacionClienteService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
+import com.citnova.sca.util.CurrentSessionUserRetriever;
 import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.PassGen;
 import com.citnova.sca.util.Util;
@@ -67,6 +65,9 @@ public class ClienteController {
 	
 	@Autowired
 	private MailManager mailManager;
+	
+	@Autowired
+	private CurrentSessionUserRetriever currentUser;
 	
 	@Autowired
 	private Util util;
@@ -370,73 +371,73 @@ public class ClienteController {
 		Persona per = personaService.findByEmailPer("sincsaodci");
 		System.out.println(per);
 		
-//		// Consulta los Estados y los coloca como atributos a la vista
-//		List<Estado> estadoList = estadoService.findAll();
-//		model.addAttribute("estadoList", estadoList);
-//				
-//		Cliente cliente = clienteService.findOne(idCli);
-//		Persona persona = cliente.getPersona();
-//		Direccion direccion = cliente.getDireccion();
-//		Municipio municipio = direccion.getMunicipio();
-//		
-//		PersonaClienteDireccionWrapper personaClienteDireccionWrapper = new PersonaClienteDireccionWrapper();
-//		
-//		personaClienteDireccionWrapper.setIdPer(persona.getIdPer());
-//		personaClienteDireccionWrapper.setNombrePer(persona.getNombrePer());
-//		personaClienteDireccionWrapper.setApPatPer(persona.getApPatPer());
-//		personaClienteDireccionWrapper.setApMatPer(persona.getApMatPer());
-//		personaClienteDireccionWrapper.setEmailPer(persona.getEmailPer());
-//		personaClienteDireccionWrapper.setCurpPer(persona.getCurpPer());
-//		personaClienteDireccionWrapper.setFhCreaPer(persona.getFhCreaPer());
-//		
-//		personaClienteDireccionWrapper.setIdCli(cliente.getIdCli());
-//		personaClienteDireccionWrapper.setEmailAltCli(cliente.getEmailAltCli());
-//		personaClienteDireccionWrapper.setPassCli(cliente.getPassCli());
-//		personaClienteDireccionWrapper.setSexoCli(cliente.getSexoCli());
-//		personaClienteDireccionWrapper.setTelFijoCli(cliente.getTelFijoCli());
-//		personaClienteDireccionWrapper.setTelMovilCli(cliente.getTelMovilCli());
-//		personaClienteDireccionWrapper.setfNacCli(cliente.getfNacCli());
-//		personaClienteDireccionWrapper.setFhCreaCli(cliente.getFhCreaCli());
-//		
-//		personaClienteDireccionWrapper.setObjetivoCli(cliente.getObjetivoCli());
-//		personaClienteDireccionWrapper.setAvatarCli(cliente.getAvatarCli());
-//		personaClienteDireccionWrapper.setStatusCli(cliente.getStatusCli());
-//		personaClienteDireccionWrapper.setPassAreaCli(cliente.getPassAreaCli());
-//		personaClienteDireccionWrapper.setIdDir(direccion.getIdDir());
-//		personaClienteDireccionWrapper.setCalleDir(direccion.getCalleDir());
-//		personaClienteDireccionWrapper.setNumExtDir(direccion.getNumExtDir());
-//		personaClienteDireccionWrapper.setNumIntDir(direccion.getNumIntDir());
-//		personaClienteDireccionWrapper.setColoniaDir(direccion.getColoniaDir());
-//		personaClienteDireccionWrapper.setCpDir(direccion.getCpDir());
-//		
-//		personaClienteDireccionWrapper.setIdEstado(municipio.getEstado().getIdEst());
-//		personaClienteDireccionWrapper.setIdMun(municipio.getIdMun());
-//		
-//		
-//		model.addAttribute("personaClienteDireccionWrapper", personaClienteDireccionWrapper);
-//		
-//		// Revisa el valor de ocupación y lo compara con un arreglo que contiene las ocupaciones
-//		// disponibles en el <select> de la vista para saber que valor darle a ocupaciónCli y al 
-//		// parámetro otroOcupacion
-//		
-//		String ocupacion = cliente.getOcupacionCli();
-//		String otroOcupacion = "";
-//		boolean isOtro = true;
-//		for(int i=0; i<Constants.OCUPACIONES.length; i++) {
-//			if(ocupacion.equals(Constants.OCUPACIONES[i])) {
-//				isOtro = false;
-//			}
-//		}
-//		
-//		if(isOtro==true) {
-//			personaClienteDireccionWrapper.setOcupacionCli("Otro");
-//			otroOcupacion = cliente.getOcupacionCli();
-//		}
-//		else {
-//			personaClienteDireccionWrapper.setOcupacionCli(cliente.getOcupacionCli());
-//		}
-//		
-//		model.addAttribute("otroOcup", otroOcupacion);
+		// Consulta los Estados y los coloca como atributos a la vista
+		List<Estado> estadoList = estadoService.findAll();
+		model.addAttribute("estadoList", estadoList);
+				
+		Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
+		Persona persona = cliente.getPersona();
+		Direccion direccion = cliente.getDireccion();
+		Municipio municipio = direccion.getMunicipio();
+		
+		PersonaClienteDireccionWrapper personaClienteDireccionWrapper = new PersonaClienteDireccionWrapper();
+		
+		personaClienteDireccionWrapper.setIdPer(persona.getIdPer());
+		personaClienteDireccionWrapper.setNombrePer(persona.getNombrePer());
+		personaClienteDireccionWrapper.setApPatPer(persona.getApPatPer());
+		personaClienteDireccionWrapper.setApMatPer(persona.getApMatPer());
+		personaClienteDireccionWrapper.setEmailPer(persona.getEmailPer());
+		personaClienteDireccionWrapper.setCurpPer(persona.getCurpPer());
+		personaClienteDireccionWrapper.setFhCreaPer(persona.getFhCreaPer());
+		
+		personaClienteDireccionWrapper.setIdCli(cliente.getIdCli());
+		personaClienteDireccionWrapper.setEmailAltCli(cliente.getEmailAltCli());
+		personaClienteDireccionWrapper.setPassCli(cliente.getPassCli());
+		personaClienteDireccionWrapper.setSexoCli(cliente.getSexoCli());
+		personaClienteDireccionWrapper.setTelFijoCli(cliente.getTelFijoCli());
+		personaClienteDireccionWrapper.setTelMovilCli(cliente.getTelMovilCli());
+		personaClienteDireccionWrapper.setfNacCli(cliente.getfNacCli());
+		personaClienteDireccionWrapper.setFhCreaCli(cliente.getFhCreaCli());
+		
+		personaClienteDireccionWrapper.setObjetivoCli(cliente.getObjetivoCli());
+		personaClienteDireccionWrapper.setAvatarCli(cliente.getAvatarCli());
+		personaClienteDireccionWrapper.setStatusCli(cliente.getStatusCli());
+		personaClienteDireccionWrapper.setPassAreaCli(cliente.getPassAreaCli());
+		personaClienteDireccionWrapper.setIdDir(direccion.getIdDir());
+		personaClienteDireccionWrapper.setCalleDir(direccion.getCalleDir());
+		personaClienteDireccionWrapper.setNumExtDir(direccion.getNumExtDir());
+		personaClienteDireccionWrapper.setNumIntDir(direccion.getNumIntDir());
+		personaClienteDireccionWrapper.setColoniaDir(direccion.getColoniaDir());
+		personaClienteDireccionWrapper.setCpDir(direccion.getCpDir());
+		
+		personaClienteDireccionWrapper.setIdEstado(municipio.getEstado().getIdEst());
+		personaClienteDireccionWrapper.setIdMun(municipio.getIdMun());
+		
+		
+		model.addAttribute("personaClienteDireccionWrapper", personaClienteDireccionWrapper);
+		
+		// Revisa el valor de ocupación y lo compara con un arreglo que contiene las ocupaciones
+		// disponibles en el <select> de la vista para saber que valor darle a ocupaciónCli y al 
+		// parámetro otroOcupacion
+		
+		String ocupacion = cliente.getOcupacionCli();
+		String otroOcupacion = "";
+		boolean isOtro = true;
+		for(int i=0; i<Constants.OCUPACIONES.length; i++) {
+			if(ocupacion.equals(Constants.OCUPACIONES[i])) {
+				isOtro = false;
+			}
+		}
+		
+		if(isOtro==true) {
+			personaClienteDireccionWrapper.setOcupacionCli("Otro");
+			otroOcupacion = cliente.getOcupacionCli();
+		}
+		else {
+			personaClienteDireccionWrapper.setOcupacionCli(cliente.getOcupacionCli());
+		}
+		
+		model.addAttribute("otroOcup", otroOcupacion);
 		
 		return "cliente_form";
 	}

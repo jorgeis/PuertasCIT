@@ -39,6 +39,7 @@ public class Cliente {
 	private String avatarCli;
 	private String statusCli;
 	private String passAreaCli;
+	private Timestamp fhAccesoCli;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.cliente", cascade=CascadeType.ALL)
 	private Set<OrganizacionCliente> organizacionClienteSet = new HashSet<OrganizacionCliente>();
@@ -241,13 +242,23 @@ public class Cliente {
 		this.usoSet = usoSet;
 	}
 
+	public Timestamp getFhAccesoCli() {
+		return fhAccesoCli;
+	}
+
+	public void setFhAccesoCli(Timestamp fhAccesoCli) {
+		this.fhAccesoCli = fhAccesoCli;
+	}
+
 	@Override
 	public String toString() {
 		return "Cliente [idCli=" + idCli + ", emailAltCli=" + emailAltCli + ", passCli=" + passCli + ", sexoCli="
 				+ sexoCli + ", telFijoCli=" + telFijoCli + ", telMovilCli=" + telMovilCli + ", fNacCli=" + fNacCli
 				+ ", fhCreaCli=" + fhCreaCli + ", ocupacionCli=" + ocupacionCli + ", objetivoCli=" + objetivoCli
-				+ ", avatarCli=" + avatarCli + ", statusCli=" + statusCli + ", passAreaCli=" + passAreaCli + "]";
+				+ ", avatarCli=" + avatarCli + ", statusCli=" + statusCli + ", passAreaCli=" + passAreaCli
+				+ ", fhAccesoCli=" + fhAccesoCli + "]";
 	}
+
 
 	
 	

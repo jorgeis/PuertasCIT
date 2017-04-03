@@ -61,14 +61,4 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<servlet>
-		<description></description>
-		<display-name>ClientController</display-name>
-		<servlet-name>ClientController</servlet-name>
-		<servlet-class>com.citnova.sca.controller.ClientController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ClientController</servlet-name>
-		<url-pattern>/ClientController</url-pattern>
-	</servlet-mapping>
 </web-app>

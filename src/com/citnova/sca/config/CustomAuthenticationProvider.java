@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.repository.AdminRepository;
 import com.citnova.sca.repository.PersonaRepository;
 import com.citnova.sca.service.AdminService;
+import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.util.Constants;
 
 @Component
@@ -32,6 +32,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private ClienteService clienteService;
 	
 	@Autowired
 	private PersonaRepository personaRepository;
@@ -71,6 +74,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				}
 				if(cliente != null){
 					if(cliente.getStatusCli().equals(Constants.STATUS_ACTIVE)){
+						Timestamp time = new Timestamp(new Date().getTime());
+						cliente.setFhAccesoCli(time);
+						clienteService.save(cliente);
 						return new UsernamePasswordAuthenticationToken(principal, user.getPassword(), user.getAuthorities());
 					}
 					else{

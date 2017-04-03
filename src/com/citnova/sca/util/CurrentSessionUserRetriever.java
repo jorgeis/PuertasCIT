@@ -3,11 +3,13 @@ package com.citnova.sca.util;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.PersonaService;
 
+@Component("currentSessionUserRetriever")
 public class CurrentSessionUserRetriever {
 	
 	@Autowired
