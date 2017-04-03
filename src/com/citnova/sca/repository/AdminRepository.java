@@ -21,6 +21,9 @@ public interface AdminRepository extends JpaRepository<Admin, Integer>{
 			String nombre, String apPat, String apMat, Pageable pageable);
 	
 	
+	public Admin findByPersona_EmailPer(String emailPer);
+	
+	
 	@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
 			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC "
 			+ "\n#pageable\n", 
