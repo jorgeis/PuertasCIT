@@ -90,5 +90,10 @@ public class AdminService {
 						)
 				.uniqueResult(admin);
 	}
+	
+	
+	public Admin findByEmailPer(String emailPer){
+		return adminRepository.findByPersona_EmailPer(emailPer);
+	}
 
 }
