@@ -78,9 +78,7 @@
 											<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
 											
 											<!-- Menú disponible si estas autenticado como CLiente (REVISAR) -->
-											<sec:authorize access="isFullyAuthenticated()">
-												<sec:authentication var="principal" property="principal" />
-												<c:set var="username" value="${principal}" />
+											<sec:authorize access="hasRole('ROLE_CLIENT')">
 												<li>
 												<a href="" class="arrow">Cliente</a>
 												<ul>
@@ -109,15 +107,34 @@
 											<sec:authorize access="isRememberMe()">
 												<sec:authentication var="principal" property="principal" />
 												<c:set var="username" value="${principal.username}" />
-												<li> ${principal.username} </li>
+												<li>
+													<sec:authorize access="hasRole('ROLE_CLIENT')">
+														CLIENTE:
+													</sec:authorize>
+													<sec:authorize access="hasAnyRole('ROLE_ROOT','ROLE_ADMIN')">
+														ADMIN:
+													</sec:authorize>
+													${principal.username}
+												</li>
 											</sec:authorize>
 											
-											<!-- Mostrar nombre de usuario si acaba inició sesión -->
+											<!-- Mostrar nombre de usuario y privilegios si acaba inició sesión -->
 											<sec:authorize access="isFullyAuthenticated()">
 												<sec:authentication var="principal" property="principal" />
 												<c:set var="username" value="${principal}" />
-												<li> ${principal} </li>
+												<li>
+													<sec:authorize access="hasRole('ROLE_CLIENT')">
+														CLIENTE:
+													</sec:authorize>
+													<sec:authorize access="hasAnyRole('ROLE_ROOT','ROLE_ADMIN')">
+														ADMIN:
+													</sec:authorize>
+													${principal}
+												</li>
 											</sec:authorize>
+											
+											
+											
 											
 											<!-- Mostrar link de login -->
 											<sec:authorize access="!isAuthenticated()">

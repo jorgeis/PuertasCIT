@@ -93,6 +93,7 @@ public class OrganizacionController {
 	
 	/**
 	 * Formulario de solicitud datos de organización de reserva de espacio gratuito
+	 * Como diferencia con /orgform, este formulario no busca los datos de un cliente para asociarlo con la organizacion
 	 * */
 	@RequestMapping(value="/orgformgra")
 	public String showOrgGratuitoForm(Model model) {

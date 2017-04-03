@@ -51,7 +51,7 @@ public class IndexController {
 
 	@RequestMapping("/")
 	public String showIndex() {
-		System.out.println(adminService.findByEmailPer("juanperez@gmail.com"));
+		//System.out.println(adminService.findByEmailPer("juanperez@gmail.com"));
 		return "index";
 	}
 	
