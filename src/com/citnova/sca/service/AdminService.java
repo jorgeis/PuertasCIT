@@ -1,14 +1,12 @@
 package com.citnova.sca.service;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +51,10 @@ public class AdminService {
 	public Page<Admin> getPage(int index) {
 		return adminRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
 	}
+	
+	public Page<Admin> getPageByStatus(String statusAd, int index) {
+		return adminRepository.findByStatusAd(statusAd, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idAd"));
+	}
 
 	public Admin findOne(int idAd) {
 		return adminRepository.findOne(idAd);
@@ -68,14 +70,22 @@ public class AdminService {
 		adminRepository.save(admin);
 	}
 
-	public List<Admin> findAllLikeNombreOApellido(String nombreOApellido) {
-		return adminRepository.findByFullNameLike(nombreOApellido);
+	public List<Admin> findActiveLikeNombreOApellido(String nombreOApellido) {
+		return adminRepository.findByFullNameLikeAndActive(nombreOApellido);
 	}
 	
-	
-	public Page<Admin> findByFullNameLike(int index, String nombreOApellido){
-		return adminRepository.findByFullNameLike(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+	public Page<Admin> findActiveByFullNameLike(int index, String nombreOApellido){
+		return adminRepository.findByFullNameLikeAndActive(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
+	
+//	public List<Admin> findAllLikeNombreOApellido(String nombreOApellido) {
+//		return adminRepository.findByFullNameLike(nombreOApellido);
+//	}
+//	
+//	public Page<Admin> findAllByFullNameLike(int index, String nombreOApellido){
+//		return adminRepository.findByFullNameLike(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+//	}
+
 
 
 	public Admin findByEmail(String email) {

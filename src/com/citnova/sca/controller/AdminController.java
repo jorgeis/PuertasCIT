@@ -28,8 +28,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
+import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.PersonaAdminWrapper;
+import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
@@ -139,14 +141,37 @@ public class AdminController {
 	}
 	
 	
-	@RequestMapping("/admin/queryall/{index}")
-	public String queryAll(Model model, @PathVariable("index") int index,
+	/**
+	 * Controlador para realizar la búsqueda de administradores en función del parámetro ingresado.
+	 * 
+	 *  - queryall: Devuelve todos los administradores con statusAd = 'Activo'
+	 *  - querydeleted: Devuelve todos los administradores con statusAd = 'Borrado'
+	 *  - querypending: Devuelve todos los administradores con statusAd = 'activar'
+	 * */
+	@RequestMapping("/admin/query{searchParam}/{index}")
+	public String queryAll(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
 			HttpSession session) {
 		// Consultar sólo los administradores activos
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		
-		Page<Admin> page = adminService.getPage(index - 1);
+		if(searchParam.equals(null)) { searchParam = "all";}
+		Page<Admin> page = null;
+		String returnParam = null;
+		
+		if(searchParam.equals("all")) {
+			page = adminService.getPageByStatus(Constants.STATUS_ACTIVE, index - 1);
+			returnParam = "admin_queryall";
+		}
+		else if(searchParam.equals("deleted")) {
+			page = adminService.getPageByStatus(Constants.STATUS_DELETED, index - 1);
+			returnParam = "admin_querydeleted";
+		}
+		else if(searchParam.equals("pending")) {
+			page = adminService.getPageByStatus(Constants.STATUS_MUST_ACTIVATE, index - 1);
+			returnParam = "admin_querydeleted";
+		}
+		
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -161,7 +186,24 @@ public class AdminController {
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
-		return "admin_queryall";
+		return returnParam;
+	}
+	
+
+	/**
+	 * Controlador para cambiar status de Administrador a Activo
+	 * */
+	@RequestMapping("/admin/reactivate/{idAd}")
+	public String reactivate(HttpSession session, RedirectAttributes ra,  
+			@PathVariable("idAd") int idAd) {
+		
+		Admin admin = adminService.findOne(idAd);
+		admin.setStatusAd(Constants.STATUS_ACTIVE);
+		adminService.saveOrUpdate(admin, admin.getPersona());
+		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_activated", null, Locale.getDefault()));
+		
+		return "redirect:/admin/queryall/1";
 	}
 	
 	
@@ -239,7 +281,7 @@ public class AdminController {
 		
 		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
 		
-		Page<Admin> page = adminService.findByFullNameLike(index - 1, "%" + searchKeyword + "%");
+		Page<Admin> page = adminService.findActiveByFullNameLike(index - 1, "%" + searchKeyword + "%");
 		System.out.println("/admin/search/" + index  + " ****** " + page.getTotalElements());
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
@@ -269,56 +311,43 @@ public class AdminController {
 	public String search(@RequestParam("busqueda") String  busqueda,
 			RedirectAttributes ra, Model model, HttpSession session) {
 		
-		List<Admin> adminList = new ArrayList<>();
-		Admin admin = null;
-		int id = 0;
-		try{
-			id = Integer.parseInt(busqueda.replaceAll("[A-Za-z. ]+", "")); 
-		}
-		catch(Exception e){}
+		System.out.println("Parámetro de búsqueda: " + busqueda);
 		
-		admin = adminService.findOne(id);
+		Page<Admin> page = adminService.findActiveByFullNameLike(0, "%" + busqueda + "%");
+		System.out.println("/admin/search ***** " + page.getTotalElements());
 		
-		if(admin != null){
-			adminList.add(admin);
+		if(page.getTotalElements() > 0){
+			
+			int currentIndex = page.getNumber() + 1;
+			int beginIndex = Math.max(1, currentIndex - 5);
+			int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+			
+			model.addAttribute("beginIndex",beginIndex);
+			model.addAttribute("endIndex",endIndex);
+			model.addAttribute("currentIndex",currentIndex);
+			model.addAttribute("totalPages", page.getTotalPages());
+			model.addAttribute("adminList", page.getContent());
+			
+			model.addAttribute(Constants.SHOW_PAGES, false);
+			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
+			model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+			
+			return "admin_queryall";
 		}
 		else{
-			// Buscar si no se ha usado campo de autocompeltado
-			Page<Admin> page = adminService.findByFullNameLike(0, "%" + busqueda + "%");
-			System.out.println("/admin/search ***** " + page.getTotalElements());
-			
-			if(page.getTotalElements() > 0){
-				model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
-				
-				int currentIndex = page.getNumber() + 1;
-				int beginIndex = Math.max(1, currentIndex - 5);
-				int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
-				
-				model.addAttribute("beginIndex",beginIndex);
-				model.addAttribute("endIndex",endIndex);
-				model.addAttribute("currentIndex",currentIndex);
-				model.addAttribute("totalPages", page.getTotalPages());
-				model.addAttribute("adminList", page.getContent());
-				
-				model.addAttribute(Constants.SHOW_PAGES, false);
-				session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
-				session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
-				
-				return "admin_queryall";
-			}
-			else{
-				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
 				return "redirect:/admin/queryall/1";
-			}
-		}
-		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
-		model.addAttribute("adminList", adminList);
-		model.addAttribute(Constants.SHOW_PAGES, false);
+		}		
 		
 		
-		return "admin_queryall";
+		
+		
+		
+		
+		
 	}
 	
 
@@ -365,7 +394,7 @@ public class AdminController {
 	
 	
 	/**
-	 * Servidor JSON para búsqueda de Administradores
+	 * Servidor JSON para búsqueda de Administradores con statusAd="Activo"
 	 * */
 	@RequestMapping(value="/json/search/admin", produces="application/json")
 	@ResponseBody
@@ -374,14 +403,13 @@ public class AdminController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		List<Admin> adminList = adminService.findAllLikeNombreOApellido("%" + term + "%");
+		List<Admin> adminList = adminService.findActiveLikeNombreOApellido("%" + term + "%");
 		
 		for (int j = 0; j < adminList.size(); j++) {
 			Admin admin = adminList.get(j);
 			map.put(String.valueOf(admin.getIdAd()), 
-										admin.getIdAd() + ". " + 
-										admin.getPersona().getNombrePer() + "  " +
-										admin.getPersona().getApPatPer() + "  " +
+										admin.getPersona().getNombrePer() + " " +
+										admin.getPersona().getApPatPer() + " " +
 										admin.getPersona().getApMatPer());
 		}
 		

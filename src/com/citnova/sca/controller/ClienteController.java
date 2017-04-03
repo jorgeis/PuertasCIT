@@ -525,7 +525,6 @@ public class ClienteController {
 					new Object[]{busqueda}, Locale.getDefault()));
 			return "redirect:/cliente/queryall/1";
 		}		
-		//return "cliente_queryall";
 	}
 	
 	

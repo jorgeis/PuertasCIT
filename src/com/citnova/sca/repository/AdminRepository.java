@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.citnova.sca.domain.Admin;
-import com.citnova.sca.domain.Cliente;
+import com.citnova.sca.util.Constants;
 
 public interface AdminRepository extends JpaRepository<Admin, Integer>{
 
 	public Admin findByPassAd(String passAd);
 	public List<Admin> findByStatusAd(String statusAd);
 	public Page<Admin> findAll(Pageable pageable);
+	public Page<Admin> findByStatusAd(String statusAd, Pageable pageable);
 	
 //	@Query("from ReleaseDateType AS rdt WHERE cm.rdt.cacheMedia.id = ?1")
 	public Page<Admin> findByPersona_NombrePerLikeOrPersona_ApPatPerLikeOrPersona_ApMatPerLike(
@@ -23,22 +24,51 @@ public interface AdminRepository extends JpaRepository<Admin, Integer>{
 	
 	public Admin findByPersona_EmailPer(String emailPer);
 	
+//	// Busca registros en Admin cuyo nombre completo(Nombres, ApPat, ApMat) coincida con el parámetro de búsqueda
+//	@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+//			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC "
+//			+ "\n#pageable\n", 
+//		countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+//				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+//		nativeQuery = true)
+//	public Page<Admin> findByFullNameLike(String fullName, Pageable pageable);
+//	
+//	// Busca registros en Admin cuyo nombre completo(Nombres, ApPat, ApMat) coincida con el parámetro de búsqueda
+//	@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+//			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC ",
+////					+ "\n#pageable\n", 
+//		countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+//				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+//		nativeQuery = true)
+//	public List<Admin> findByFullNameLike(String fullName);
+//	
 	
+			
+			
+			
+	
+	// Busca registros en Admin cuyo nombre completo(Nombres, ApPat, ApMat) coincida con el parámetro de búsqueda
+	// Y QUE SU STATUS SEA ACTIVO!!!
 	@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC "
-			+ "\n#pageable\n", 
-		countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
-		nativeQuery = true)
-	public Page<Admin> findByFullNameLike(String fullName, Pageable pageable);
-	
-	
-	@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC ",
+			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusAd='Activo'"
+			+ "ORDER BY idPer ASC ",
 //			+ "\n#pageable\n", 
 		countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
 				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
 		nativeQuery = true)
-	public List<Admin> findByFullNameLike(String fullName);
+	public List<Admin> findByFullNameLikeAndActive(String fullName);
+	
+	// Busca registros en Admin cuyo nombre completo(Nombres, ApPat, ApMat) coincida con el parámetro de búsqueda
+	// Y QUE SU STATUS SEA ACTIVO!!!
+		@Query(	value = "SELECT * FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusAd='Activo'"
+				+ "ORDER BY idPer ASC "
+				+ "\n#pageable\n", 
+			countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
+					+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+			nativeQuery = true)
+		public Page<Admin> findByFullNameLikeAndActive(String fullName, Pageable pageable);
+		
+		
 
 }
