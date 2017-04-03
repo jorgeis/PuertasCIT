@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.Persona;
+import com.citnova.sca.domain.PersonaAdminWrapper;
 import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
@@ -408,7 +410,6 @@ public class ClienteController {
 	
 	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un cliente
-	 * @throws UnsupportedEncodingException 
 	 * */
 	@RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
 	public String search(@RequestParam("busqueda") String busqueda,
@@ -430,7 +431,7 @@ public class ClienteController {
 			model.addAttribute("totalPages", page.getTotalPages());
 			model.addAttribute("clienteList", page.getContent());
 			
-			model.addAttribute(Constants.SHOW_PAGES, true);
+			model.addAttribute(Constants.SHOW_PAGES, false);
 			model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 			
 			return "cliente_queryall";
@@ -442,6 +443,38 @@ public class ClienteController {
 		}		
 		//return "cliente_queryall";
 	}
+	
+	
+	/**
+	 * Paginación como resultado de la búsqueda de clientes
+	 * */
+	@RequestMapping(value="/cliente/search/{index}")
+	public String searchPages(@PathVariable("index") int index,
+			HttpSession session, Model model) {
+		
+		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
+		
+		Page<Cliente> page = clienteService.findByFullNameLikePage(index - 1, "%" + searchKeyword + "%");
+		System.out.println("/cliente/search/" + index  + " ****** " + page.getTotalElements());
+		
+		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("clienteList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, false);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+		
+		return "cliente_queryall";
+	}
+	
 	
 	
 	/**

@@ -234,7 +234,7 @@ public class AdminController {
 	 * Paginación como resultado de la búsqueda
 	 * */
 	@RequestMapping(value="/admin/search/{index}")
-	public String searchPages(@PathVariable("index") int  index,
+	public String searchPages(@PathVariable("index") int index,
 			HttpSession session, Model model) {
 		
 		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);

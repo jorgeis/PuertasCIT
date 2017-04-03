@@ -123,7 +123,7 @@
 			</table>
 			
 			
-			<!-- Paginación por búsqueda de clientes -->
+			<!-- Paginación por búsqueda de administradores -->
 			<c:if test="${sessionScope.showPagesFromSearch == true}">
 				<h1>Siiiiii</h1>
 				<c:url var="firstUrl" value="/admin/search/1" />
