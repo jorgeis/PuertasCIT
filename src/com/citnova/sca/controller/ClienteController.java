@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -246,27 +247,39 @@ public class ClienteController {
 			
 			return "redirect:/cliente/queryall/1";
 		}
-		
-		
 	}
 	
 	
 	
 	/**
-	 * Consulta de todos los clientes
+	 * Controlador para realizar la búsqueda de clientes en función del parámetro ingresado.
+	 * 
+	 *  - queryall: Devuelve todos los administradores con statusAd = 'Activo'
+	 *  - querydeleted: Devuelve todos los administradores con statusAd = 'Borrado'
+	 *  - querypending: Devuelve todos los administradores con statusAd = 'Activar'
 	 * */
-	@RequestMapping("/cliente/queryall/{index}")
-	public String queryAll(Model model, @PathVariable("index") int index) {
-		
-		// Busca todos los clientes, activos o inactivos
-		//Page<Cliente> page = clienteService.getAllClientesPage(index - 1);
-		
-		// Busca solo los clientes cuyo estado es Activo
-		Page<Cliente> page = clienteService.getActiveClientesPage(index - 1);
+	@RequestMapping("/cliente/query{searchParam}/{index}")
+	public String queryAll(Model model, @PathVariable("index") int index,  @PathVariable("searchParam") String searchParam,
+			HttpSession session) {
 		
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
+		if(searchParam.equals(null)) { searchParam = "all";}
+		Page<Cliente> page = null;
+		String returnParam = null;
 		
+		if(searchParam.equals("all")) {
+			page = clienteService.getPageByStatus(Constants.STATUS_ACTIVE, index - 1);
+			returnParam = "cliente_queryall";
+		}
+		else if(searchParam.equals("deleted")) {
+			page = clienteService.getPageByStatus(Constants.STATUS_DELETED, index - 1);
+			returnParam = "cliente_query";
+		}
+		else if(searchParam.equals("pending")) {
+			page = clienteService.getPageByStatus(Constants.STATUS_MUST_ACTIVATE, index - 1);
+			returnParam = "cliente_query";
+		}
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -277,10 +290,12 @@ public class ClienteController {
 		model.addAttribute("currentIndex",currentIndex);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("clienteList", page.getContent());
+		model.addAttribute("searchParam", searchParam);
 		
 		model.addAttribute(Constants.SHOW_PAGES, true);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
-		return "cliente_queryall";
+		return returnParam;
 	}
 	
 	/**
@@ -497,11 +512,11 @@ public class ClienteController {
 	 * */
 	@RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
 	public String search(@RequestParam("busqueda") String busqueda,
-			RedirectAttributes ra, Model model){
+			RedirectAttributes ra, Model model, HttpSession session){
 		
 		System.out.println("Parámetro de búsqueda: " + busqueda);
 
-		Page<Cliente> page = clienteService.findByFullNameLikePage(0, busqueda);
+		Page<Cliente> page = clienteService.findByFullNameLikeAndStatusActivoPage(0, busqueda);
 		
 		if(page.getTotalElements() > 0){
 			
@@ -516,6 +531,8 @@ public class ClienteController {
 			model.addAttribute("clienteList", page.getContent());
 			
 			model.addAttribute(Constants.SHOW_PAGES, false);
+			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 			
 			return "cliente_queryall";
@@ -537,7 +554,7 @@ public class ClienteController {
 		
 		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
 		
-		Page<Cliente> page = clienteService.findByFullNameLikePage(index - 1, "%" + searchKeyword + "%");
+		Page<Cliente> page = clienteService.findByFullNameLikeAndStatusActivoPage(index - 1, "%" + searchKeyword + "%");
 		System.out.println("/cliente/search/" + index  + " ****** " + page.getTotalElements());
 		
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
@@ -558,6 +575,24 @@ public class ClienteController {
 		return "cliente_queryall";
 	}
 	
+	
+	/**
+	 * Controlador para cambiar status de Administrador a Activo
+	 * */
+	@RequestMapping("/cliente/activate/{idCli}")
+	public String activateAccount(HttpSession session, RedirectAttributes ra,  
+			@PathVariable("idCli") int idCli) {
+		
+		System.out.println(idCli);
+		
+		Cliente cliente = clienteService.findOne(idCli);
+		cliente.setStatusCli(Constants.STATUS_ACTIVE);
+		clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), cliente.getDireccion().getMunicipio());
+		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_activated", null, Locale.getDefault()));
+		
+		return "redirect:/cliente/queryall/1";
+	}
 	
 	
 	/**
@@ -586,7 +621,7 @@ public class ClienteController {
 
 	
 	/**
-	 * Servidor JSON para búsqueda de Clientes
+	 * Servidor JSON para búsqueda de Clientes con statusCli='Activo'
 	 * */
 	@RequestMapping(value="/json/search/cliente", produces="application/json")
 	@ResponseBody
@@ -594,7 +629,7 @@ public class ClienteController {
 		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		
-		List<Cliente> clienteList = clienteService.findByFullNameLike(term);
+		List<Cliente> clienteList = clienteService.findByFullNameLikeAndStatusActivo(term);
 		
 		for (int j = 0; j < clienteList.size(); j++) {
 			Cliente cliente = clienteList.get(j);

@@ -2,13 +2,11 @@ package com.citnova.sca.controller;
 
 import java.security.Principal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,14 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
-import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.PersonaAdminWrapper;
-import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
@@ -146,12 +141,11 @@ public class AdminController {
 	 * 
 	 *  - queryall: Devuelve todos los administradores con statusAd = 'Activo'
 	 *  - querydeleted: Devuelve todos los administradores con statusAd = 'Borrado'
-	 *  - querypending: Devuelve todos los administradores con statusAd = 'activar'
+	 *  - querypending: Devuelve todos los administradores con statusAd = 'Activar'
 	 * */
 	@RequestMapping("/admin/query{searchParam}/{index}")
 	public String queryAll(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
 			HttpSession session) {
-		// Consultar sólo los administradores activos
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		
@@ -165,13 +159,12 @@ public class AdminController {
 		}
 		else if(searchParam.equals("deleted")) {
 			page = adminService.getPageByStatus(Constants.STATUS_DELETED, index - 1);
-			returnParam = "admin_querydeleted";
+			returnParam = "admin_query";
 		}
 		else if(searchParam.equals("pending")) {
 			page = adminService.getPageByStatus(Constants.STATUS_MUST_ACTIVATE, index - 1);
-			returnParam = "admin_querydeleted";
+			returnParam = "admin_query";
 		}
-		
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -182,6 +175,7 @@ public class AdminController {
 		model.addAttribute("currentIndex",currentIndex);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("adminList", page.getContent());
+		model.addAttribute("searchParam", searchParam);
 		
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
@@ -193,8 +187,8 @@ public class AdminController {
 	/**
 	 * Controlador para cambiar status de Administrador a Activo
 	 * */
-	@RequestMapping("/admin/reactivate/{idAd}")
-	public String reactivate(HttpSession session, RedirectAttributes ra,  
+	@RequestMapping("/admin/activate/{idAd}")
+	public String activateAccount(HttpSession session, RedirectAttributes ra,  
 			@PathVariable("idAd") int idAd) {
 		
 		Admin admin = adminService.findOne(idAd);
@@ -281,7 +275,7 @@ public class AdminController {
 		
 		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
 		
-		Page<Admin> page = adminService.findActiveByFullNameLike(index - 1, "%" + searchKeyword + "%");
+		Page<Admin> page = adminService.findByFullNameLikeAndStatusActivoPage(index - 1, "%" + searchKeyword + "%");
 		System.out.println("/admin/search/" + index  + " ****** " + page.getTotalElements());
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
@@ -313,7 +307,7 @@ public class AdminController {
 		
 		System.out.println("Parámetro de búsqueda: " + busqueda);
 		
-		Page<Admin> page = adminService.findActiveByFullNameLike(0, "%" + busqueda + "%");
+		Page<Admin> page = adminService.findByFullNameLikeAndStatusActivoPage(0, "%" + busqueda + "%");
 		System.out.println("/admin/search ***** " + page.getTotalElements());
 		
 		if(page.getTotalElements() > 0){
@@ -403,7 +397,7 @@ public class AdminController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		List<Admin> adminList = adminService.findActiveLikeNombreOApellido("%" + term + "%");
+		List<Admin> adminList = adminService.findByFullNameLikeAndStatusActivo(term);
 		
 		for (int j = 0; j < adminList.size(); j++) {
 			Admin admin = adminList.get(j);

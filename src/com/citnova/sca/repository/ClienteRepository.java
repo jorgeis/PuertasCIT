@@ -16,15 +16,18 @@ public interface ClienteRepository extends CrudRepository<Cliente, Integer>{
 	
 	
 	@Query(	value = "SELECT * FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC "
+			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusCli='Activo'"
+			+ "ORDER BY idPer ASC "
 			+ "\n#pageable\n", 
 		countQuery = "SELECT COUNT(*) FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusCli='Activo'"
+				+ "ORDER BY idPer ASC", 
 		nativeQuery = true)
-	public Page<Cliente> findByFullNameLikePage(String fullName, Pageable pageable);
+	public Page<Cliente> findByFullNameLikePageAndStatusActivoPage(String fullName, Pageable pageable);
 	
 	@Query(	value = "SELECT * FROM Cliente WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+			+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusCli='Activo'"
+			+ "ORDER BY idPer ASC", 
 		nativeQuery = true)
-	public List<Cliente> findByFullNameLike(String fullName);
+	public List<Cliente> findByFullNameLikeAndStatusActivo(String fullName);
 }

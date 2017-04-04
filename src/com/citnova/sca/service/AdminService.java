@@ -70,23 +70,13 @@ public class AdminService {
 		adminRepository.save(admin);
 	}
 
-	public List<Admin> findActiveLikeNombreOApellido(String nombreOApellido) {
-		return adminRepository.findByFullNameLikeAndActive(nombreOApellido);
+	public List<Admin> findByFullNameLikeAndStatusActivo(String fullName) {
+		return adminRepository.findByFullNameLikeAndStatusActivo(fullName);
 	}
 	
-	public Page<Admin> findActiveByFullNameLike(int index, String nombreOApellido){
-		return adminRepository.findByFullNameLikeAndActive(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+	public Page<Admin> findByFullNameLikeAndStatusActivoPage(int index, String fullName){
+		return adminRepository.findByFullNameLikeAndStatusActivoPage(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
-	
-//	public List<Admin> findAllLikeNombreOApellido(String nombreOApellido) {
-//		return adminRepository.findByFullNameLike(nombreOApellido);
-//	}
-//	
-//	public Page<Admin> findAllByFullNameLike(int index, String nombreOApellido){
-//		return adminRepository.findByFullNameLike(nombreOApellido, new PageRequest(index, Constants.ITEMS_PER_PAGE));
-//	}
-
-
 
 	public Admin findByEmail(String email) {
 		QAdmin admin = QAdmin.admin;
@@ -101,9 +91,7 @@ public class AdminService {
 				.uniqueResult(admin);
 	}
 	
-	
 	public Admin findByEmailPer(String emailPer){
 		return adminRepository.findByPersona_EmailPer(emailPer);
 	}
-
 }

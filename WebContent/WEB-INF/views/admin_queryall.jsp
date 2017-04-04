@@ -27,7 +27,6 @@
 		var path = $("#path").val();
 		jQuery("#busqueda").autocomplete({
 			source: path + "/json/search/admin",
-			minLength: 2
 		});
 		jQuery("#valid").validationEngine();
 		jQuery("#valid2").validationEngine();
@@ -39,7 +38,7 @@
 	
 		<sf:form method="post" id="valid"
 			action="${pageContext.request.contextPath}/admin/save" 
-	 		commandName="personaAdminWrapper"> 
+	 		commandName="personaAdminWrapper">
 			
 		<h1>Registrar Nuevo Administrador</h1>
 		<h2>${result}</h2>

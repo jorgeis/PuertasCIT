@@ -68,7 +68,7 @@
 						<td>${admin.telefonoAd}</td>
 						<td>${admin.rolAd}</td>
 						<td> 
-							<a class="confirm" href="<c:url value='/admin/reactivate/${admin.idAd}' />">Activar</a><br/>
+							<a class="confirm" href="<c:url value='/admin/activate/${admin.idAd}' />">Activar</a><br/>
 						</td>
 					</tr>
 				</c:forEach>
@@ -123,10 +123,10 @@
 			
 			<!-- Paginación estándar -->
 			<c:if test="${showPages == true}">
-				<c:url var="firstUrl" value="/admin/querydeleted/1" />
-				<c:url var="lastUrl" value="/admin/querydeleted/${totalPages}" />
-				<c:url var="prevUrl" value="/admin/querydeleted/${currentIndex - 1}" />
-				<c:url var="nextUrl" value="/admin/querydeleted/${currentIndex + 1}" />
+				<c:url var="firstUrl" value="/admin/query${searchParam}/1" />
+				<c:url var="lastUrl" value="/admin/query${searchParam}/${totalPages}" />
+				<c:url var="prevUrl" value="/admin/query${searchParam}/${currentIndex - 1}" />
+				<c:url var="nextUrl" value="/admin/query${searchParam}/${currentIndex + 1}" />
 				<c:choose>
 					<%-- Si la página actual es 1 deshabilitar botones << y < --%>
 					<c:when test="${currentIndex == 1}">
@@ -141,7 +141,7 @@
 				</c:choose>
 				<c:forEach var="i" begin="${beginIndex}" end="${endIndex}">
 					<%-- Construir links a partir de los índices --%>
-					<c:url var="pageUrl" value="/admin/querydeleted/${i}" />
+					<c:url var="pageUrl" value="/admin/query${searchParam}/${i}" />
 					<c:choose>
 						<%-- Remarcar el índice actual --%>
 						<c:when test="${i == currentIndex}">

@@ -75,8 +75,8 @@ public class ClienteService {
 		return clienteRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
 	}
 	
-	public Page<Cliente> getActiveClientesPage(int index) {
-		return clienteRepository.findByStatusCli(Constants.STATUS_ACTIVE, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
+	public Page<Cliente> getPageByStatus(String statusCli, int index) {
+		return clienteRepository.findByStatusCli(statusCli, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idCli"));
 	}
 
 	public List<Cliente> findAllLikeNombreOApellido(String nombreOApellido) {
@@ -94,11 +94,11 @@ public class ClienteService {
 				.list(cliente);
 	}
 	
-	public Page<Cliente> findByFullNameLikePage(int index, String fullName) {
-		return clienteRepository.findByFullNameLikePage(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
+	public Page<Cliente> findByFullNameLikeAndStatusActivoPage(int index, String fullName) {
+		return clienteRepository.findByFullNameLikePageAndStatusActivoPage(fullName, new PageRequest(index, Constants.ITEMS_PER_PAGE));
 	}
 	
-	public List<Cliente> findByFullNameLike(String fullName) {
-		return clienteRepository.findByFullNameLike(fullName);
+	public List<Cliente> findByFullNameLikeAndStatusActivo(String fullName) {
+		return clienteRepository.findByFullNameLikeAndStatusActivo(fullName);
 	}
 }

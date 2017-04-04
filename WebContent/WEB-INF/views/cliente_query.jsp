@@ -17,8 +17,8 @@
 
 <script>
 	jQuery(document).ready(function(){
-		jQuery(".confirmDelete").on("click", function() {
-	        return confirm("Si eliminas este elemento no se podrá recuperar. ¿Continuar?");
+		jQuery(".confirm").on("click", function() {
+	        return confirm("Este cambiará su estado a Activo. ¿Continuar?");
 	    });
 		var path = $("#path").val();
 		jQuery("#busqueda").autocomplete({
@@ -43,15 +43,7 @@
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
 
 	<!-- Article - Formulario -->
-	<article class="featured">		
-		<form method="post" id="valid2" action="${pageContext.request.contextPath}/cliente/search" >
-			<h1>Búsqueda de Clientes</h1>
-			<h2>${result}</h2>
-			<input type="hidden" id="path" value="${pageContext.request.contextPath}"/>
-			<input type="text" id="busqueda" name="busqueda" class="validate[required]" />
-			<button type="submit">Buscar</button>
-		</form>	
-		
+	<article>
 	<h1>Resultados</h1>	
 	
 	<br />
@@ -72,17 +64,17 @@
 						<td>${cliente.persona.apMatPer}</td>
 						<td>${cliente.persona.emailPer}</td>
 						<td>
-							<a href="<c:url value='/cliente/update/${cliente.idCli}' />">Modificar</a> &nbsp;  
-							<a class="confirmDelete" href="<c:url value='/cliente/delete/${cliente.idCli}' />">Eliminar</a><br/>
+							<a class="confirm" href="<c:url value='/cliente/activate/${cliente.idCli}' />">Activar</a><br/>
 						</td>
 					</tr>
 				</c:forEach>
 			</table>
 		
 		
-		<!-- Paginación por búsqueda de clientes -->
+		<!-- 	Paginación por búsqueda de administradores(implementar para buscar solo admin borrados, oculta por el momento
+					desde el controlador) -->
 			<c:if test="${sessionScope.showPagesFromSearch == true}">
-				<h1>Siiiiii, ${totalPages}</h1>
+				<h1>Siiiiii</h1>
 				<c:url var="firstUrl" value="/cliente/search/1" />
 				<c:url var="lastUrl" value="/cliente/search/${totalPages}" />
 				<c:url var="prevUrl" value="/cliente/search/${currentIndex - 1}" />
@@ -127,10 +119,10 @@
 			
 			<!-- Paginación estándar -->
 			<c:if test="${showPages == true}">
-				<c:url var="firstUrl" value="/cliente/queryall/1" />
-				<c:url var="lastUrl" value="/cliente/queryall/${totalPages}" />
-				<c:url var="prevUrl" value="/cliente/queryall/${currentIndex - 1}" />
-				<c:url var="nextUrl" value="/cliente/queryall/${currentIndex + 1}" />
+				<c:url var="firstUrl" value="/cliente/query${searchParam}/1" />
+				<c:url var="lastUrl" value="/cliente/query${searchParam}/${totalPages}" />
+				<c:url var="prevUrl" value="/cliente/query${searchParam}/${currentIndex - 1}" />
+				<c:url var="nextUrl" value="/cliente/query${searchParam}/${currentIndex + 1}" />
 				<c:choose>
 					<%-- Si la página actual es 1 deshabilitar botones << y < --%>
 					<c:when test="${currentIndex == 1}">
@@ -145,7 +137,7 @@
 				</c:choose>
 				<c:forEach var="i" begin="${beginIndex}" end="${endIndex}">
 					<%-- Construir links a partir de los índices --%>
-					<c:url var="pageUrl" value="/cliente/queryall/${i}" />
+					<c:url var="pageUrl" value="/cliente/query${searchParam}/${i}" />
 					<c:choose>
 						<%-- Remarcar el índice actual --%>
 						<c:when test="${i == currentIndex}">
