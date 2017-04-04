@@ -9,13 +9,16 @@
 
  
 					<article class="featured">
-						<c:if test="${param.error != null}">
-							<span style="color: red;">¡Error de credenciales!</span>
-						</c:if>
+<%-- 						<c:if test="${param.error != null}"> --%>
+<!-- 							<span style="color: red;">¡Error de credenciales!</span> -->
+<%-- 						</c:if> --%>
 						
 						<form name='f' action="j_spring_security_check" method='POST'>
 
 							<h1>Inicio de Sesión</h1>
+							<c:if test="${param.error != null}">
+								<h2>¡Correo electrónico o contrseña incorrectos!</h2>
+							</c:if>
 							<h2>${result}</h2>
 
 							<fieldset>

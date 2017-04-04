@@ -1,7 +1,5 @@
 package com.citnova.sca.controller;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,6 @@ public class GratuitoController {
 	
 	@Autowired
 	private EstadoService estadoService;
-	
-	private Timestamp time = new Timestamp(new Date().getTime());
 	
 
 	/**

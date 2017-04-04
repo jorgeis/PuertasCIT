@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -383,9 +382,6 @@ public class ClienteController {
 	@RequestMapping("/cliente/update")
 	public String updateCurrentClient(Model model, Principal principal) {
 		
-		Persona per = personaService.findByEmailPer("sincsaodci");
-		System.out.println(per);
-		
 		// Consulta los Estados y los coloca como atributos a la vista
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
@@ -473,6 +469,39 @@ public class ClienteController {
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_deleted", null, Locale.getDefault()));
 		
 		return "redirect:/cliente/queryall/1";
+	}
+	
+
+	/**
+	 * Controlador para cambiar status de Cliente a Borrado en cuenta propia
+	 * */
+	@RequestMapping("/cliente/deletesc")
+	public String deleteScreen(Model model, HttpSession session, RedirectAttributes ra, Principal principal) {
+		
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_confirm_delete", null, Locale.getDefault()));
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/cliente/delete");
+		model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
+		model.addAttribute(Constants.PAGE_TITLE, "Eliminar cuenta");
+		
+		return "confirm";
+	}
+	
+
+	/**
+	 * Controlador para cambiar status de Cliente a Borrado en cuenta propia
+	 * */
+	@RequestMapping("/cliente/delete")
+	public String deleteAccount(HttpSession session, RedirectAttributes ra, Principal principal) {
+		
+		Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
+		cliente.setStatusCli(Constants.STATUS_DELETED);
+		clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), cliente.getDireccion().getMunicipio());
+		
+		
+		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_deleted", null, Locale.getDefault()));
+		
+		return "redirect:/logout";
 	}
 	
 	

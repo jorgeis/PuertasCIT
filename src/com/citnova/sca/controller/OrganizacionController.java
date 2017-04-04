@@ -1,7 +1,5 @@
 package com.citnova.sca.controller;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,9 +57,6 @@ public class OrganizacionController {
 	
 	@Autowired
 	private MessageSource messageSource;
-	
-	private Timestamp time = new Timestamp(new Date().getTime());
-	
 
 	/**
 	 * Formulario de alta de organización
@@ -191,7 +186,7 @@ public class OrganizacionController {
 				}
 				while (passUsed == true);
 				
-				OrganizacionCliente orgCli = new OrganizacionCliente("Activo", "Responsable", passOC);
+				//OrganizacionCliente orgCli = new OrganizacionCliente("Activo", "Responsable", passOC);
 				
 			}
 			else {

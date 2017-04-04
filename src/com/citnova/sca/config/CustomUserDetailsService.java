@@ -11,13 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Persona;
-import com.citnova.sca.repository.AdminRepository;
-import com.citnova.sca.repository.ClienteRepository;
 import com.citnova.sca.repository.PersonaRepository;
 
 
@@ -26,12 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService{
 	
 	@Autowired
 	private PersonaRepository personaRepository;
-	
-	@Autowired
-	private ClienteRepository clienteRepository;
-	
-	@Autowired
-	private AdminRepository adminRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username)

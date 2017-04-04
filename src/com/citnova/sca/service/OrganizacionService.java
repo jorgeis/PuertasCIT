@@ -5,11 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
-import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.repository.DireccionRepository;
 import com.citnova.sca.repository.OrganizacionRepository;

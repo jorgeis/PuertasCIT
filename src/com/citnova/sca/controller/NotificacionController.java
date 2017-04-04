@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
@@ -29,7 +28,6 @@ import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.NotificacionService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.MailManager;
-import com.citnova.sca.util.Util;
 
 @Controller
 public class NotificacionController {
@@ -48,9 +46,6 @@ public class NotificacionController {
 	
 	@Autowired
 	private MailManager mailManager;
-	
-	@Autowired
-	private Util util;
 	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	

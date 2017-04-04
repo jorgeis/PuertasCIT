@@ -22,4 +22,7 @@ public class Constants {
 	public static final String SHOW_PAGES_FROM_SEARCH = "showPagesFromSearch";
 	public static final String ADMIN_SEARCH_KEYWORD = "adminSearchKeyword";
 	
+	public static final String CUSTOM_MAPPING = "customMapping";
+	public static final String CONFIRM_BUTTON = "confirmButton";
+	public static final String PAGE_TITLE = "pageTitle";
 }

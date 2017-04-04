@@ -46,9 +46,9 @@
 			user-service-ref="customUserDetailsService" />
 	</security:http>
 	
-	<security:authentication-manager alias="authenticationManager">
-		<security:authentication-provider ref="authenticationProviderImpl"></security:authentication-provider>
-	</security:authentication-manager>
+<!-- 	<security:authentication-manager alias="authenticationManager"> -->
+<!-- 		<security:authentication-provider ref="authenticationProviderImpl"></security:authentication-provider> -->
+<!-- 	</security:authentication-manager> -->
 	
 	
 	<security:authentication-manager>

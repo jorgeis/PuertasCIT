@@ -89,7 +89,7 @@
 														<span class="arrow">Administrar</span>
 														<ul>
 															<li><a href='<c:url value="/cliente/update/"/>'>Cambiar datos personales</a></li>
-															<li><a href='<c:url value="/cliente/delete/"/>'>Borrar cuenta</a></li>
+															<li><a href='<c:url value="/cliente/deletesc/"/>'>Borrar cuenta</a></li>
 															<li><a href="#">XXXXXXXXXX</a></li>
 															<li><a href="#">XXXXXXXXXX</a></li>
 															<li><a href="#">XXXXXXXXXX</a></li>

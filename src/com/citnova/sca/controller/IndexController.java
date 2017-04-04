@@ -20,16 +20,12 @@ import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.service.AdminService;
 import com.citnova.sca.service.ClienteService;
-import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.Util;
 
 @Controller
 public class IndexController {
-	
-	@Autowired
-	private PersonaService personaService;
 	
 	@Autowired
 	private ClienteService clienteService;
