@@ -183,6 +183,12 @@ public class IndexController {
 		return "notifications";
 	}
 	
+	@RequestMapping("/confirmscreen")
+	public String confirmScreen(Model model) {
+		
+		return "notifications";
+	}
+	
 	@RequestMapping("/formex")
 	public String showOneColumn() {
 		return "formResp";

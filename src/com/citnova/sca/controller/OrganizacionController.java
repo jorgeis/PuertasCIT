@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -110,7 +111,9 @@ public class OrganizacionController {
 	/**
 	 * Guardar nueva organización en BD
 	 * */
+	
 	@RequestMapping(value="/orgsave", method=RequestMethod.POST)
+	@Transactional(readOnly = true)
 	public String createOrganizacion(Model model, OrganizacionDireccionWrapper organizacionDireccionWrapper, 
 			@RequestParam("idCli") int idCliente, HttpServletRequest request, RedirectAttributes ra) {
 		
@@ -186,7 +189,18 @@ public class OrganizacionController {
 				}
 				while (passUsed == true);
 				
-				//OrganizacionCliente orgCli = new OrganizacionCliente("Activo", "Responsable", passOC);
+				Cliente cliente = clienteService.findOne(idCliente);
+				
+				System.out.println("El objeto cliente ha sido traido: " + cliente);
+				System.out.println("La organización ingresada es: " + organizacion);
+				OrganizacionCliente orgCli = new OrganizacionCliente();
+				orgCli.setOrganizacion(organizacion);
+				orgCli.setCliente(cliente);
+				orgCli.setCargoOC("Responsable");
+				orgCli.setPassOC(passOC);
+				orgCli.setStatusOC("Activo");
+				
+				organizacionClienteService.save(orgCli);
 				
 			}
 			else {
@@ -194,7 +208,7 @@ public class OrganizacionController {
 			}
 			
 			
-			return "redirect:/cliente/queryall/1";
+			return "redirect:/confirmscreen";
 			
 		}
 		
@@ -227,7 +241,7 @@ public class OrganizacionController {
 			organizacionService.saveOrUpdate(organizacion, direccion, municipio, sectorEmp);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_updated", null, Locale.getDefault()));
 			
-			return "redirect:/cliente/queryall/1";
+			return "redirect:/confirmscreen";
 		}
 	}
 	

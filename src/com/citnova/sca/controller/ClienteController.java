@@ -202,11 +202,11 @@ public class ClienteController {
 				
 				ra.addFlashAttribute("idCli", cliente.getIdCli());
 				
-				return "redirect:/orgform";
+				return "redirect:/login";
 			}
 			
 			else {
-				return "redirect:/cliente/queryall/1";
+				return "redirect:/login";
 			}
 		
 		}
@@ -244,7 +244,7 @@ public class ClienteController {
 			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_updated", null, Locale.getDefault()));
 			
-			return "redirect:/cliente/queryall/1";
+			return "redirect:/confirmscreen";
 		}
 	}
 	

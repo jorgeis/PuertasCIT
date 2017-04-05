@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
+<c:import url="/res/js/dateScript.txt" />
 <link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
 
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
@@ -154,7 +154,7 @@ persistIdCli
 			action="${pageContext.request.contextPath}/clientesave"
 	 		commandName="personaClienteDireccionWrapper"> 
 			
-		<h1>Registrar Nuevo Cliente</h1>
+		<h1>Datos del Cliente</h1>
 		<h2>${result}</h2>
 			<div id="accountCli">
 				<fieldset>

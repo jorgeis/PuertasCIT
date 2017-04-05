@@ -21,6 +21,10 @@ public class OrganizacionCliente {
 	private String statusOC;
 	private String cargoOC;
 	private String passOC;
+	
+	public OrganizacionCliente() {
+		
+	}
 
 	public OrganizacionCliente(String statusOC, String cargoOC, String passOC) {
 		this.statusOC = statusOC;

@@ -83,16 +83,18 @@
 												<a href="" class="arrow">Cliente</a>
 												<ul>
 													<li><a href="#">XXXXXXXXXX</a></li>
-													<li><a href="#">XXXXXXXXXX</a></li>
-													<li><a href="#">XXXXXXXXXX</a></li>
 													<li>
 														<span class="arrow">Administrar</span>
 														<ul>
 															<li><a href='<c:url value="/cliente/update/"/>'>Cambiar datos personales</a></li>
 															<li><a href='<c:url value="/cliente/deletesc/"/>'>Borrar cuenta</a></li>
-															<li><a href="#">XXXXXXXXXX</a></li>
-															<li><a href="#">XXXXXXXXXX</a></li>
-															<li><a href="#">XXXXXXXXXX</a></li>
+														</ul>
+													</li>
+													<li>
+														<span class="arrow">Organización</span>
+														<ul>
+															<li><a href='<c:url value="#"/>'>Consultar</a></li>
+															<li><a href='<c:url value="/orgform"/>'>Agregar</a></li>
 														</ul>
 													</li>
 												</ul>
@@ -133,8 +135,10 @@
 												</li>
 											</sec:authorize>
 											
-											
-											
+											<!-- Mostrar link de registro -->
+											<sec:authorize access="!isAuthenticated()">
+												<li><a href='<c:url value="/clienteform" />'>Regístrate</a> </li>
+											</sec:authorize>
 											
 											<!-- Mostrar link de login -->
 											<sec:authorize access="!isAuthenticated()">

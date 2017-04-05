@@ -197,7 +197,8 @@ persistIdCli
 				
 			<sf:input type="hidden" path="idMun" class="persistMun" />
 			<sf:input type="hidden" path="idEstado" class="persistEst" />
-			<input type="hidden" name="idCli" value="${idCli}" />
+			<input type="hidden" name="idCli" value="5" />
+<%-- 			<input type="hidden" name="idCli" value="${idCli}" /> --%>
 			<%-- 			<sf:input type="hidden" path="idCli" class="persistIdCli"/> --%>
 				
 		</fieldset>
