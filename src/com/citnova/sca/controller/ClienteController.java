@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -125,6 +126,20 @@ public class ClienteController {
 		//un nuevo usuario. Si su valor es diferente de cero significa que se está dando de alta un nuevo usuario que
 		//por parte de un responsable de organización, y que el nuevo usuario es miembro de la nueva organización.
 		
+		// Se revisa idOrgParam. En caso de que sea diferente de cero, se asocia el nuevo usuario con la organización
+		// cuyo id sea igual a idOrgParam.
+		
+		int idOrg;
+		
+		System.out.println("Parámetro idOrgParam en /clientesave: " + idOrgParam);
+		
+		if(idOrgParam==null) {	
+			idOrg = 0;	
+		}
+		else {	
+			idOrg = idOrgParam;	
+		}
+
 		// Consulta los Estados
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
@@ -181,7 +196,6 @@ public class ClienteController {
 					time);
 			
 			Cliente cliente = new Cliente(personaClienteDireccionWrapper.getEmailAltCli(),
-					passwordEncoder.encode(personaClienteDireccionWrapper.getPassCli()),
 					personaClienteDireccionWrapper.getSexoCli(),
 					personaClienteDireccionWrapper.getTelFijoCli(),
 					personaClienteDireccionWrapper.getTelMovilCli(),
@@ -201,6 +215,10 @@ public class ClienteController {
 			
 			Municipio municipio = municipioService.findByIdMun(personaClienteDireccionWrapper.getIdMun());
 			
+			if(idOrg == 0) {
+				cliente.setPassCli(passwordEncoder.encode(personaClienteDireccionWrapper.getPassCli()));
+			}
+			
 			// Revisa una la persona ya existe con el mismo email
 			
 			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
@@ -216,27 +234,8 @@ public class ClienteController {
 			// Guardar los datos a través del servicio
 			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
 			
-			// Enviar correo electrónico para confirmar cuenta
-			mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
-					util.getRootUrl(request, "/clientesave")
-							.concat("/clienteaccount/")
-							.concat(String.valueOf(cliente.getIdCli()))
-							.concat("/confirm/")
-						);
-			
 			// Se revisa idOrgParam. En caso de que sea diferente de cero, se asocia el nuevo usuario con la organización
 			// cuyo id sea igual a idOrgParam.
-			
-			int idOrg;
-			
-			System.out.println("Parámetro idOrgParam en /clientesave: " + idOrgParam);
-			
-			if(idOrgParam==null) {	
-				idOrg = 0;	
-			}
-			else {	
-				idOrg = idOrgParam;	
-			}
 			
 			if(idOrg != 0) {
 				
@@ -278,6 +277,14 @@ public class ClienteController {
 				
 				organizacionClienteService.save(orgCli);
 				
+				// Enviar correo electrónico para confirmar cuenta, soicitando la contraseña de la cuenta.
+				mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
+						util.getRootUrl(request, "/clientesave")
+								.concat("/clienteaccount/")
+								.concat(String.valueOf(cliente.getIdCli()))
+								.concat("/account/password")
+							);
+				
 				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_member_saved", null, Locale.getDefault()));
 				return "redirect:/org/queryown/1";
 			}
@@ -287,11 +294,27 @@ public class ClienteController {
 				
 				ra.addFlashAttribute("idCli", cliente.getIdCli());
 				
+				// Enviar correo electrónico para confirmar cuenta (Revisar igual A = B)
+				mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
+						util.getRootUrl(request, "/clientesave")
+								.concat("/clienteaccount/")
+								.concat(String.valueOf(cliente.getIdCli()))
+								.concat("/confirm/")
+							);
+				
 				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
 				return "redirect:/login";
 			}
 			
 			else {
+				
+				// Enviar correo electrónico para confirmar cuenta (Revisar igual B = A)
+				mailManager.sendEmailConfirmacion(persona.getEmailPer(), 
+						util.getRootUrl(request, "/clientesave")
+								.concat("/clienteaccount/")
+								.concat(String.valueOf(cliente.getIdCli()))
+								.concat("/confirm/")
+							);
 				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
 				return "redirect:/login";
 			}
@@ -692,7 +715,7 @@ public class ClienteController {
 	
 	
 	/**
-	 * Controlador para cambiar status de Administrador a Activo
+	 * Controlador para cambiar status de Cliente a Activo
 	 * */
 	@RequestMapping("/cliente/activate/{idCli}")
 	public String activateAccount(HttpSession session, RedirectAttributes ra,  
@@ -707,6 +730,50 @@ public class ClienteController {
 		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_activated", null, Locale.getDefault()));
 		
 		return "redirect:/cliente/queryall/1";
+	}
+	
+	
+	/**
+	 * Vista para una vez creada la cuenta, capturar contraseña (para cuando se da de alta un nuevo cliente
+	 * por parte de responsable de empresa)
+	 * */
+	@RequestMapping("/clienteaccount/{idCli}/account/password")
+	public String inputPassword(HttpSession session, Model model,  
+			@PathVariable("idCli") int idCli) {
+		
+		session.setAttribute(Constants.ID_CLI, idCli);
+		Cliente cliente = clienteService.findOne(idCli);
+		
+		if(cliente.getStatusCli().equals(Constants.STATUS_MUST_ACTIVATE)){
+			return "cliente_password";
+		}
+		else{
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_was_confirmed", null, Locale.getDefault()));
+			return "notifications";
+		}
+	}
+	
+	
+	/**
+	 * Controlador para guardar contraseña y activar la cuenta de Cliente (para cuando se da de alta un nuevo cliente
+	 * por parte de responsable de empresa)
+	 * */
+	@RequestMapping("/clienteaccount/confirm")
+	public String confirmAccount(Model model, @RequestParam("password") String rawPassword, 
+			HttpSession session) {
+		
+		int idCli = (int) session.getAttribute(Constants.ID_CLI);
+		Cliente cliente = clienteService.findOne(idCli);
+		Persona persona = cliente.getPersona();
+		
+		cliente.setPassCli(passwordEncoder.encode(rawPassword));
+		cliente.setStatusCli(Constants.STATUS_ACTIVE);
+		clienteService.saveOrUpdate(cliente, persona, cliente.getDireccion(), cliente.getDireccion().getMunicipio());
+		
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("cliente_confirmed", null, Locale.getDefault()));
+		
+		session.invalidate();
+		return "notifications";
 	}
 	
 	
