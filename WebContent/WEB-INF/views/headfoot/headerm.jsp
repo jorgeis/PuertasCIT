@@ -93,7 +93,7 @@
 													<li>
 														<span class="arrow">Organización</span>
 														<ul>
-															<li><a href='<c:url value="#"/>'>Consultar</a></li>
+															<li><a href='<c:url value="/org/queryown/1"/>'>Consultar</a></li>
 															<li><a href='<c:url value="/orgform"/>'>Agregar</a></li>
 														</ul>
 													</li>

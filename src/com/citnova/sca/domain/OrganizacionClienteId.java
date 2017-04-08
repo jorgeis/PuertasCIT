@@ -31,4 +31,9 @@ public class OrganizacionClienteId implements Serializable {
 		this.cliente = cliente;
 	}
 
+	@Override
+	public String toString() {
+		return "OrganizacionClienteId [organizacion=" + organizacion + ", cliente=" + cliente + "]";
+	}
+
 }

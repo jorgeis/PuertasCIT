@@ -49,7 +49,8 @@ public class Organizacion {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.organizacion", cascade=CascadeType.ALL)
 	private Set<MembresiaOrganizacion> membresiaOrganizacionSet = new HashSet<MembresiaOrganizacion>();
 
-	
+	public Organizacion() {
+	}
 
 	public Organizacion(String nombreOrg, String siglasOrg, String rfcOrg, int numTrabajadoresOrg, String telefonoOrg,
 			String webOrg, String giroOrg) {
@@ -171,7 +172,5 @@ public class Organizacion {
 		return "Organizacion [idOrg=" + idOrg + ", nombreOrg=" + nombreOrg + ", siglasOrg=" + siglasOrg + ", rfcOrg="
 				+ rfcOrg + ", numTrabajadoresOrg=" + numTrabajadoresOrg + ", telefonoOrg=" + telefonoOrg + ", webOrg="
 				+ webOrg + ", giroOrg=" + giroOrg + ", direccion=" + direccion + ", sectorEmp=" + sectorEmp + "]";
-	}
-
-	
+	}	
 }

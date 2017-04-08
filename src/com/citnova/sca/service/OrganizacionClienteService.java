@@ -21,4 +21,8 @@ public class OrganizacionClienteService {
 	public List<OrganizacionCliente> findAll() {
 		return (List<OrganizacionCliente>) organizacionClienteRepository.findAll();
 	}
+	
+	public List<OrganizacionCliente> findByIdOrg(int idOrg) {
+		return organizacionClienteRepository.findByPkOrganizacionIdOrg(idOrg);
+	}
 }

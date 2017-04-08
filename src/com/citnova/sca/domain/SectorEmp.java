@@ -51,5 +51,8 @@ public class SectorEmp {
 		this.organizacionSet = organizacionSet;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "SectorEmp [idSE=" + idSE + ", nombreSE=" + nombreSE + ", descripcionSE=" + descripcionSE + "]";
+	}
 }

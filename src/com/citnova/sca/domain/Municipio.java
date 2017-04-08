@@ -59,10 +59,6 @@ public class Municipio {
 
 	@Override
 	public String toString() {
-		return "Municipio [idMun=" + idMun + ", nombreMun=" + nombreMun + ", estado=" + estado + ", direccionSet="
-				+ direccionSet + "]";
+		return "Municipio [idMun=" + idMun + ", nombreMun=" + nombreMun + ", estado=" + estado + "]";
 	}
-	
-	
-
 }

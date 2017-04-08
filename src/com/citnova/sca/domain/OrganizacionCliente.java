@@ -82,4 +82,10 @@ public class OrganizacionCliente {
 	public void setPassOC(String passOC) {
 		this.passOC = passOC;
 	}
+
+	@Override
+	public String toString() {
+		return "OrganizacionCliente [pk=" + pk + ", statusOC=" + statusOC + ", cargoOC=" + cargoOC + ", passOC="
+				+ passOC + "]";
+	}
 }

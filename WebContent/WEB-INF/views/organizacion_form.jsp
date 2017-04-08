@@ -6,15 +6,20 @@
 <%@ page import="java.io.*,java.util.*"%>
 <%@ page import="java.text.*"%>
 
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-
-<link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
 <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <c:import url="/res/js/dateScript.txt" />
+<link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
+
+<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
+<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+
+
+
 
 <!-- Script para ocultar y mostrar campo dependiendo de opción seleccionada en <select> -->
 <script>
@@ -196,11 +201,9 @@ persistIdCli
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cpDir" />
 				
 			<sf:input type="hidden" path="idMun" class="persistMun" />
-			<sf:input type="hidden" path="idEstado" class="persistEst" />
-			<input type="hidden" name="idCli" value="5" />
-<%-- 			<input type="hidden" name="idCli" value="${idCli}" /> --%>
-			<%-- 			<sf:input type="hidden" path="idCli" class="persistIdCli"/> --%>
-				
+				<sf:input type="hidden" path="idEstado" class="persistEst" />
+				<sf:input type="hidden" path="idOrg"/>
+				<sf:input type="hidden" path="idDir"/>
 		</fieldset>
 	
 		
