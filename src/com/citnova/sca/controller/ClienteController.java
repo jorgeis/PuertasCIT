@@ -140,6 +140,8 @@ public class ClienteController {
 			idOrg = idOrgParam;	
 		}
 
+		model.addAttribute("idOrgParam", idOrg);
+		
 		// Consulta los Estados
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
@@ -356,7 +358,6 @@ public class ClienteController {
 			return "redirect:/confirmscreen";
 		}
 	}
-	
 	
 	
 	/**

@@ -159,7 +159,7 @@ persistIdCli
 	<!-- Article - Formulario -->
 	<article class="featured">
 
-		<input type="hidden" id="path" value=${pageContext.request.contextPath} />
+		<input type="hidden" id="path" value="${pageContext.request.contextPath}" />
 		
 		<!-- Formularios de prueba para JSON y AJAX -->
 <%-- 		<form action="${pageContext.request.contextPath}/findMunicipio"> --%>
