@@ -30,6 +30,7 @@ import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.OrganizacionDireccionWrapper;
+import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
@@ -138,7 +139,7 @@ public class OrganizacionController {
 			
 			System.out.println("El cliente es: " + cliente);
 			
-			// Genera un nuevo pass para passArea
+			// Genera un nuevo pass para passOC
 			List<Cliente> clienteList = clienteService.findAll();
 			List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
 			boolean passUsed;
@@ -215,7 +216,8 @@ public class OrganizacionController {
 	 * Actualizar organización  en específico
 	 * */
 	@RequestMapping(value="/org/update", method=RequestMethod.POST)
-	public String update(Model model, Principal principal, @RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
+	public String update(Model model, Principal principal, 
+			@RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
 		
 		int idOrg;
 		
@@ -279,7 +281,7 @@ public class OrganizacionController {
 	}
 	
 	
-	@RequestMapping(value="/org/members", method=RequestMethod.POST)
+	@RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
 	public String viewOrg(Model model, Principal principal, RedirectAttributes ra,
 			@RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
 		
@@ -302,13 +304,18 @@ public class OrganizacionController {
 		List<OrganizacionCliente> orgCliList = organizacionClienteService.findByIdOrg(idOrg);
 		
 		List<Cliente>clienteList = new ArrayList<Cliente>();
+		List<String>cargoList = new ArrayList<String>();
 		
 		for(int i=0; i<orgCliList.size(); i++) {
 			System.out.println("Elemento " + i + " de la lista: " + orgCliList.get(i).getCliente());
 			clienteList.add(orgCliList.get(i).getCliente());
+			System.out.println("Elemento " + i + " de la lista: " + orgCliList.get(i).getCargoOC());
+			cargoList.add(orgCliList.get(i).getCargoOC());
 		}
 		
+		model.addAttribute("idOrg", idOrg);
 		model.addAttribute("clienteList", clienteList);
+		model.addAttribute("cargoList", cargoList);
 		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
 		
 		return"organizacion_members";
@@ -354,7 +361,6 @@ public class OrganizacionController {
 		
 		return"organizacion_query";
 	}
-	
 	
 	
 	/**

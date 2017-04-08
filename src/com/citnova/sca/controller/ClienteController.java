@@ -28,6 +28,7 @@ import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Municipio;
+import com.citnova.sca.domain.Organizacion;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
@@ -35,6 +36,7 @@ import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
 import com.citnova.sca.service.MunicipioService;
 import com.citnova.sca.service.OrganizacionClienteService;
+import com.citnova.sca.service.OrganizacionService;
 import com.citnova.sca.service.PersonaService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.CurrentSessionUserRetriever;
@@ -61,6 +63,9 @@ public class ClienteController {
 	private OrganizacionClienteService organizacionClienteService;
 	
 	@Autowired
+	private OrganizacionService organizacionService;
+	
+	@Autowired
 	private MessageSource messageSource;
 	
 	@Autowired
@@ -78,12 +83,31 @@ public class ClienteController {
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
 	@RequestMapping("/clienteform")
-	public String showClientForm(Model model) {
+	public String showClientForm(Model model, @RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
 		// Consulta los Estados
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
+		
+		
+		// Revisa si se recibió un parámetro con el ID de la organización. De ser así, lo agrega al modelo.
+		// En la vista se comprueba si el parámetro es diferente de cero para mostrar u ocultar el campo de
+		// password y cambiar el controlador al que se dirige cuando se pulsa submit, para saber si se agregó
+		// un usuario normal, o un miembro de organización, lo cual hace que cambie la forma en la que se valida
+		// el usuario.
+		int idOrg;
+		
+		System.out.println("parámetro: " + idOrgParam);
+		
+		if(idOrgParam==null) {
+			idOrg = 0;
+		}
+		else {
+			idOrg = idOrgParam;
+		}
+		
+		model.addAttribute("idOrgParam", idOrg);
 		
 		return "cliente_form";
 	}
@@ -95,7 +119,11 @@ public class ClienteController {
 	@RequestMapping(value="/clientesave", method=RequestMethod.POST)
 	public String createCliente(Model model, PersonaClienteDireccionWrapper personaClienteDireccionWrapper, 
 			@RequestParam("otroOcupacion") String otroOcupacion, HttpServletRequest request,
-			RedirectAttributes ra) {
+			RedirectAttributes ra, @RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
+		
+		//idOrgParam es un parámetro enviado desde el formulario. Si su valor es cero significa que se está dando de alta
+		//un nuevo usuario. Si su valor es diferente de cero significa que se está dando de alta un nuevo usuario que
+		//por parte de un responsable de organización, y que el nuevo usuario es miembro de la nueva organización.
 		
 		// Consulta los Estados
 		List<Estado> estadoList = estadoService.findAll();
@@ -195,20 +223,78 @@ public class ClienteController {
 							.concat(String.valueOf(cliente.getIdCli()))
 							.concat("/confirm/")
 						);
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
+			
+			// Se revisa idOrgParam. En caso de que sea diferente de cero, se asocia el nuevo usuario con la organización
+			// cuyo id sea igual a idOrgParam.
+			
+			int idOrg;
+			
+			System.out.println("Parámetro idOrgParam en /clientesave: " + idOrgParam);
+			
+			if(idOrgParam==null) {	
+				idOrg = 0;	
+			}
+			else {	
+				idOrg = idOrgParam;	
+			}
+			
+			if(idOrg != 0) {
+				
+				Organizacion organizacion = organizacionService.findOne(idOrg);
+				
+				// Genera un nuevo pass para passOC
+				List<Cliente> clienteListB = clienteService.findAll();
+				List<OrganizacionCliente> orgCliListB = organizacionClienteService.findAll();
+				boolean passUsedB = false;
+				String passOC;
+				do {
+					passUsed = false;
+					passOC = PassGen.generatePass();
+					System.out.println("\nPass generado: " + passOC);
+					for(Cliente cli : clienteListB) {
+			            if(passOC.equals(cli.getPassAreaCli())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsedB = true;
+			            }
+			        }
+					for(OrganizacionCliente orgClie : orgCliListB) {
+			            if(passOC.equals(orgClie.getPassOC())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsedB = true;
+			            }
+			        }
+					System.out.println(passUsedB);
+				}
+				while (passUsedB == true);
+				
+				System.out.println("El objeto cliente ingresado y guardado: " + cliente);
+				System.out.println("La organización de idOrgParam es: " + organizacion);
+				OrganizacionCliente orgCli = new OrganizacionCliente();
+				orgCli.setOrganizacion(organizacion);
+				orgCli.setCliente(cliente);
+				orgCli.setCargoOC("Miembro");
+				orgCli.setPassOC(passOC);
+				orgCli.setStatusOC("Activo");
+				
+				organizacionClienteService.save(orgCli);
+				
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_member_saved", null, Locale.getDefault()));
+				return "redirect:/org/queryown/1";
+			}
 			
 			if(	ocupacion.equals(Constants.OCUPACIONES[1]) || ocupacion.equals(Constants.OCUPACIONES[2]) ||
 				ocupacion.equals(Constants.OCUPACIONES[3]) || ocupacion.equals(Constants.OCUPACIONES[4])) {
 				
 				ra.addFlashAttribute("idCli", cliente.getIdCli());
 				
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
 				return "redirect:/login";
 			}
 			
 			else {
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_saved", null, Locale.getDefault()));
 				return "redirect:/login";
 			}
-		
 		}
 		
 		else{

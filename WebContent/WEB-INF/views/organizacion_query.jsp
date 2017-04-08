@@ -38,6 +38,7 @@
 	<article class="featured"> 
 		<form>
 			<h1>Buscar Organizaciones Propias</h1>
+			<h2>${result}</h2>
 		</form>
 		
 <%-- 		<form method="post" id="valid2" action="${pageContext.request.contextPath}/admin/search" > --%>
@@ -68,7 +69,7 @@
 						</form>	
 						</td>
 						<td>
-							<form method="post" action="${pageContext.request.contextPath}/org/members" >
+							<form method="post" action="${pageContext.request.contextPath}/org/querymembers" >
 							<input type="hidden" name="idOrgParam" value="${org.idOrg}"/>
 							<button type="submit">Miembros</button>
 						</form>	

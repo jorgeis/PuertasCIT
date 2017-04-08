@@ -44,8 +44,10 @@
 
 	<!-- Article - Formulario -->
 	<article class="featured">		
-		<form >
+		<form method="post" action="${pageContext.request.contextPath}/clienteform">
 			<h1>Miembros de ${siglasOrg}</h1>
+			<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+			<button type="submit">Agregar Nuevo Miembro</button>
 		</form>	
 		
 		<div class = "table1">
@@ -55,13 +57,17 @@
 					<td>Apellido Paterno</td>
 					<td>Apellido Materno</td>
 					<td>Correo electrónico</td>
+					<td>Nivel</td>
 				</tr>
-				<c:forEach var="cliente" items="${clienteList}">
+				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
 					<tr>
 						<td>${cliente.persona.nombrePer}</td>
 						<td>${cliente.persona.apPatPer}</td>
 						<td>${cliente.persona.apMatPer}</td>
 						<td>${cliente.persona.emailPer}</td>
+						
+						<td>${cargoList[status.index]}</td>
+						
 						<td>
 							<a href="<c:url value='/cliente/update/${cliente.idCli}' />">Opt1</a> &nbsp;  
 							<a class="confirmDelete" href="<c:url value='/cliente/delete/${cliente.idCli}' />">Opt2</a><br/>
