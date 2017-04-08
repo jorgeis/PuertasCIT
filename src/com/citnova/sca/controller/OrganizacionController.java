@@ -1,6 +1,7 @@
 package com.citnova.sca.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -300,11 +301,17 @@ public class OrganizacionController {
 		
 		List<OrganizacionCliente> orgCliList = organizacionClienteService.findByIdOrg(idOrg);
 		
+		List<Cliente>clienteList = new ArrayList<Cliente>();
+		
 		for(int i=0; i<orgCliList.size(); i++) {
 			System.out.println("Elemento " + i + " de la lista: " + orgCliList.get(i).getCliente());
+			clienteList.add(orgCliList.get(i).getCliente());
 		}
 		
-		return"notifications";
+		model.addAttribute("clienteList", clienteList);
+		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
+		
+		return"organizacion_members";
 	}
 	
 	

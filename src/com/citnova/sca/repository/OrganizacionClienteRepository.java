@@ -10,5 +10,4 @@ import com.citnova.sca.domain.OrganizacionCliente;
 public interface OrganizacionClienteRepository extends CrudRepository<OrganizacionCliente, Integer> {
 	
 	public List<OrganizacionCliente> findByPkOrganizacionIdOrg(int idOrg);
-
 }
