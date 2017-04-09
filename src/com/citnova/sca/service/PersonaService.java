@@ -29,4 +29,8 @@ public class PersonaService {
 	public List<Persona> findByFullNameLike(String fullName) {
 		return personaRepository.findByFullNameLike(fullName);
 	}
+	
+	public Persona findByCurpPer(String curpPer){
+		return personaRepository.findByCurpPer(curpPer);
+	}
 }

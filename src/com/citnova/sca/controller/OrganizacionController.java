@@ -318,7 +318,7 @@ public class OrganizacionController {
 		model.addAttribute("cargoList", cargoList);
 		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
 		
-		return"organizacion_members";
+		return "organizacion_members";
 	}
 	
 	

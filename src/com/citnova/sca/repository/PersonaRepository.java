@@ -17,5 +17,7 @@ public interface PersonaRepository extends CrudRepository<Persona, Integer> {
 			+ "concat(nombrePer, ' ', apPatPer, ' ', apMatPer) as 'Cosa' from Persona) "
 			+ "as Cosilla where Cosa like %?1%", nativeQuery = true)
 	public List<Persona> findByFullNameLike(String fullName);
+	
+	public Persona findByCurpPer(String curpPer);
 }
 
