@@ -436,6 +436,8 @@ public class OrganizacionController {
 					util.getRootUrl(request, "/org/sendinvite")
 							.concat("/org/")
 							.concat(email)
+							.concat("/")
+							.concat(Integer.toString(idOrg))
 							.concat("/invite/confirm"), organizacionService.findOne(idOrg).getNombreOrg()
 						);
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("invite_mail_sent", null, Locale.getDefault()));
@@ -459,19 +461,24 @@ public class OrganizacionController {
 		Cliente cliente = clienteService.findByEmail(emailCli);
 		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, cliente.getIdCli());
 		
-		if(orgCli.getStatusOC().equals(Constants.STATUS_PENDING)) {
-			
-			orgCli.setStatusOC(Constants.STATUS_MUST_ACTIVATE);
-			organizacionClienteService.save(orgCli);
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_confirmed", 
-					new Object[]{organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
-			return "redirect:/confirmscreen";
+		if(orgCli != null) {
+			if(orgCli.getStatusOC().equals(Constants.STATUS_PENDING)) {
+				
+				orgCli.setStatusOC(Constants.STATUS_MUST_ACTIVATE);
+				organizacionClienteService.save(orgCli);
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_confirmed", 
+						new Object[]{organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+			}
+			else{
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_was_confirmed", 
+						null, Locale.getDefault()));	
+			}
 		}
-		
-		else{
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_was_confirmed", null, Locale.getDefault()));
-			return "redirect:/confirmscreen";
+		else {
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("data_input_error", 
+					null, Locale.getDefault()));
 		}
+		return "redirect:/confirmscreen";
 	}
 	
 	
