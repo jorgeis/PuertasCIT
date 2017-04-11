@@ -38,28 +38,22 @@ public class AdminController {
 	
 	@Autowired
 	private PersonaService personaService;
-	
 	@Autowired
 	private AdminService adminService;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private MailManager mailManager;
-	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
 	@Autowired
 	private Util util;
-
-	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
 
 	/**
 	 * Controlador para guardar o actualizar datos del Administrador
+	 * @RequestMapping(value="/admin/save", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/admin/save", method=RequestMethod.POST)
 	public String createPersona(Model model, PersonaAdminWrapper personaAdminWrapper,
@@ -142,6 +136,8 @@ public class AdminController {
 	 *  - queryall: Devuelve todos los administradores con statusAd = 'Activo'
 	 *  - querydeleted: Devuelve todos los administradores con statusAd = 'Borrado'
 	 *  - querypending: Devuelve todos los administradores con statusAd = 'Activar'
+	 *  
+	 *  @RequestMapping("/admin/query{searchParam}/{index}")
 	 * */
 	@RequestMapping("/admin/query{searchParam}/{index}")
 	public String queryAll(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
@@ -186,6 +182,7 @@ public class AdminController {
 
 	/**
 	 * Controlador para cambiar status de Administrador a Activo
+	 * @RequestMapping("/admin/activate/{idAd}")
 	 * */
 	@RequestMapping("/admin/activate/{idAd}")
 	public String activateAccount(HttpSession session, RedirectAttributes ra,  
@@ -200,7 +197,11 @@ public class AdminController {
 		return "redirect:/admin/queryall/1";
 	}
 	
-	
+
+	/**
+	 * Controlador actualizar un administrador en específico
+	 * @RequestMapping("/admin/update/{idAd}")
+	 * */
 	@RequestMapping("/admin/update/{idAd}")
 	public String update(Model model, @PathVariable("idAd") int idAd,
 			HttpSession session) {
@@ -251,6 +252,7 @@ public class AdminController {
 	
 	/**
 	 * Controlador para cambiar status de Administrador a Borrado
+	 * @RequestMapping("/admin/delete/{idAd}")
 	 * */
 	@RequestMapping("/admin/delete/{idAd}")
 	public String delete(HttpSession session, RedirectAttributes ra,  
@@ -268,6 +270,7 @@ public class AdminController {
 	
 	/**
 	 * Paginación como resultado de la búsqueda
+	 * @RequestMapping(value="/admin/search/{index}")
 	 * */
 	@RequestMapping(value="/admin/search/{index}")
 	public String searchPages(@PathVariable("index") int index,
@@ -298,8 +301,8 @@ public class AdminController {
 	
 	
 	/**
-	 * Controlador para mostrar los resultados de la búsqueda de un
-	 * administador
+	 * Controlador para mostrar los resultados de la búsqueda de un administador
+	 * @RequestMapping(value="/admin/search", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/admin/search", method=RequestMethod.POST)
 	public String search(@RequestParam("busqueda") String  busqueda,
@@ -347,6 +350,7 @@ public class AdminController {
 
 	/**
 	 * Vista para una vez creada la cuenta, capturar contraseña 
+	 * @RequestMapping("/adminaccount/{idAd}/account/password")
 	 * */
 	@RequestMapping("/adminaccount/{idAd}/account/password")
 	public String inputPassword(HttpSession session, Model model,  
@@ -367,6 +371,7 @@ public class AdminController {
 	
 	/**
 	 * Controlador para guardar contraseña y activar la cuenta de Administrador
+	 * @RequestMapping("/adminaccount/confirm")
 	 * */
 	@RequestMapping("/adminaccount/confirm")
 	public String confirmAccount(Model model, @RequestParam("password") String rawPassword, 
@@ -389,6 +394,7 @@ public class AdminController {
 	
 	/**
 	 * Servidor JSON para búsqueda de Administradores con statusAd="Activo"
+	 * @RequestMapping(value="/json/search/admin", produces="application/json")
 	 * */
 	@RequestMapping(value="/json/search/admin", produces="application/json")
 	@ResponseBody

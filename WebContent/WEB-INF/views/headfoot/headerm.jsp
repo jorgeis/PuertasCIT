@@ -73,16 +73,15 @@
 													<li><a href="#">Gratuito</a></li>
 													<li><a href="#">Individual</a></li>
 													<li><a href="#">Empresarial</a></li>
+													<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
 												</ul>
 											</li>
-											<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
 											
-											<!-- Menú disponible si estas autenticado como CLiente (REVISAR) -->
+											<!-- Menú disponible si estas autenticado como Cliente -->
 											<sec:authorize access="hasRole('ROLE_CLIENT')">
 												<li>
 												<a href="" class="arrow">Cliente</a>
 												<ul>
-													<li><a href="#">XXXXXXXXXX</a></li>
 													<li>
 														<span class="arrow">Administrar</span>
 														<ul>
@@ -102,8 +101,29 @@
 											</sec:authorize>
 											
 											
-											
-											<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Notificaciones</a></li>
+											<!-- Menú disponible si estas autenticado como Cliente -->
+<%-- 											<sec:authorize access="hasRole('ROLE_ADMIN')"> --%>
+											<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_ROOT')">
+												<li>
+												<a href="" class="arrow">Administrador</a>
+												<ul>
+													<li>
+														<span class="arrow">Notificaciones</span>
+														<ul>
+															<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Administrar</a></li>
+														</ul>
+													</li>
+													<li>
+														<span class="arrow">Administradores</span>
+														<ul>
+															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar todos</a></li>
+															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar pendientes</a></li>
+															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar borrados</a></li>
+														</ul>
+													</li>
+												</ul>
+											</li>
+											</sec:authorize>
 											
 											<!-- Mostrar nombre de usuario si inició sesión automáticamente -->
 											<sec:authorize access="isRememberMe()">

@@ -24,7 +24,8 @@ public interface AdminRepository extends JpaRepository<Admin, Integer>{
 			+ "ORDER BY idPer ASC ",
 //			+ "\n#pageable\n", 
 		countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+				+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusAd='Activo'"
+				+ "ORDER BY idPer ASC", 
 		nativeQuery = true)
 	public List<Admin> findByFullNameLikeAndStatusActivo(String fullName);
 	
@@ -35,7 +36,8 @@ public interface AdminRepository extends JpaRepository<Admin, Integer>{
 				+ "ORDER BY idPer ASC "
 				+ "\n#pageable\n", 
 			countQuery = "SELECT COUNT(*) FROM Admin WHERE idPer IN (SELECT idPer FROM (SELECT idPer, CONCAT(nombrePer, ' ', "
-					+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) ORDER BY idPer ASC", 
+					+ "apPatPer, ' ', apMatPer) AS Query1 FROM Persona) AS Query2 WHERE Query1 LIKE %?1%) AND statusAd='Activo'"
+					+ "ORDER BY idPer ASC", 
 			nativeQuery = true)
 		public Page<Admin> findByFullNameLikeAndStatusActivoPage(String fullName, Pageable pageable);
 }

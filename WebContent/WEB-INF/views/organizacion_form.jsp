@@ -134,7 +134,7 @@ persistIdCli
 <!-- Article - Formulario -->
 <article class="featured">
 
-	<input type="hidden" id="path" value=${pageContext.request.contextPath} />
+	<input type="hidden" id="path" value="${pageContext.request.contextPath}" />
 	
 	<sf:form method="post" id="valid"
 		action="${pageContext.request.contextPath}/orgsave"
