@@ -26,7 +26,7 @@ public class MailManager {
 	public void sendEmailConfirmacion(String destino, String urlActivacion) {
 		MimeMessage mime = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
 			helper.setSubject("Activa tu cuenta ");
@@ -49,7 +49,7 @@ public class MailManager {
 	public boolean sendPasswordResetEmail(String destino, String url) {
 		MimeMessage mime = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
 			helper.setSubject("Cambio de contraseña");
@@ -75,7 +75,7 @@ public class MailManager {
 	public boolean sendEmailContacto(String nombre, String correo, String comentario) {
 		MimeMessage mime = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 			helper.setFrom(correoEmisor);
 			helper.setTo("contacto@novellius.com");
 			helper.setSubject("Has recibido un nuevo correo de contacto");
@@ -103,7 +103,7 @@ public class MailManager {
 	public boolean sendEmailInfo(String destino, String asunto, String mensaje) {
 		MimeMessage mime = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
 			helper.setSubject(asunto);
@@ -128,7 +128,7 @@ public class MailManager {
 	public boolean sendOrgMemberInvite(String destino, String url, String nombreOrg) {
 		MimeMessage mime = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 			helper.setFrom(correoEmisor);
 			helper.setTo(destino);
 			helper.setSubject("Invitación para ser miembro de " + nombreOrg);
@@ -150,5 +150,4 @@ public class MailManager {
 			return false;
 		}
 	}
-	
 }
