@@ -15,12 +15,14 @@
 	</bean>
 	<context:component-scan base-package="com.citnova.sca.controller"></context:component-scan>
 
-<!-- 	<mvc:annotation-driven></mvc:annotation-driven> -->
-<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-    <property name="favorPathExtension" value="false" />
-</bean>
-<mvc:annotation-driven content-negotiation-manager="contentNegotiationManager"/>
-	
+	<!-- <mvc:annotation-driven></mvc:annotation-driven> -->
+	<bean id="contentNegotiationManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="favorPathExtension" value="false" />
+	</bean>
+	<mvc:annotation-driven
+		content-negotiation-manager="contentNegotiationManager" />
+
 	<mvc:resources location="/resources/" mapping="/res/**" />
 
 	<!-- ======================== Habilitar anotaciones en paquete util ======================== -->
@@ -30,17 +32,36 @@
 
 	<!-- ======================== Envío de emails ======================== -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="mail.novellius.com" />
-		<property name="port" value="26" />
-		<property name="username" value="test@novellius.com" />
-		<property name="password" value="azteca777." />
+		<property name="host" value="smtp.terra.com" />
+		<property name="port" value="587" />
+		<property name="username" value="edgar3345@terra.com" />
+		<property name="password" value="abc123abc" />
 
 		<property name="javaMailProperties">
 			<props>
+				<!-- Use SMTP-AUTH to authenticate to SMTP server -->
 				<prop key="mail.smtp.auth">true</prop>
+				<!-- Use TLS to encrypt communication with SMTP server -->
+				<prop key="mail.smtp.starttls.enable">true</prop>
 			</props>
 		</property>
 	</bean>
+
+
+
+
+	<!-- <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"> -->
+	<!-- <property name="host" value="mail.novellius.com" /> -->
+	<!-- <property name="port" value="26" /> -->
+	<!-- <property name="username" value="test@novellius.com" /> -->
+	<!-- <property name="password" value="azteca777." /> -->
+
+	<!-- <property name="javaMailProperties"> -->
+	<!-- <props> -->
+	<!-- <prop key="mail.smtp.auth">true</prop> -->
+	<!-- </props> -->
+	<!-- </property> -->
+	<!-- </bean> -->
 
 	<!-- ======================== Bundle Message Source ======================== -->
 	<bean id="messageSource"

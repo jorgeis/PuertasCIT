@@ -34,16 +34,11 @@
 		<h1>${pageTitle}</h1>
 		<h2>${result}</h2>
 		<h2>${message1}</h2>
-		<h2>${param1}</h2>
 		<input type="hidden" name="param1" value="${param1}" />
+		<input type="hidden" name="param2" value="${param2}" />
 		<button type="submit">${confirmButton}</button>
 	</form>
 </article>
-
-
-
-
-
 
 <c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />
 <c:import url="/WEB-INF/views/headfoot/footerm.jsp" />

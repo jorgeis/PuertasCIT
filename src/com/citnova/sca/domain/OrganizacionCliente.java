@@ -1,5 +1,7 @@
 package com.citnova.sca.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.EmbeddedId;
@@ -21,15 +23,17 @@ public class OrganizacionCliente {
 	private String statusOC;
 	private String cargoOC;
 	private String passOC;
+	private Timestamp fhCreaOC;
 	
 	public OrganizacionCliente() {
 		
 	}
 
-	public OrganizacionCliente(String statusOC, String cargoOC, String passOC) {
+	public OrganizacionCliente(String statusOC, String cargoOC, String passOC, Timestamp fhCreaOC) {
 		this.statusOC = statusOC;
 		this.cargoOC = cargoOC;
 		this.passOC = passOC;
+		this.fhCreaOC = fhCreaOC;
 	}
 
 	@EmbeddedId
@@ -83,9 +87,17 @@ public class OrganizacionCliente {
 		this.passOC = passOC;
 	}
 
+	public Timestamp getFhCreaOC() {
+		return fhCreaOC;
+	}
+
+	public void setFhCreaOC(Timestamp fhCreaOC) {
+		this.fhCreaOC = fhCreaOC;
+	}
+
 	@Override
 	public String toString() {
 		return "OrganizacionCliente [pk=" + pk + ", statusOC=" + statusOC + ", cargoOC=" + cargoOC + ", passOC="
-				+ passOC + "]";
+				+ passOC + ", fhCreaOC=" + fhCreaOC +"]";
 	}
 }

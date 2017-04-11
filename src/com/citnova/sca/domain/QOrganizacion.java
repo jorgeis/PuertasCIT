@@ -7,7 +7,6 @@ import com.mysema.query.types.path.*;
 import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
 import com.mysema.query.types.Path;
-import com.mysema.query.types.path.PathInits;
 
 
 /**
@@ -41,6 +40,8 @@ public class QOrganizacion extends EntityPathBase<Organizacion> {
     public final StringPath rfcOrg = createString("rfcOrg");
 
     public final QSectorEmp sectorEmp;
+    
+    public final DateTimePath<java.sql.Timestamp> fhCreaOrg = createDateTime("fhCreaOrg", java.sql.Timestamp.class);
 
     public final StringPath siglasOrg = createString("siglasOrg");
 

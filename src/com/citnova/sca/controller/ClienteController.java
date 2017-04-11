@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -76,7 +77,6 @@ public class ClienteController {
 	
 	/**
 	 * Mostrar formulario de registro de cliente
-	 * 
 	 * @RequestMapping("/clienteform")
 	 * */
 	@RequestMapping("/clienteform")
@@ -112,7 +112,6 @@ public class ClienteController {
 	
 	/**
 	 * Guardar nuevo cliente en BD
-	 * 
 	 * @RequestMapping(value="/clientesave", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/clientesave", method=RequestMethod.POST)
@@ -226,20 +225,23 @@ public class ClienteController {
 				return "/cliente_form";
 			}
 			
-			// Revisa una la persona ya existe con el mismo CURP
-			Persona persona3 = personaService.findByCurpPer(persona.getCurpPer());
-			if(persona3 != null){
-				System.out.println("Persona con el mismo curp: " + persona3.getCurpPer());
-				model.addAttribute(Constants.RESULT, messageSource.getMessage("client_curp_exists", null, Locale.getDefault()));
+			// Revisa si existe un cliente con el mismo CURP
+			Cliente cliente2 = clienteService.findByCurpPer(persona.getCurpPer());
+			if(cliente2 != null){
+				System.out.println("Persona con el mismo curp: " + cliente2.getPersona().getCurpPer());
+				
+				model.addAttribute(Constants.RESULT, messageSource.getMessage("client_curp_exists", 
+						new Object[]{cliente2.getPersona().getCurpPer()}, Locale.getDefault()));
 				
 				// Comportamiento cuando un cliente responsable de empresa registra a un cliente que ya existe en sistema
 				// (con el mismo CURP) como miembro de la empresa.
 				if(idOrg != 0) {
 					model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_send_member_email", null, Locale.getDefault()));
-					model.addAttribute(Constants.CUSTOM_MAPPING, "/orgjoin");
+					model.addAttribute(Constants.CUSTOM_MAPPING, "/org/sendinvite");
 					model.addAttribute(Constants.CONFIRM_BUTTON, "Enviar solicitud");
 					model.addAttribute(Constants.PAGE_TITLE, "Registro de Cliente");
 					model.addAttribute(Constants.PARAM1, persona.getCurpPer());
+					model.addAttribute(Constants.PARAM2, idOrg);
 				}
 
 				
@@ -389,11 +391,9 @@ public class ClienteController {
 	
 	/**
 	 * Controlador para realizar la búsqueda de clientes en función del parámetro ingresado.
-	 * 
 	 *  - queryall: Devuelve todos los administradores con statusAd = 'Activo'
 	 *  - querydeleted: Devuelve todos los administradores con statusAd = 'Borrado'
 	 *  - querypending: Devuelve todos los administradores con statusAd = 'Activar'
-	 *  
 	 *  @RequestMapping("/cliente/query{searchParam}/{index}")
 	 * */
 	@RequestMapping("/cliente/query{searchParam}/{index}")
@@ -438,6 +438,7 @@ public class ClienteController {
 	
 	/**
 	 * Actualizar un cliente en específico
+	 * @RequestMapping("/cliente/update/{idCli}")
 	 * */
 	@RequestMapping("/cliente/update/{idCli}")
 	public String update(Model model, @PathVariable("idCli") int idCli) {
@@ -517,7 +518,6 @@ public class ClienteController {
 	
 	/**
 	 * Actualizar el cliente identificado actualmente en el sistema
-	 * 
 	 * @RequestMapping("/cliente/update")
 	 * */
 	@RequestMapping("/cliente/update")
@@ -598,7 +598,6 @@ public class ClienteController {
 	
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado
-	 * 
 	 * @RequestMapping("/cliente/delete/{idCli}")
 	 * */
 	@RequestMapping("/cliente/delete/{idCli}")
@@ -617,7 +616,6 @@ public class ClienteController {
 
 	/**
 	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente a Borrado en cuenta propia
-	 * 
 	 * @RequestMapping("/cliente/deletesc")
 	 * */
 	@RequestMapping("/cliente/deletesc")
@@ -634,7 +632,6 @@ public class ClienteController {
 
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado en cuenta propia
-	 * 
 	 * @RequestMapping("/cliente/delete")
 	 * */
 	@RequestMapping("/cliente/delete")
@@ -654,7 +651,6 @@ public class ClienteController {
 	
 	/**
 	 * Confirmación de cuenta de cliente, enviado desde la URL en el email de confirmación de cuenta
-	 * 
 	 * @RequestMapping("/clienteaccount/{idCli}/confirm")
 	 * */
 	@RequestMapping("/clienteaccount/{idCli}/confirm")
@@ -687,7 +683,6 @@ public class ClienteController {
 	
 	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un cliente
-	 * 
 	 * @RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
 	 * */
 	@RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
@@ -727,7 +722,6 @@ public class ClienteController {
 	
 	/**
 	 * Paginación como resultado de la búsqueda de clientes
-	 * 
 	 * @RequestMapping(value="/cliente/search/{index}")
 	 * */
 	@RequestMapping(value="/cliente/search/{index}")
@@ -760,7 +754,6 @@ public class ClienteController {
 	
 	/**
 	 * Controlador para cambiar status de Cliente a Activo
-	 * 
 	 * @RequestMapping("/cliente/activate/{idCli}")
 	 * */
 	@RequestMapping("/cliente/activate/{idCli}")
@@ -782,7 +775,6 @@ public class ClienteController {
 	/**
 	 * Vista para una vez creada la cuenta, capturar contraseña (para cuando se da de alta un nuevo cliente
 	 * por parte de responsable de empresa)
-	 * 
 	 * @RequestMapping("/clienteaccount/{idCli}/account/password")
 	 * */
 	@RequestMapping("/clienteaccount/{idCli}/account/password")
@@ -805,7 +797,6 @@ public class ClienteController {
 	/**
 	 * Controlador para guardar contraseña y activar la cuenta de Cliente (para cuando se da de alta un nuevo cliente
 	 * por parte de responsable de empresa)
-	 * 
 	 * @RequestMapping("/clienteaccount/confirm")
 	 * */
 	@RequestMapping("/clienteaccount/confirm")
@@ -827,9 +818,10 @@ public class ClienteController {
 	}
 	
 	
+	
+	
 	/**
 	 * Servidor JSON para búsqueda de Municipios
-	 * 
 	 * @RequestMapping(value="/json/search/mun", produces="application/json")
 	 * */
 	@RequestMapping(value="/json/search/mun", produces="application/json")
@@ -856,7 +848,6 @@ public class ClienteController {
 	
 	/**
 	 * Servidor JSON para búsqueda de Clientes con statusCli='Activo'
-	 * 
 	 * @RequestMapping(value="/json/search/cliente", produces="application/json")
 	 * */
 	@RequestMapping(value="/json/search/cliente", produces="application/json")

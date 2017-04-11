@@ -1,7 +1,9 @@
 package com.citnova.sca.controller;
 
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +32,6 @@ import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.OrganizacionDireccionWrapper;
-import com.citnova.sca.domain.PersonaClienteDireccionWrapper;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
@@ -40,37 +41,37 @@ import com.citnova.sca.service.OrganizacionService;
 import com.citnova.sca.service.SectorEmpService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.CurrentSessionUserRetriever;
+import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.PassGen;
+import com.citnova.sca.util.Util;
 
 @Controller
 public class OrganizacionController {
 	
 	@Autowired
 	private EstadoService estadoService;
-	
 	@Autowired
 	private SectorEmpService sectorEmpService;
-	
 	@Autowired
 	private ClienteService clienteService;
-	
 	@Autowired
 	private OrganizacionClienteService organizacionClienteService;
-	
 	@Autowired
 	private OrganizacionService organizacionService;
-	
 	@Autowired
-	MunicipioService municipioService;
-	
+	private MunicipioService municipioService;
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private CurrentSessionUserRetriever currentUser;
-
+	@Autowired
+	private MailManager mailManager;
+	@Autowired
+	private Util util;
+	
 	/**
 	 * Formulario de alta de organización
+	 * @RequestMapping(value="/orgform")
 	 * */
 	@RequestMapping(value="/orgform")
 	public String showOrganizacionForm(Model model) {
@@ -91,6 +92,7 @@ public class OrganizacionController {
 	
 	/**
 	 * Guardar nueva organización en BD
+	 * @RequestMapping(value="/orgsave", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/orgsave", method=RequestMethod.POST)
 	@Transactional(readOnly = true)
@@ -116,7 +118,8 @@ public class OrganizacionController {
 					organizacionDireccionWrapper.getNumTrabajadoresOrg(),
 					organizacionDireccionWrapper.getTelefonoOrg(),
 					organizacionDireccionWrapper.getWebOrg(),
-					organizacionDireccionWrapper.getGiroOrg());
+					organizacionDireccionWrapper.getGiroOrg(), 
+					new Timestamp(new Date().getTime()));
 			
 			Direccion direccion = new Direccion(organizacionDireccionWrapper.getCalleDir(),
 					organizacionDireccionWrapper.getNumExtDir(),
@@ -172,6 +175,7 @@ public class OrganizacionController {
 			orgCli.setCargoOC("Responsable");
 			orgCli.setPassOC(passOC);
 			orgCli.setStatusOC("Activo");
+			orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
 			
 			organizacionClienteService.save(orgCli);
 				
@@ -214,6 +218,7 @@ public class OrganizacionController {
 	
 	/**
 	 * Actualizar organización  en específico
+	 * @RequestMapping(value="/org/update", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/org/update", method=RequestMethod.POST)
 	public String update(Model model, Principal principal, 
@@ -242,7 +247,7 @@ public class OrganizacionController {
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
 		
-		int idCli = currentUser.getIdCliente(principal);
+		//int idCli = currentUser.getIdCliente(principal);
 		OrganizacionDireccionWrapper organizacionDireccionWrapper = new OrganizacionDireccionWrapper();
 		
 		Organizacion organizacion = organizacionService.findOne(idOrg);
@@ -281,6 +286,10 @@ public class OrganizacionController {
 	}
 	
 	
+	/**
+	 * Consultar los miembros que pertenecen a una organización en específico
+	 * @RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
+	 * */
 	@RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
 	public String viewOrg(Model model, Principal principal, RedirectAttributes ra,
 			@RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
@@ -325,10 +334,8 @@ public class OrganizacionController {
 	
 	/**
 	 * Controlador para consulta de las organizaciones dadas de alta por el cliente identificado en el sistema
+	 * @RequestMapping("/org/queryown/{index}")
 	 */
-	// Consulta creada, especificar parámetros de busqueda con Principal en findByorganizacionClienteSet_PkClienteIdCli
-	// junto con index de paginación
-	
 	@RequestMapping("/org/queryown/{index}")
 	public String queryAll(Model model,
 			HttpSession session, Principal principal, @PathVariable("index") int index) {
@@ -364,7 +371,113 @@ public class OrganizacionController {
 	
 	
 	/**
+	 * Controlador para enviar correo electrónico de invitación a unirse a empresa.
+	 @RequestMapping("/org/sendinvite")
+	 * */
+	@RequestMapping("/org/sendinvite")
+	public String sendInviteMail(@RequestParam("param1") String curpPer, @RequestParam("param2") int idOrg,
+			HttpServletRequest request, Model model, RedirectAttributes ra) {
+		
+		// Revisar si el CURP tiene una o más cuentas de usuario asociada
+		
+		Cliente cliente = clienteService.findByCurpPer(curpPer);
+		if(cliente != null) {
+			
+			
+			
+			
+			
+			// Se almacena la relación entre la organización y la persona invitada, con un estado pendiente de aprobar.
+						
+			
+				
+			Organizacion organizacion = organizacionService.findOne(idOrg);
+			
+			// Genera un nuevo pass para passOC
+			List<Cliente> clienteList = clienteService.findAll();
+			List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
+			boolean passUsed = false;
+			String passOC;
+			do {
+				passUsed = false;
+				passOC = PassGen.generatePass();
+				System.out.println("\nPass generado: " + passOC);
+				for(Cliente cli : clienteList) {
+		            if(passOC.equals(cli.getPassAreaCli())) {
+		            	System.out.println("La contraseña ya existe");
+		            	passUsed = true;
+		            }
+		        }
+				for(OrganizacionCliente orgClie : orgCliList) {
+		            if(passOC.equals(orgClie.getPassOC())) {
+		            	System.out.println("La contraseña ya existe");
+		            	passUsed = true;
+		            }
+		        }
+				System.out.println(passUsed);
+			}
+			while (passUsed == true);
+			
+			System.out.println("El objeto cliente ingresado y guardado: " + cliente);
+			System.out.println("La organización de idOrgParam es: " + organizacion);
+			OrganizacionCliente orgCli = new OrganizacionCliente();
+			orgCli.setOrganizacion(organizacion);
+			orgCli.setCliente(cliente);
+			orgCli.setCargoOC("Miembro");
+			orgCli.setPassOC(passOC);
+			orgCli.setStatusOC("Pendiente");
+			orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
+			
+			organizacionClienteService.save(orgCli);
+				
+			String email = cliente.getPersona().getEmailPer();
+			// Enviar correo electrónico de invitación para ser miembro de una organización
+			mailManager.sendOrgMemberInvite(email, 
+					util.getRootUrl(request, "/org/sendinvite")
+							.concat("/org/")
+							.concat(email)
+							.concat("/invite/confirm"), organizacionService.findOne(idOrg).getNombreOrg()
+						);
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("invite_mail_sent", null, Locale.getDefault()));
+		}
+		else{
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("invite_account_not_exists", null, Locale.getDefault()));
+		}
+		return "redirect:/confirmscreen";
+	}
+	
+	
+	/**
+	 * Confirmación de asociación de cliente existente a organización, enviado desde la URL en el email de confirmación de cuenta
+	 * @RequestMapping("/clienteaccount/{idCli}/confirm")
+	 * */
+	@RequestMapping("/org/{emailCli}/{idOrg}/invite/confirm")
+	public String inputPassword(HttpSession session, Model model,  
+			@PathVariable("emailCli") String emailCli, @PathVariable("idOrg") int idOrg, 
+			RedirectAttributes ra) {
+		
+		Cliente cliente = clienteService.findByEmail(emailCli);
+		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, cliente.getIdCli());
+		
+		if(orgCli.getStatusOC().equals(Constants.STATUS_PENDING)) {
+			
+			orgCli.setStatusOC(Constants.STATUS_MUST_ACTIVATE);
+			organizacionClienteService.save(orgCli);
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_confirmed", 
+					new Object[]{organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+			return "redirect:/confirmscreen";
+		}
+		
+		else{
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_was_confirmed", null, Locale.getDefault()));
+			return "redirect:/confirmscreen";
+		}
+	}
+	
+	
+	/**
 	 * Servidor JSON para búsqueda de Organizaciones
+	 * @RequestMapping(value="/json/search/siglasorg", produces="application/json")
 	 * */
 	@RequestMapping(value="/json/search/siglasorg", produces="application/json")
 	@ResponseBody

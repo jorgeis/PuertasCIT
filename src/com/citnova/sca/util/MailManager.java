@@ -16,7 +16,8 @@ public class MailManager {
 	 * Cambiar por correo real, configurar en dispatcher-servlet
 	 * 
 	 * */
-	private static final String correoEmisor = "test@novellius.com";
+//	private static final String correoEmisor = "test@novellius.com";
+	private static final String correoEmisor = "edgar3345@terra.com";
 	
 	@Autowired
 	private JavaMailSender mailSender;
@@ -123,5 +124,31 @@ public class MailManager {
 		}
 	}
 
+	
+	public boolean sendOrgMemberInvite(String destino, String url, String nombreOrg) {
+		MimeMessage mime = mailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+			helper.setFrom(correoEmisor);
+			helper.setTo(destino);
+			helper.setSubject("Invitación para ser miembro de " + nombreOrg);
+			String htmlText = "<h1>Has sido invitado </h1>"
+					+ "<br/>"
+					+ nombreOrg + " te ha enviado una invitación para disfrutar de los beneficios del Parque Científico Tecnológico."
+					+ "<br />Si deseas aceptar la invitación: "
+					+ "<a href=\"" + url + "\">Haz click aquí</a>";
+			helper.setText(htmlText, true);
+			mailSender.send(mime);
+			return true;
+		}
+		catch (MailException e) {
+			e.printStackTrace();
+			return false;
+		}
+		catch (MessagingException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 }

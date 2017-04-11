@@ -29,45 +29,60 @@ public class IndexController {
 	
 	@Autowired
 	private ClienteService clienteService;
-	
 	@Autowired
 	private AdminService adminService;
-	
 	@Autowired
 	private MailManager mailManager;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
 	@Autowired
 	private Util util;
-
+	
+	/**
+	 * Controlador para página principal 
+	 * @RequestMapping("/")
+	 * */
 	@RequestMapping("/")
 	public String showIndex() {
-		//System.out.println(adminService.findByEmailPer("juanperez@gmail.com"));
 		return "index";
 	}
 	
+
+	/**
+	 * Controlador para pantalla de acceso al sistema 
+	 * @RequestMapping("/login")
+	 * */
 	@RequestMapping("/login")
 	public String login() {
 		return "login";
 	}
 	
+	
+	/**
+	 * Controlador para pantalla de cierre de sesión
+	 * @RequestMapping("/logout")
+	 * */
 	@RequestMapping("/logout")
 	public String logout() {
 		return "/";
 	}
 
+	
+	/**
+	 * Controlador para reestablecer contraseña
+	 * @RequestMapping("/account/forgot")
+	 * */
 	@RequestMapping("/account/forgot")
 	public String forgot() {
 		return "account_mail";
 	}
 	
+	
 	/**
 	 * Controlador para enviar correo electrónico de recuperación de contraseña 
+	 * @RequestMapping("/account/forgot/send")
 	 * */
 	@RequestMapping("/account/forgot/send")
 	public String sendMail(@RequestParam("email") String email,
@@ -105,6 +120,7 @@ public class IndexController {
 
 	/**
 	 * Controlador para mostrar la vista para reestablecer la contraseña
+	 * @RequestMapping("/account/{email}/recovery")
 	 * */
 	@RequestMapping("/account/{email}/recovery")
 	public String restorePassword(
@@ -145,6 +161,7 @@ public class IndexController {
 	
 	/**
 	 * Controlador para almacenar nueva contraseña
+	 * @RequestMapping("/account/confirm")
 	 * */
 	@RequestMapping("/account/confirm")
 	public String accountConfirm(
@@ -176,6 +193,11 @@ public class IndexController {
 		}
 	}
 	
+	
+	/**
+	 * Controlador para pantalla mostrada después de iniciar sesión dando click en el vínculo de inicio de sesión
+	 @RequestMapping("/afterlogin")
+	 * */
 	@RequestMapping("/afterlogin")
 	public String showAfterLogin(Model model) {
 		
@@ -183,6 +205,11 @@ public class IndexController {
 		return "notifications";
 	}
 	
+
+	/**
+	 * Controlador para pantalla de confirmación, utilizada para mostrar mensajes despés de realizar alguna acción
+	 @RequestMapping("/confirmscreen")
+	 * */
 	@RequestMapping("/confirmscreen")
 	public String confirmScreen(Model model) {
 		

@@ -25,4 +25,8 @@ public class OrganizacionClienteService {
 	public List<OrganizacionCliente> findByIdOrg(int idOrg) {
 		return organizacionClienteRepository.findByPkOrganizacionIdOrg(idOrg);
 	}
+	
+	public OrganizacionCliente findOneByIdOrgAndIdCli(int idOrg, int idCli) {
+		return organizacionClienteRepository.findByPkOrganizacionIdOrgAndPkClienteIdCli(idOrg, idCli);
+	}
 }

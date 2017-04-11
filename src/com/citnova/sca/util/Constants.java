@@ -6,9 +6,11 @@ public class Constants {
 	public static final String STATUS_ACTIVE = "Activo";
 	public static final String STATUS_DELETED = "Borrado";
 	public static final String STATUS_MUST_ACTIVATE = "Activar";
+	public static final String STATUS_PENDING = "Pendiente";
 	public static final String RESULT = "result";
 	public static final String MESSAGE1 = "message1";
 	public static final String PARAM1 = "param1";
+	public static final String PARAM2 = "param2";
 	public static final String ID_AD = "ID_AD";
 	public static final int ITEMS_PER_PAGE = 2;
 	public static final String SHOW_PAGES = "showPages";

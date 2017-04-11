@@ -1,5 +1,6 @@
 package com.citnova.sca.domain;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ public class Organizacion {
 	private String telefonoOrg;
 	private String webOrg;
 	private String giroOrg;
+	private Timestamp fhCreaOrg;
 	
 	@ManyToOne
 	@JoinColumn(name = "idDir")
@@ -53,7 +55,7 @@ public class Organizacion {
 	}
 
 	public Organizacion(String nombreOrg, String siglasOrg, String rfcOrg, int numTrabajadoresOrg, String telefonoOrg,
-			String webOrg, String giroOrg) {
+			String webOrg, String giroOrg, Timestamp fhCreaOrg) {
 		this.nombreOrg = nombreOrg;
 		this.siglasOrg = siglasOrg;
 		this.rfcOrg = rfcOrg;
@@ -61,6 +63,7 @@ public class Organizacion {
 		this.telefonoOrg = telefonoOrg;
 		this.webOrg = webOrg;
 		this.giroOrg = giroOrg;
+		this.fhCreaOrg = fhCreaOrg;
 	}
 
 	public int getIdOrg() {
@@ -167,10 +170,19 @@ public class Organizacion {
 		this.membresiaOrganizacionSet = membresiaOrganizacionSet;
 	}
 
+	public Timestamp getFhCreaOrg() {
+		return fhCreaOrg;
+	}
+
+	public void setFhCreaOrg(Timestamp fhCreaOrg) {
+		this.fhCreaOrg = fhCreaOrg;
+	}
+
 	@Override
 	public String toString() {
 		return "Organizacion [idOrg=" + idOrg + ", nombreOrg=" + nombreOrg + ", siglasOrg=" + siglasOrg + ", rfcOrg="
 				+ rfcOrg + ", numTrabajadoresOrg=" + numTrabajadoresOrg + ", telefonoOrg=" + telefonoOrg + ", webOrg="
-				+ webOrg + ", giroOrg=" + giroOrg + ", direccion=" + direccion + ", sectorEmp=" + sectorEmp + "]";
-	}	
+				+ webOrg + ", giroOrg=" + giroOrg + ", fhCreaOrg=" + fhCreaOrg + ", direccion=" + direccion
+				+ ", sectorEmp=" + sectorEmp + "]";
+	}
 }

@@ -58,6 +58,21 @@ public class ClienteService {
 				.uniqueResult(cliente);
 	}
 	
+	
+	public Cliente findByCurpPer(String curpPer) {
+		QPersona persona = QPersona.persona;
+		QCliente cliente = QCliente.cliente;
+		
+		return new JPAQuery(entityManager)
+				.from(cliente)
+				.join(cliente.persona, persona)
+				.where(
+						persona.curpPer.eq(curpPer)
+						)
+				.uniqueResult(cliente);
+	}
+	
+	
 	public void saveOrUpdate(Cliente cliente, Persona persona, Direccion direccion, Municipio municipio){
 		direccion.setMunicipio(municipio);
 		direccionRepository.save(direccion);
