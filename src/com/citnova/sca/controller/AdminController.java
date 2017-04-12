@@ -217,7 +217,7 @@ public class AdminController {
 		admin.setStatusAd(Constants.STATUS_ACTIVE);
 		adminService.saveOrUpdate(admin, admin.getPersona());
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_activated", null, Locale.getDefault()));
+		ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_activated", null, Locale.getDefault()));
 		
 		return "redirect:/admin/queryall/1";
 	}
@@ -287,7 +287,7 @@ public class AdminController {
 		admin.setStatusAd(Constants.STATUS_DELETED);
 		adminService.saveOrUpdate(admin, admin.getPersona());
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
+		ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_deleted", null, Locale.getDefault()));
 		
 		return "redirect:/admin/queryall/1";
 	}
@@ -343,6 +343,8 @@ public class AdminController {
 		Page<Admin> page = adminService.findByFullNameLikeAndStatusActivoPage(0, "%" + busqueda + "%");
 		System.out.println("/admin/search ***** " + page.getTotalElements());
 		
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
+		
 		if(page.getTotalElements() > 0){
 			
 			int currentIndex = page.getNumber() + 1;
@@ -359,7 +361,6 @@ public class AdminController {
 			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
 			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
-			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
 			model.addAttribute("busqueda", busqueda);
@@ -367,7 +368,7 @@ public class AdminController {
 			return "admin_query";
 		}
 		else{
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
 				return "redirect:/admin/queryall/1";

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.citnova.sca.domain.Admin;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
@@ -107,6 +106,17 @@ public class ClienteController {
 		model.addAttribute("idOrgParam", idOrg);
 		
 		return "cliente_form";
+	}
+
+	
+	/**
+	 * Controlador para mostrar formulario búsqueda de clientes activos
+	 * @RequestMapping("/cliente/searchform")
+	 * */
+	@RequestMapping("/cliente/searchform")
+	public String showClienteSearch(Model model) {
+		
+		return "cliente_search";
 	}
 	
 	
@@ -254,6 +264,8 @@ public class ClienteController {
 					model.addAttribute(Constants.PAGE_TITLE, "Registro de Cliente");
 				}
 				
+				
+				
 				return "/confirm";
 			}
 			
@@ -382,9 +394,9 @@ public class ClienteController {
 			municipio = municipioService.findByIdMun(personaClienteDireccionWrapper.getIdMun());
 			
 			clienteService.saveOrUpdate(cliente, persona, direccion, municipio);
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_updated", null, Locale.getDefault()));
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_updated", null, Locale.getDefault()));
 			
-			return "redirect:/confirmscreen";
+			return "redirect:/cliente/queryall/1";
 		}
 	}
 	
@@ -397,26 +409,28 @@ public class ClienteController {
 	 *  @RequestMapping("/cliente/query{searchParam}/{index}")
 	 * */
 	@RequestMapping("/cliente/query{searchParam}/{index}")
-	public String queryAll(Model model, @PathVariable("index") int index,  @PathVariable("searchParam") String searchParam,
+	public String queryCliente(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
 			HttpSession session) {
 		
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 		
 		if(searchParam.equals(null)) { searchParam = "all";}
 		Page<Cliente> page = null;
-		String returnParam = null;
 		
 		if(searchParam.equals("all")) {
 			page = clienteService.getPageByStatus(Constants.STATUS_ACTIVE, index - 1);
-			returnParam = "cliente_queryall";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_all", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("deleted")) {
 			page = clienteService.getPageByStatus(Constants.STATUS_DELETED, index - 1);
-			returnParam = "cliente_query";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_deleted", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("pending")) {
 			page = clienteService.getPageByStatus(Constants.STATUS_MUST_ACTIVATE, index - 1);
-			returnParam = "cliente_query";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_pending", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		
 		int currentIndex = page.getNumber() + 1;
@@ -433,8 +447,10 @@ public class ClienteController {
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
-		return returnParam;
+		return "cliente_query";
 	}
+	
+	
 	
 	/**
 	 * Actualizar un cliente en específico
@@ -513,6 +529,8 @@ public class ClienteController {
 		
 		return "cliente_form";
 	}
+	
+	
 	
 	
 	
@@ -596,6 +614,8 @@ public class ClienteController {
 	
 	
 	
+	
+	
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado
 	 * @RequestMapping("/cliente/delete/{idCli}")
@@ -608,12 +628,14 @@ public class ClienteController {
 		cliente.setStatusCli(Constants.STATUS_DELETED);
 		clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), cliente.getDireccion().getMunicipio());
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_deleted", null, Locale.getDefault()));
+		ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_deleted", null, Locale.getDefault()));
 		
 		return "redirect:/cliente/queryall/1";
 	}
 	
 
+	
+	
 	/**
 	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente a Borrado en cuenta propia
 	 * @RequestMapping("/cliente/deletesc")
@@ -630,6 +652,8 @@ public class ClienteController {
 	}
 	
 
+	
+	
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado en cuenta propia
 	 * @RequestMapping("/cliente/delete")
@@ -647,6 +671,8 @@ public class ClienteController {
 		
 		return "redirect:/logout";
 	}
+	
+	
 	
 	
 	/**
@@ -681,6 +707,8 @@ public class ClienteController {
 	}
 	
 	
+	
+	
 	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un cliente
 	 * @RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
@@ -692,6 +720,8 @@ public class ClienteController {
 		System.out.println("Parámetro de búsqueda: " + busqueda);
 
 		Page<Cliente> page = clienteService.findByFullNameLikeAndStatusActivoPage(0, busqueda);
+		
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_all", null, Locale.getDefault()));
 		
 		if(page.getTotalElements() > 0){
 			
@@ -710,14 +740,20 @@ public class ClienteController {
 			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 			
-			return "cliente_queryall";
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
+			model.addAttribute("busqueda", busqueda);
+			
+			return "cliente_query";
 		}
 		else{
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_not_found", 
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			return "redirect:/cliente/queryall/1";
 		}		
 	}
+	
+	
 	
 	
 	/**
@@ -734,6 +770,7 @@ public class ClienteController {
 		System.out.println("/cliente/search/" + index  + " ****** " + page.getTotalElements());
 		
 		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
+		String busqueda = (String) model.asMap().get("busqueda");
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -747,9 +784,17 @@ public class ClienteController {
 		
 		model.addAttribute(Constants.SHOW_PAGES, false);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_all", null, Locale.getDefault()));
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
+		model.addAttribute("busqueda", busqueda);
 		
-		return "cliente_queryall";
+		
+		
+		return "cliente_query";
 	}
+	
+	
 	
 	
 	/**
@@ -766,7 +811,7 @@ public class ClienteController {
 		cliente.setStatusCli(Constants.STATUS_ACTIVE);
 		clienteService.saveOrUpdate(cliente, cliente.getPersona(), cliente.getDireccion(), cliente.getDireccion().getMunicipio());
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_activated", null, Locale.getDefault()));
+		ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_activated", null, Locale.getDefault()));
 		
 		return "redirect:/cliente/queryall/1";
 	}
@@ -820,6 +865,8 @@ public class ClienteController {
 	
 	
 	
+	
+	
 	/**
 	 * Servidor JSON para búsqueda de Municipios
 	 * @RequestMapping(value="/json/search/mun", produces="application/json")
@@ -845,6 +892,8 @@ public class ClienteController {
 		return map;
 	}
 
+	
+	
 	
 	/**
 	 * Servidor JSON para búsqueda de Clientes con statusCli='Activo'

@@ -7,13 +7,13 @@
 <%@ page import="java.text.*"%>
 <%@ page session="true" %>
 
-
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
-<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
 
 <link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
 
@@ -21,8 +21,11 @@
 <script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
 <script>
 	jQuery(document).ready(function(){
-		jQuery(".confirm").on("click", function() {
+		jQuery(".confirmActivate").on("click", function() {
 	        return confirm("Este cambiará su estado a Activo. ¿Continuar?");
+	    });
+		jQuery(".confirmDelete").on("click", function() {
+	        return confirm("Si eliminas este elemento no se podrá recuperar. ¿Continuar?");
 	    });
 		var path = $("#path").val();
 		jQuery("#busqueda").autocomplete({
@@ -78,15 +81,15 @@
 						<td>${admin.rolAd}</td>
 						<td> 
 						
-						<!-- Compara el título de la página para saber que hipervínculos de acción mostrar -->
-						<c:if test="${pageTitle != 'Consultar Administradores Activos'}">
-  								<a class="confirm" href="<c:url value='/admin/activate/${admin.idAd}' />">Activar</a><br/>
+							<!-- Compara el título de la página para saber que hipervínculos de acción mostrar -->
+							<c:if test="${pageTitle != 'Consultar Administradores Activos'}">
+	  							<a class="confirmActivate" href="<c:url value='/admin/activate/${admin.idAd}' />">Activar</a><br/>
 							</c:if>
-							
-							
+								
+								
 							<c:if test="${pageTitle == 'Consultar Administradores Activos'}">
-  								<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
-								<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
+	 								<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
+								<a class="confirmDelete" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
 							</c:if>
 						</td>
 					</tr>

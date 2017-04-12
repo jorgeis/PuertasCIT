@@ -21,14 +21,17 @@
 		<script src='<c:url value = "/res/js/jquery.dropotron-1.1.js" />'></script>
 		<script src='<c:url value = "/res/js/jquery.slidertron-1.2.js" />'></script>
 		<script src='<c:url value = "/res/js/init.js" />'></script>
-		<noscript>
-			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core.css" />' />
-			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-desktop.css" />' />
-			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-1200px.css" />' />
-			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-noscript.css" />' />
-			<link rel="stylesheet" href='<c:url value = "/res/css/style.css" />' />
-			<link rel="stylesheet" href='<c:url value = "/res/css/style-desktop.css" />' />
-		</noscript>
+
+<!-- 		DESCOMENTAR!!!!!
+
+			<noscript> -->
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core.css" />' /> --%>
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-desktop.css" />' /> --%>
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-1200px.css" />' /> --%>
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-noscript.css" />' /> --%>
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/style.css" />' /> --%>
+<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/style-desktop.css" />' /> --%>
+<!-- 		</noscript> -->
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
 		<!--[if lte IE 7]><link rel="stylesheet" href="css/ie7.css" /><![endif]-->
 		
@@ -117,11 +120,20 @@
 													<li>
 														<span class="arrow">Administradores</span>
 														<ul>
-															<li><a href='<c:url value="/admin/form"/>'>Crear nuevo</a></li>
-															<li><a href='<c:url value="/admin/searchform"/>'>Buscar todos</a></li>
-															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar todos</a></li>
-															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar pendientes</a></li>
-															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar borrados</a></li>
+															<li><a href='<c:url value="/admin/form"/>'>Crear Nuevo</a></li>
+															<li><a href='<c:url value="/admin/searchform"/>'>Buscar Activos</a></li>
+															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar Activos</a></li>
+															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar Pendientes</a></li>
+															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar Borrados</a></li>
+														</ul>
+													</li>
+													<li>
+														<span class="arrow">Clientes</span>
+														<ul>
+															<li><a href='<c:url value="/cliente/searchform"/>'>Buscar Activos</a></li>
+															<li><a href='<c:url value="/cliente/queryall/1"/>'>Consultar Activos</a></li>
+															<li><a href='<c:url value="/cliente/querypending/1"/>'>Consultar Pendientes</a></li>
+															<li><a href='<c:url value="/cliente/querydeleted/1"/>'>Consultar Borrados</a></li>
 														</ul>
 													</li>
 												</ul>
