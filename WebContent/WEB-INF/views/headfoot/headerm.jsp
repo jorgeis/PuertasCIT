@@ -110,12 +110,15 @@
 													<li>
 														<span class="arrow">Notificaciones</span>
 														<ul>
-															<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Administrar</a></li>
+															<li><a href='<c:url value="/admin/notificacion/form"/>'>Crear notificación</a></li>
+															<li><a href='<c:url value="/admin/notificacion/queryall/1"/>'>Consultar notificaciones</a></li>
 														</ul>
 													</li>
 													<li>
 														<span class="arrow">Administradores</span>
 														<ul>
+															<li><a href='<c:url value="/admin/form"/>'>Crear nuevo</a></li>
+															<li><a href='<c:url value="/admin/searchform"/>'>Buscar todos</a></li>
 															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar todos</a></li>
 															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar pendientes</a></li>
 															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar borrados</a></li>

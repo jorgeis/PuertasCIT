@@ -32,58 +32,12 @@
 		jQuery("#valid2").validationEngine();
 	});
 </script>
-
-	<!-- Article - Formulario -->
-	<article class="featured">
-	
-		<sf:form method="post" id="valid"
-			action="${pageContext.request.contextPath}/admin/save" 
-	 		commandName="personaAdminWrapper">
-			
-		<h1>Registrar Nuevo Administrador</h1>
-		<h2>${result}</h2>
-			<fieldset>
-			<sf:input type="hidden" path="idAd" />
-			
-			<label >Nombre(s):</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombrePer" />
-			
-			<label >Apellido Paterno</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apPatPer" />
-			
-			<label >Apellido Materno</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="apMatPer" />
-			
-			<label >Correo electrónico</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="emailPer" />
-			
-			<label >CURP</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="curpPer" />
-			
-			<label >Área</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="areaAd" />
-			
-			<label >Cargo</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cargoAd" />
-			
-			<label >Teléfono</label>
-			<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="telefonoAd" />		
-			
-			<label >Permisos</label>
-			<sf:select path="rolAd" class="validate[required]">
-				<sf:option value="">Elige una opción</sf:option>
-				<sf:option value="ROLE_ROOT">Super Administrador</sf:option>
-				<sf:option value="ROLE_ADMIN">Administrador</sf:option>
-			</sf:select>
-			</fieldset>
-			
-			<button type="submit">Guardar</button>
-		</sf:form>
-	</article>
 	
 	<article class="featured"> 
 		<form method="post" id="valid2" action="${pageContext.request.contextPath}/admin/search" >
 			<h1>Buscar administradores</h1>
+			<h2>${result}</h2>
+			<h2>${message1}</h2>
 			<input type="hidden" id="path" value="${pageContext.request.contextPath}"/>
 			<input type="text" name="busqueda" id="busqueda" class="validate[required]" />
 			<button type="submit">Buscar</button>

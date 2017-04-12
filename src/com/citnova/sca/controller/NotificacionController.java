@@ -34,22 +34,32 @@ public class NotificacionController {
 
 	@Autowired
 	private NotificacionService notificacionService;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private AdminService adminService;
-	
 	@Autowired
 	private ClienteService clienteService;
-	
 	@Autowired
 	private MailManager mailManager;
-	
 	private Timestamp time = new Timestamp(new Date().getTime());
 	
+
+	/**
+	 * Controlador para mostrar el formulario de alta de notificaciones
+	 * @RequestMapping("/admin/notificacion/form")
+	 * */
+	@RequestMapping("/admin/notificacion/form")
+	public String showNotificacionForm(){
+		
+		return "notificacion_form";
+	}
 	
+	
+	/**
+	 * Controlador para consultar las notificaciones enviadas
+	 * @RequestMapping("/admin/notificacion/queryall/{index}")
+	 * */
 	@RequestMapping("/admin/notificacion/queryall/{index}")
 	public String queryAll(Model model,
 			@PathVariable("index") int index){
@@ -73,6 +83,10 @@ public class NotificacionController {
 	}
 	
 	
+	/**
+	 * Controlador para buscar notificaciones
+	 * @RequestMapping("/admin/notificacion/search")
+	 * */
 	@RequestMapping("/admin/notificacion/search")
 	public String search(Model model,
 			@RequestParam("dateFrom") String dateFrom,

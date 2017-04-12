@@ -87,7 +87,7 @@ public class AdminController {
 			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
 			if(persona2 != null){
 				model.addAttribute(Constants.RESULT, messageSource.getMessage("admin_exists", null, Locale.getDefault()));
-				return "admin_queryall";
+				return "admin_query";
 			}
 			
 			// Guardar datos de relación @OneToOne
@@ -100,7 +100,7 @@ public class AdminController {
 							.concat(String.valueOf(admin.getIdAd()))
 							.concat("/account/password")
 						);
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_saved", null, Locale.getDefault()));
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_saved", null, Locale.getDefault()));
 		}
 		//
 		// Actualizar registro
@@ -123,7 +123,7 @@ public class AdminController {
 			admin.setRolAd(personaAdminWrapper.getRolAd());
 			
 			adminService.saveOrUpdate(admin, persona);
-			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_updated", null, Locale.getDefault()));
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_updated", null, Locale.getDefault()));
 		}
 		ra.addFlashAttribute(Constants.SHOW_PAGES, true);
 		return "redirect:/admin/queryall/1";
@@ -140,26 +140,28 @@ public class AdminController {
 	 *  @RequestMapping("/admin/query{searchParam}/{index}")
 	 * */
 	@RequestMapping("/admin/query{searchParam}/{index}")
-	public String queryAll(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
+	public String queryAdmin(Model model, @PathVariable("index") int index, @PathVariable("searchParam") String searchParam,
 			HttpSession session) {
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 		
 		if(searchParam.equals(null)) { searchParam = "all";}
 		Page<Admin> page = null;
-		String returnParam = null;
 		
 		if(searchParam.equals("all")) {
 			page = adminService.getPageByStatus(Constants.STATUS_ACTIVE, index - 1);
-			returnParam = "admin_queryall";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("deleted")) {
 			page = adminService.getPageByStatus(Constants.STATUS_DELETED, index - 1);
-			returnParam = "admin_query";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_deleted", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("pending")) {
 			page = adminService.getPageByStatus(Constants.STATUS_MUST_ACTIVATE, index - 1);
-			returnParam = "admin_query";
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_pending", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		
 		int currentIndex = page.getNumber() + 1;
@@ -176,7 +178,30 @@ public class AdminController {
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
-		return returnParam;
+		return "admin_query";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar formulario de registro de nuevo administrador
+	 * @RequestMapping("/admin/form")
+	 * */
+	@RequestMapping("/admin/form")
+	public String showAdminForm(Model model) {
+		
+		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		return "admin_form";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar formulario búsqueda de administradores activos
+	 * @RequestMapping("/admin/searchform")
+	 * */
+	@RequestMapping("/admin/searchform")
+	public String showAdminSearch(Model model) {
+		
+		return "admin_search";
 	}
 	
 
@@ -246,7 +271,7 @@ public class AdminController {
 		model.addAttribute(Constants.SHOW_PAGES, true);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
 		
-		return "admin_queryall";
+		return "admin_form";
 	}
 	
 	
@@ -282,6 +307,7 @@ public class AdminController {
 		System.out.println("/admin/search/" + index  + " ****** " + page.getTotalElements());
 		
 		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+		String busqueda = (String) model.asMap().get("busqueda");
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -295,8 +321,12 @@ public class AdminController {
 		
 		model.addAttribute(Constants.SHOW_PAGES, false);
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
+		model.addAttribute("busqueda", busqueda);
 		
-		return "admin_queryall";
+		return "admin_query";
 	}
 	
 	
@@ -329,8 +359,12 @@ public class AdminController {
 			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
 			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
+			model.addAttribute("busqueda", busqueda);
 			
-			return "admin_queryall";
+			return "admin_query";
 		}
 		else{
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 

@@ -43,6 +43,15 @@
 <!-- 			<button type="submit">Buscar</button> -->
 <!-- 		</form>	 -->
 
+
+	<form method="post">
+
+		<h1>${pageTitle}</h1>
+		<h2>${result}</h2>
+		<h2>${message1}</h2>
+	</form>
+
+
 		<div class = "table1">
 			<table>
 				<tr>
@@ -68,7 +77,17 @@
 						<td>${admin.telefonoAd}</td>
 						<td>${admin.rolAd}</td>
 						<td> 
-							<a class="confirm" href="<c:url value='/admin/activate/${admin.idAd}' />">Activar</a><br/>
+						
+						<!-- Compara el título de la página para saber que hipervínculos de acción mostrar -->
+						<c:if test="${pageTitle != 'Consultar Administradores Activos'}">
+  								<a class="confirm" href="<c:url value='/admin/activate/${admin.idAd}' />">Activar</a><br/>
+							</c:if>
+							
+							
+							<c:if test="${pageTitle == 'Consultar Administradores Activos'}">
+  								<a href="<c:url value='/admin/update/${admin.idAd}' />">Modificar</a> &nbsp;  
+								<a class="confirm" href="<c:url value='/admin/delete/${admin.idAd}' />">Eliminar</a><br/>
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>

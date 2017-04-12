@@ -47,6 +47,13 @@
 	<h1>Resultados</h1>	
 	
 	<br />
+	
+	<form method="post">
+
+		<h1>${pageTitle}</h1>
+		<h2>${result}</h2>
+		<h2>${message1}</h2>
+	</form>
 		
 		
 		<div class = "table1">
