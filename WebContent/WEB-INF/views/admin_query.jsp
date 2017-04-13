@@ -14,6 +14,7 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
 <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
+<link rel="stylesheet" href='<c:url value = "/res/css/own.css" />' />
 
 <link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
 
@@ -67,6 +68,7 @@
 					<td>Cargo</td>
 					<td>Teléfono</td>
 					<td>Permisos</td>
+					<td>Acción</td>
 				</tr>
 				<c:forEach var="admin" items="${adminList}">
 					<tr>

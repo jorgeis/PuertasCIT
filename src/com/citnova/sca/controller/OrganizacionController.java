@@ -32,6 +32,7 @@ import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.domain.OrganizacionDireccionWrapper;
+import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
@@ -291,7 +292,7 @@ public class OrganizacionController {
 	 * @RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
-	public String viewOrg(Model model, Principal principal, RedirectAttributes ra,
+	public String viewOrgMembers(Model model, Principal principal, RedirectAttributes ra,
 			@RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
 		
 		int idOrg;
@@ -310,7 +311,7 @@ public class OrganizacionController {
 			return "redirect:/confirmscreen";
 		}
 		
-		List<OrganizacionCliente> orgCliList = organizacionClienteService.findByIdOrg(idOrg);
+		List<OrganizacionCliente> orgCliList = organizacionClienteService.findByIdOrgAndStatusActivo(idOrg);
 		
 		List<Cliente>clienteList = new ArrayList<Cliente>();
 		List<String>cargoList = new ArrayList<String>();
@@ -331,13 +332,79 @@ public class OrganizacionController {
 	}
 	
 	
+	/**
+	 * Desasociar a un miembro de una organización (Cambiar status en OrganizacionCliente a Borrado)
+	 * @RequestMapping(value="/org/deletemember", method=RequestMethod.POST)
+	 * */
+	@RequestMapping(value="/org/deletemember", method=RequestMethod.POST)
+	public String deleteMember(Model model, RedirectAttributes ra, HttpSession session) {
+		
+		
+		
+		int idCli = (int) session.getAttribute("idCli");
+		int idOrg = (int) session.getAttribute("idOrg");
+		
+		session.removeAttribute("idCli");
+		session.removeAttribute("idOrg");
+		
+		Persona persona = clienteService.findOne(idOrg).getPersona();
+		
+		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);
+		orgCli.setStatusOC("Borrado");
+		organizacionClienteService.save(orgCli);
+		
+		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete_confirm", 
+				new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+						organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+		
+		return "redirect:/confirmscreen";
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente a Borrado en relación OrganizacionCliente, 
+	 * es decir desasociar a un Cliente de una Organización.
+	 * @RequestMapping("/org/deletemembersc")
+	 * */
+	@RequestMapping("/org/deletemembersc")
+	public String deleteScreen(Model model, HttpSession session, RedirectAttributes ra, Principal principal,
+			@RequestParam("idOrgParam") int idOrg, @RequestParam("idCliParam") int idCli) {
+		
+		Persona persona = clienteService.findOne(idOrg).getPersona();
+		
+		System.out.println("Parámetros: " + idOrg + ", " + idCli);
+		
+		session.setAttribute("idOrg", idOrg);
+		session.setAttribute("idCli", idCli);
+		
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete", 
+				new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+						organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/org/deletemember");
+		model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
+		model.addAttribute(Constants.PAGE_TITLE, "Eliminar usuario");
+		
+		return "confirm";
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Controlador para consulta de las organizaciones dadas de alta por el cliente identificado en el sistema
 	 * @RequestMapping("/org/queryown/{index}")
 	 */
 	@RequestMapping("/org/queryown/{index}")
-	public String queryAll(Model model,
+	public String queryOwn(Model model,
 			HttpSession session, Principal principal, @PathVariable("index") int index) {
 		
 		int idCli = currentUser.getIdCliente(principal);

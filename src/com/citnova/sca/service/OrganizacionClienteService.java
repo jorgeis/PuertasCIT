@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.citnova.sca.domain.OrganizacionCliente;
 import com.citnova.sca.repository.OrganizacionClienteRepository;
+import com.citnova.sca.util.Constants;
 
 @Service
 public class OrganizacionClienteService {
@@ -22,8 +23,12 @@ public class OrganizacionClienteService {
 		return (List<OrganizacionCliente>) organizacionClienteRepository.findAll();
 	}
 	
-	public List<OrganizacionCliente> findByIdOrg(int idOrg) {
+	public List<OrganizacionCliente> findAllByIdOrg(int idOrg) {
 		return organizacionClienteRepository.findByPkOrganizacionIdOrg(idOrg);
+	}
+	
+	public List<OrganizacionCliente> findByIdOrgAndStatusActivo(int idOrg) {
+		return organizacionClienteRepository.findByPkOrganizacionIdOrgAndStatusOC(idOrg, Constants.STATUS_ACTIVE);
 	}
 	
 	public OrganizacionCliente findOneByIdOrgAndIdCli(int idOrg, int idCli) {

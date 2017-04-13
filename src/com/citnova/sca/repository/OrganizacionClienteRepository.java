@@ -10,5 +10,7 @@ public interface OrganizacionClienteRepository extends CrudRepository<Organizaci
 	
 	public List<OrganizacionCliente> findByPkOrganizacionIdOrg(int idOrg);
 	
+	public List<OrganizacionCliente> findByPkOrganizacionIdOrgAndStatusOC(int idOrg, String statusOC);
+	
 	public OrganizacionCliente findByPkOrganizacionIdOrgAndPkClienteIdCli(int idOrg, int idCli);
 }

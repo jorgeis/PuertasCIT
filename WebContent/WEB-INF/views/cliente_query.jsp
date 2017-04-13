@@ -15,6 +15,7 @@
 <link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
 
 <link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
+<link rel="stylesheet" href='<c:url value = "/res/css/own.css" />' />
 
 <script>
 	jQuery(document).ready(function(){
@@ -63,6 +64,7 @@
 					<td>Apellido Paterno</td>
 					<td>Apellido Materno</td>
 					<td>Correo electrónico</td>
+					<td>Acción</td>
 				</tr>
 				<c:forEach var="cliente" items="${clienteList}">
 					<tr>
