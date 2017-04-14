@@ -47,109 +47,178 @@
 
 
 	<!-- Article - Formulario -->
-	<article class="featured">		
-		<form method="post" action="${pageContext.request.contextPath}/clienteform">
-			<h1>Miembros de ${siglasOrg}</h1>
-			<h2>${result}</h2>
-			<input type="hidden" name="idOrgParam" value="${idOrg}"/>
-			<button type="submit">Agregar Nuevo Miembro</button>
-		</form>	
+	<!-- Vista si se hace la consulta de los miembros de una organización -->
+	<c:if test="${actionView != 'orgrespsc'}">
+		<article class="featured">		
+			<form method="post">
+				<h1>${siglasOrg}</h1>
+				<h2>${result}</h2>
+			</form>		
 		
-		<form method="post" action="${pageContext.request.contextPath}/clienteform">
-			<h1>Miembros Activos</h1>
-		</form>	
-		<div class="table1">
-			<table>
-				<tr style="border-radius: 5px;">
-					<td>Nombre(s)</td>
-					<td>Apellido Paterno</td>
-					<td>Apellido Materno</td>
-					<td>Correo electrónico</td>
-					<td>Nivel</td>
-					<td>Acción</td>
-				</tr>
-				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-					<c:if test="${statusList[status.index] == 'Activo'}">
-						<tr>
-							<td>${cliente.persona.nombrePer}</td>
-							<td>${cliente.persona.apPatPer}</td>
-							<td>${cliente.persona.apMatPer}</td>
-							<td>${cliente.persona.emailPer}</td>
-							<td>${cargoList[status.index]}</td>
-							<td>
-								<form method="post" action="${pageContext.request.contextPath}/org/deletemembersc" >
-								<input type="hidden" name="idOrgParam" value="${idOrg}"/>
-								<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
-								<button type="submit">Eliminar</button>
-							</form>	
-							</td>
-						</tr>
-					</c:if>
-				</c:forEach>
-			</table>
-		</div>
+			<br /><br />
 		
-		<br /><br />
+			<form method="post" action="${pageContext.request.contextPath}/clienteform">
+				<h1>Miembros Activos</h1>
+			</form>	
+			<div class="table1">
+				<table>
+					<tr style="border-radius: 5px;">
+						<td>Nombre(s)</td>
+						<td>Apellido Paterno</td>
+						<td>Apellido Materno</td>
+						<td>Correo electrónico</td>
+						<td>Nivel</td>
+						<td>Acción</td>
+					</tr>
+					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+						<c:if test="${statusList[status.index] == 'Activo'}">
+							<tr>
+								<td>${cliente.persona.nombrePer}</td>
+								<td>${cliente.persona.apPatPer}</td>
+								<td>${cliente.persona.apMatPer}</td>
+								<td>${cliente.persona.emailPer}</td>
+								<td>${cargoList[status.index]}</td>
+								<td>
+									<form method="post" action="${pageContext.request.contextPath}/org/deletemembersc" >
+									<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+									<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
+									<button type="submit">Eliminar</button>
+								</form>	
+								</td>
+							</tr>
+						</c:if>
+					</c:forEach>
+				</table>
+			</div>
+			
+			<br /><br />
+			
+			<form method="post" action="${pageContext.request.contextPath}/clienteform">
+				<h1>Miembros Pendientes</h1>
+			</form>	
+			<div class="table1">
+				<table>
+					<tr style="border-radius: 5px;">
+						<td>Nombre(s)</td>
+						<td>Apellido Paterno</td>
+						<td>Apellido Materno</td>
+						<td>Correo electrónico</td>
+					</tr>
+					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+						<c:if test="${statusList[status.index] == 'Pendiente'}">
+							<tr>
+								<td>${cliente.persona.nombrePer}</td>
+								<td>${cliente.persona.apPatPer}</td>
+								<td>${cliente.persona.apMatPer}</td>
+								<td>${cliente.persona.emailPer}</td>
+							</tr>
+						</c:if>
+					</c:forEach>
+				</table>
+			</div>
+			
+			<br /><br />
+			
+			<form method="post" action="${pageContext.request.contextPath}/clienteform">
+				<h1>Miembros Borrados</h1>
+			</form>	
+			<div class="table1">
+				<table>
+					<tr style="border-radius: 5px;">
+						<td>Nombre(s)</td>
+						<td>Apellido Paterno</td>
+						<td>Apellido Materno</td>
+						<td>Correo electrónico</td>
+						<td>Acción</td>
+					</tr>
+					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+						<c:if test="${statusList[status.index] == 'Borrado'}">
+							<tr>
+								<td>${cliente.persona.nombrePer}</td>
+								<td>${cliente.persona.apPatPer}</td>
+								<td>${cliente.persona.apMatPer}</td>
+								<td>${cliente.persona.emailPer}</td>
+								<td>
+									<form method="post" action="${pageContext.request.contextPath}/org/reinvitemembersc" >
+									<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+									<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
+									<button type="submit">Reinvitar</button>
+								</form>	
+								</td>
+							</tr>
+						</c:if>
+					</c:forEach>
+				</table>
+			</div>
+			
+			<br /> <br />
+			
+			<form method="post">
+				<h1>Acciones</h1>
+			</form>
+			
+			<form method="post" action="${pageContext.request.contextPath}/clienteform">
+				<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+				<button type="submit">Agregar Nuevo Miembro</button>
+			</form>	
+			
+			<form method="post" action="${pageContext.request.contextPath}/org/querymembers">
+				<input type="hidden" name="param1" value="${idOrg}"/>
+				<input type="hidden" name="param2" value="orgrespsc"/>
+				<button type="submit">Cambiar Responsable</button>
+			</form>	
+		</article>
+	</c:if>
+	
+	
+	
+	
+	<!-- Vista si se desea cambiar el responsable de empresa -->
+	<c:if test="${actionView == 'orgrespsc'}">
+		<article class="featured">		
+			<form method="post">
+				<h1>${siglasOrg}</h1>
+				<h2>${result}</h2>
+			</form>		
 		
-		<form method="post" action="${pageContext.request.contextPath}/clienteform">
-			<h1>Miembros Pendientes</h1>
-		</form>	
-		<div class="table1">
-			<table>
-				<tr style="border-radius: 5px;">
-					<td>Nombre(s)</td>
-					<td>Apellido Paterno</td>
-					<td>Apellido Materno</td>
-					<td>Correo electrónico</td>
-				</tr>
-				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-					<c:if test="${statusList[status.index] == 'Pendiente'}">
-						<tr>
-							<td>${cliente.persona.nombrePer}</td>
-							<td>${cliente.persona.apPatPer}</td>
-							<td>${cliente.persona.apMatPer}</td>
-							<td>${cliente.persona.emailPer}</td>
-						</tr>
-					</c:if>
-				</c:forEach>
-			</table>
-		</div>
+			<br /><br />
 		
-		<br /><br />
-		
-		<form method="post" action="${pageContext.request.contextPath}/clienteform">
-			<h1>Miembros Borrados</h1>
-		</form>	
-		<div class="table1">
-			<table>
-				<tr style="border-radius: 5px;">
-					<td>Nombre(s)</td>
-					<td>Apellido Paterno</td>
-					<td>Apellido Materno</td>
-					<td>Correo electrónico</td>
-					<td>Acción</td>
-				</tr>
-				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-					<c:if test="${statusList[status.index] == 'Borrado'}">
-						<tr>
-							<td>${cliente.persona.nombrePer}</td>
-							<td>${cliente.persona.apPatPer}</td>
-							<td>${cliente.persona.apMatPer}</td>
-							<td>${cliente.persona.emailPer}</td>
-							<td>
-								<form method="post" action="${pageContext.request.contextPath}/org/reinvitemembersc" >
-								<input type="hidden" name="idOrgParam" value="${idOrg}"/>
-								<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
-								<button type="submit">Reinvitar</button>
-							</form>	
-							</td>
-						</tr>
-					</c:if>
-				</c:forEach>
-			</table>
-		</div>
-		
-	</article>
+			<form method="post" action="${pageContext.request.contextPath}/clienteform">
+				<h1>Cambiar responsable</h1>
+			</form>	
+			<div class="table1">
+				<table>
+					<tr style="border-radius: 5px;">
+						<td>Nombre(s)</td>
+						<td>Apellido Paterno</td>
+						<td>Apellido Materno</td>
+						<td>Correo electrónico</td>
+						<td>Nivel</td>
+						<td>Acción</td>
+					</tr>
+					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+						<c:if test="${statusList[status.index] == 'Activo'}">
+							<tr>
+								<td>${cliente.persona.nombrePer}</td>
+								<td>${cliente.persona.apPatPer}</td>
+								<td>${cliente.persona.apMatPer}</td>
+								<td>${cliente.persona.emailPer}</td>
+								<td>${cargoList[status.index]}</td>
+								<td>
+									<form method="post" action="${pageContext.request.contextPath}/org/respmembersc" >
+									<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+									<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
+									<button type="submit">Elegir nuevo responsable</button>
+								</form>	
+								</td>
+							</tr>
+						</c:if>
+					</c:forEach>
+				</table>
+			</div>
+		</article>			
+	</c:if>
+	
 					
 <c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />	
 <c:import url="/WEB-INF/views/headfoot/footerm.jsp" />

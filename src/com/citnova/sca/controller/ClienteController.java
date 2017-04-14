@@ -343,9 +343,9 @@ public class ClienteController {
 				OrganizacionCliente orgCli = new OrganizacionCliente();
 				orgCli.setOrganizacion(organizacion);
 				orgCli.setCliente(cliente);
-				orgCli.setCargoOC("Miembro");
+				orgCli.setCargoOC(Constants.ORG_MEMBER);
 				orgCli.setPassOC(passOC);
-				orgCli.setStatusOC("Activo");
+				orgCli.setStatusOC(Constants.STATUS_ACTIVE);
 				
 				organizacionClienteService.save(orgCli);
 				

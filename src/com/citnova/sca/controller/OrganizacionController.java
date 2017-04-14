@@ -173,9 +173,9 @@ public class OrganizacionController {
 			OrganizacionCliente orgCli = new OrganizacionCliente();
 			orgCli.setOrganizacion(organizacion);
 			orgCli.setCliente(cliente);
-			orgCli.setCargoOC("Responsable");
+			orgCli.setCargoOC(Constants.ORG_RESPONSABLE);
 			orgCli.setPassOC(passOC);
-			orgCli.setStatusOC("Activo");
+			orgCli.setStatusOC(Constants.STATUS_ACTIVE);
 			orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
 			
 			organizacionClienteService.save(orgCli);
@@ -218,7 +218,7 @@ public class OrganizacionController {
 	
 	
 	/**
-	 * Actualizar organización  en específico
+	 * Actualizar organización en específico
 	 * @RequestMapping(value="/org/update", method=RequestMethod.POST)
 	 * */
 	@RequestMapping(value="/org/update", method=RequestMethod.POST)
@@ -293,7 +293,8 @@ public class OrganizacionController {
 	 * */
 	@RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
 	public String viewOrgMembers(Model model, Principal principal, RedirectAttributes ra,
-			@RequestParam(value = "param1", required=false) Integer idOrgParam) {
+			@RequestParam(value = "param1", required=false) Integer idOrgParam, 
+			@RequestParam(value = "param2", required=false) String actionView) {
 		
 		int idOrg;
 		
@@ -334,6 +335,13 @@ public class OrganizacionController {
 		model.addAttribute("statusList", statusList);
 		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
 		
+		// Atributo para que a vista sepa si mostrar exclusivamente la parte para cambiar el responsable
+		if(actionView != null) {
+			if(actionView.equals("orgrespsc")) {
+				model.addAttribute("actionView", "orgrespsc");
+			}
+		}
+		
 		return "organizacion_members";
 		
 	}
@@ -357,19 +365,74 @@ public class OrganizacionController {
 		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);		
 		Persona persona = clienteService.findOne(idOrg).getPersona();
 		
-		orgCli.setStatusOC("Borrado");
+		orgCli.setStatusOC(Constants.STATUS_DELETED);
 		organizacionClienteService.save(orgCli);
 		
-		ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete_confirm", 
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete_confirm", 
 				new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
 						organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
 		
-		return "redirect:/confirmscreen";
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/org/querymembers");
+		model.addAttribute(Constants.CONFIRM_BUTTON, "Regresar");
+		model.addAttribute(Constants.PAGE_TITLE, "Eliminar miembro de " + organizacionService.findOne(idOrg).getSiglasOrg());
+		model.addAttribute(Constants.PARAM1, idOrg);
+		
+		return "confirm";
 	}
 	
 	
 	/**
-	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente en relación OrganizacionCliente
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * Cambiar el responsable de una organización
+	 * @RequestMapping(value="/org/orgresp", method=RequestMethod.POST)
+	 * */
+	@Transactional
+	@RequestMapping(value="/org/orgresp", method=RequestMethod.POST)
+	public String orgResp(Model model, RedirectAttributes ra, HttpSession session, 
+			@RequestParam("param1") int idCli,  @RequestParam("param2") int idOrg) {
+		
+		OrganizacionCliente orgCliNewResp = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);		
+		Persona persona = clienteService.findOne(idOrg).getPersona();
+		
+		if(orgCliNewResp.getCargoOC().equals(Constants.ORG_RESPONSABLE)) {
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_alreadyresp", 
+					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+		}
+		else {
+			// Buscar responsable de antes y cambiarlo a Miembro
+			OrganizacionCliente orgCliOldResp = organizacionClienteService.findOneByIdOrgAndCargoResp(idOrg);
+			orgCliOldResp.setCargoOC(Constants.ORG_MEMBER);
+			organizacionClienteService.save(orgCliOldResp);
+			
+			// Hacer nuevo responsable al cliente seleccionado
+			orgCliNewResp.setCargoOC(Constants.ORG_RESPONSABLE);
+			organizacionClienteService.save(orgCliNewResp);
+			
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_resp_confirm", 
+					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+		}
+		
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/org/querymembers");
+		model.addAttribute(Constants.CONFIRM_BUTTON, "Regresar");
+		model.addAttribute(Constants.PAGE_TITLE, "Cambiar Responsable de " + organizacionService.findOne(idOrg).getSiglasOrg());
+		model.addAttribute(Constants.PARAM1, idOrg);
+		
+		return "confirm";
+	}
+	
+	
+	
+	/**
+	 * Controlador para mostrar pantalla de confirmación para cambiar datos en relación OrganizacionCliente
 	 * @RequestMapping("/org/{actionParam}membersc")
 	 * */
 	@RequestMapping("/org/{actionParam}membersc")
@@ -390,7 +453,7 @@ public class OrganizacionController {
 			OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);
 			
 			// Revisa si el cliente a borrar es el responsable de la organización. De ser así, no permite su eliminación
-			if(orgCli.getCargoOC().equals("Responsable")) {
+			if(orgCli.getCargoOC().equals(Constants.ORG_RESPONSABLE)) {
 				model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("org_cliente_responsable", null, Locale.getDefault()));
 				model.addAttribute(Constants.CUSTOM_MAPPING, "/org/querymembers");
 				model.addAttribute(Constants.CONFIRM_BUTTON, "Regresar");
@@ -417,6 +480,18 @@ public class OrganizacionController {
 			model.addAttribute(Constants.CONFIRM_BUTTON, "Enviar Invitación");
 			model.addAttribute(Constants.PAGE_TITLE, "Reactivar usuario");
 			model.addAttribute(Constants.PARAM1, persona.getCurpPer());
+			model.addAttribute(Constants.PARAM2, idOrg);
+		}
+		
+		// Cambiar responsable de la organización
+		else if(action.equals("resp")) {
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_newresp", 
+					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+			model.addAttribute(Constants.CUSTOM_MAPPING, "/org/orgresp");
+			model.addAttribute(Constants.CONFIRM_BUTTON, "Cambiar Responsable");
+			model.addAttribute(Constants.PAGE_TITLE, "Cambio de Responsable");
+			model.addAttribute(Constants.PARAM1, idCli);
 			model.addAttribute(Constants.PARAM2, idOrg);
 		}
 		return "confirm";
@@ -510,9 +585,9 @@ public class OrganizacionController {
 			OrganizacionCliente orgCli = new OrganizacionCliente();
 			orgCli.setOrganizacion(organizacion);
 			orgCli.setCliente(cliente);
-			orgCli.setCargoOC("Miembro");
+			orgCli.setCargoOC(Constants.ORG_MEMBER);
 			orgCli.setPassOC(passOC);
-			orgCli.setStatusOC("Pendiente");
+			orgCli.setStatusOC(Constants.STATUS_PENDING);
 			orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
 			
 			organizacionClienteService.save(orgCli);

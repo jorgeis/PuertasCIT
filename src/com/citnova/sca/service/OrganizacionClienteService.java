@@ -34,4 +34,8 @@ public class OrganizacionClienteService {
 	public OrganizacionCliente findOneByIdOrgAndIdCli(int idOrg, int idCli) {
 		return organizacionClienteRepository.findByPkOrganizacionIdOrgAndPkClienteIdCli(idOrg, idCli);
 	}
+	
+	public OrganizacionCliente findOneByIdOrgAndCargoResp(int idOrg) {
+		return organizacionClienteRepository.findByPkOrganizacionIdOrgAndCargoOC(idOrg, Constants.ORG_RESPONSABLE);
+	}
 }
