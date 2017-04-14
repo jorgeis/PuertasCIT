@@ -72,7 +72,7 @@
 						</td>
 						<td>
 							<form method="post" action="${pageContext.request.contextPath}/org/querymembers" >
-							<input type="hidden" name="idOrgParam" value="${org.idOrg}"/>
+							<input type="hidden" name="param1" value="${org.idOrg}"/>
 							<button type="submit">Miembros</button>
 						</form>	
 						</td>

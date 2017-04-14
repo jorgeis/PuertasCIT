@@ -293,7 +293,7 @@ public class OrganizacionController {
 	 * */
 	@RequestMapping(value="/org/querymembers", method=RequestMethod.POST)
 	public String viewOrgMembers(Model model, Principal principal, RedirectAttributes ra,
-			@RequestParam(value = "idOrgParam", required=false) Integer idOrgParam) {
+			@RequestParam(value = "param1", required=false) Integer idOrgParam) {
 		
 		int idOrg;
 		
@@ -354,9 +354,9 @@ public class OrganizacionController {
 		session.removeAttribute("idCli");
 		session.removeAttribute("idOrg");
 		
+		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);		
 		Persona persona = clienteService.findOne(idOrg).getPersona();
 		
-		OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);
 		orgCli.setStatusOC("Borrado");
 		organizacionClienteService.save(orgCli);
 		
@@ -373,7 +373,7 @@ public class OrganizacionController {
 	 * @RequestMapping("/org/{actionParam}membersc")
 	 * */
 	@RequestMapping("/org/{actionParam}membersc")
-	public String deleteScreen(Model model, HttpSession session, RedirectAttributes ra, Principal principal,
+	public String actionScreen(Model model, HttpSession session, RedirectAttributes ra, Principal principal,
 			@RequestParam("idOrgParam") int idOrg, @RequestParam("idCliParam") int idCli, 
 			@PathVariable("actionParam") String action) {
 		
@@ -386,13 +386,28 @@ public class OrganizacionController {
 		
 		// Borrar cliente de organización
 		if(action.equals("delete")) {
-			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete", 
-					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
-							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
-			model.addAttribute(Constants.CUSTOM_MAPPING, "/org/deletemember");
-			model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
-			model.addAttribute(Constants.PAGE_TITLE, "Eliminar usuario");
+			
+			OrganizacionCliente orgCli = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);
+			
+			// Revisa si el cliente a borrar es el responsable de la organización. De ser así, no permite su eliminación
+			if(orgCli.getCargoOC().equals("Responsable")) {
+				model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("org_cliente_responsable", null, Locale.getDefault()));
+				model.addAttribute(Constants.CUSTOM_MAPPING, "/org/querymembers");
+				model.addAttribute(Constants.CONFIRM_BUTTON, "Regresar");
+				model.addAttribute(Constants.PAGE_TITLE, "No se puede eliminar responsable");
+				model.addAttribute(Constants.PARAM1, idOrg);
+			}
+			// En caso de no ser responsable, procede a mostrar confirmación de eliminación
+			else {
+				model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete", 
+						new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+								organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+				model.addAttribute(Constants.CUSTOM_MAPPING, "/org/deletemember");
+				model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
+				model.addAttribute(Constants.PAGE_TITLE, "Eliminar usuario");
+			}
 		}
+		
 		// Volver a mandar invitación a cliente ya borrado
 		else if(action.equals("reinvite")) {
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_reinvite", 

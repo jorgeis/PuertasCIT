@@ -260,9 +260,10 @@ public class ClienteController {
 					// Si el usuario que se quiere registrar ya está dado de alta como miembro activo de la organización
 					if(existInOrg == true) {
 						model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("org_cliente_exists", null, Locale.getDefault()));
-						model.addAttribute(Constants.CUSTOM_MAPPING, "/");
-						model.addAttribute(Constants.CONFIRM_BUTTON, "Página principal");
+						model.addAttribute(Constants.CUSTOM_MAPPING, "/org/querymembers");
+						model.addAttribute(Constants.CONFIRM_BUTTON, "Consultar Miembros");
 						model.addAttribute(Constants.PAGE_TITLE, "La persona ya existe");
+						model.addAttribute(Constants.PARAM1, idOrg);
 					}
 					else {
 						model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_send_member_email", null, Locale.getDefault()));
