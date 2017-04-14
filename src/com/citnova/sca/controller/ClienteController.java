@@ -239,12 +239,39 @@ public class ClienteController {
 				// Comportamiento cuando un cliente responsable de empresa registra a un cliente que ya existe en sistema
 				// (con el mismo CURP) como miembro de la empresa.
 				if(idOrg != 0) {
-					model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_send_member_email", null, Locale.getDefault()));
-					model.addAttribute(Constants.CUSTOM_MAPPING, "/org/sendinvite");
-					model.addAttribute(Constants.CONFIRM_BUTTON, "Enviar solicitud");
-					model.addAttribute(Constants.PAGE_TITLE, "Registro de Cliente");
-					model.addAttribute(Constants.PARAM1, persona.getCurpPer());
-					model.addAttribute(Constants.PARAM2, idOrg);
+					
+					// Verifica que la persona ingresada existe o no en la organización que se desea ingresar
+					//List<Persona> miembros = 
+					
+					boolean existInOrg = false;
+					
+					List<OrganizacionCliente> orgCliList2 = organizacionClienteService.findAllByIdOrg(idOrg);
+					
+					System.out.println("Datos de la tupla a buscar: \nOrg: " + idOrg + "\nidCli: " + idCli);
+					for(int i=0; i<orgCliList2.size(); i++) {
+						System.out.println("Cliente en OrganizaciónCliente: " + orgCliList2.get(i).getCliente().getIdCli());
+						if(persona.getCurpPer().equals(orgCliList2.get(i).getCliente().getPersona().getCurpPer())) {
+							existInOrg = true;
+							System.out.println("Coincidencia encontrada: Cliente " + orgCliList2.get(i).getCliente().getIdCli());
+						}
+					}
+					
+					
+					// Si el usuario que se quiere registrar ya está dado de alta como miembro activo de la organización
+					if(existInOrg == true) {
+						model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("org_cliente_exists", null, Locale.getDefault()));
+						model.addAttribute(Constants.CUSTOM_MAPPING, "/");
+						model.addAttribute(Constants.CONFIRM_BUTTON, "Página principal");
+						model.addAttribute(Constants.PAGE_TITLE, "La persona ya existe");
+					}
+					else {
+						model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_send_member_email", null, Locale.getDefault()));
+						model.addAttribute(Constants.CUSTOM_MAPPING, "/org/sendinvite");
+						model.addAttribute(Constants.CONFIRM_BUTTON, "Enviar solicitud");
+						model.addAttribute(Constants.PAGE_TITLE, "Registro de Cliente");
+						model.addAttribute(Constants.PARAM1, persona.getCurpPer());
+						model.addAttribute(Constants.PARAM2, idOrg);
+					}
 				}
 
 				
