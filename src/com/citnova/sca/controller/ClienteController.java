@@ -228,13 +228,6 @@ public class ClienteController {
 				cliente.setPassCli(passwordEncoder.encode(personaClienteDireccionWrapper.getPassCli()));
 			}
 			
-			// Revisa una la persona ya existe con el mismo email
-			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
-			if(persona2 != null){
-				model.addAttribute(Constants.RESULT, messageSource.getMessage("client_exists", null, Locale.getDefault()));
-				return "/cliente_form";
-			}
-			
 			// Revisa si existe un cliente con el mismo CURP
 			Cliente cliente2 = clienteService.findByCurpPer(persona.getCurpPer());
 			if(cliente2 != null){
@@ -267,6 +260,14 @@ public class ClienteController {
 				
 				
 				return "/confirm";
+			}
+			
+			
+			// Revisa una la persona ya existe con el mismo email
+			Persona persona2 = personaService.findByEmailPer(persona.getEmailPer());
+			if(persona2 != null){
+				model.addAttribute(Constants.RESULT, messageSource.getMessage("client_exists", null, Locale.getDefault()));
+				return "/cliente_form";
 			}
 			
 			

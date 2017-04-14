@@ -311,24 +311,31 @@ public class OrganizacionController {
 			return "redirect:/confirmscreen";
 		}
 		
-		List<OrganizacionCliente> orgCliList = organizacionClienteService.findByIdOrgAndStatusActivo(idOrg);
+		// Consulta de miembros de una organización en específico sin importar statusOC, esto se filtra en la vista
+		
+		List<OrganizacionCliente> orgCliList = organizacionClienteService.findAllByIdOrg(idOrg);
 		
 		List<Cliente>clienteList = new ArrayList<Cliente>();
 		List<String>cargoList = new ArrayList<String>();
+		List<String>statusList = new ArrayList<String>();
 		
 		for(int i=0; i<orgCliList.size(); i++) {
 			System.out.println("Elemento " + i + " de la lista: " + orgCliList.get(i).getCliente());
 			clienteList.add(orgCliList.get(i).getCliente());
-			System.out.println("Elemento " + i + " de la lista: " + orgCliList.get(i).getCargoOC());
+			System.out.println("Cargo: " + orgCliList.get(i).getCargoOC());
 			cargoList.add(orgCliList.get(i).getCargoOC());
+			System.out.println("Status: " + orgCliList.get(i).getStatusOC());
+			statusList.add(orgCliList.get(i).getStatusOC());
 		}
 		
 		model.addAttribute("idOrg", idOrg);
 		model.addAttribute("clienteList", clienteList);
 		model.addAttribute("cargoList", cargoList);
+		model.addAttribute("statusList", statusList);
 		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
 		
 		return "organizacion_members";
+		
 	}
 	
 	
@@ -361,42 +368,44 @@ public class OrganizacionController {
 	}
 	
 	
-	
-	
-	
-	
-	
 	/**
-	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente a Borrado en relación OrganizacionCliente, 
-	 * es decir desasociar a un Cliente de una Organización.
-	 * @RequestMapping("/org/deletemembersc")
+	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente en relación OrganizacionCliente
+	 * @RequestMapping("/org/{actionParam}membersc")
 	 * */
-	@RequestMapping("/org/deletemembersc")
+	@RequestMapping("/org/{actionParam}membersc")
 	public String deleteScreen(Model model, HttpSession session, RedirectAttributes ra, Principal principal,
-			@RequestParam("idOrgParam") int idOrg, @RequestParam("idCliParam") int idCli) {
+			@RequestParam("idOrgParam") int idOrg, @RequestParam("idCliParam") int idCli, 
+			@PathVariable("actionParam") String action) {
 		
-		Persona persona = clienteService.findOne(idOrg).getPersona();
+		Persona persona = clienteService.findOne(idCli).getPersona();
 		
 		System.out.println("Parámetros: " + idOrg + ", " + idCli);
 		
 		session.setAttribute("idOrg", idOrg);
 		session.setAttribute("idCli", idCli);
 		
-		model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete", 
-				new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
-						organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
-		model.addAttribute(Constants.CUSTOM_MAPPING, "/org/deletemember");
-		model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
-		model.addAttribute(Constants.PAGE_TITLE, "Eliminar usuario");
-		
+		// Borrar cliente de organización
+		if(action.equals("delete")) {
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_delete", 
+					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+			model.addAttribute(Constants.CUSTOM_MAPPING, "/org/deletemember");
+			model.addAttribute(Constants.CONFIRM_BUTTON, "Eliminar");
+			model.addAttribute(Constants.PAGE_TITLE, "Eliminar usuario");
+		}
+		// Volver a mandar invitación a cliente ya borrado
+		else if(action.equals("reinvite")) {
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_reinvite", 
+					new Object[]{persona.getNombrePer() + " " + persona.getApPatPer() + " " + persona.getApMatPer(), 
+							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
+			model.addAttribute(Constants.CUSTOM_MAPPING, "/org/sendinvite");
+			model.addAttribute(Constants.CONFIRM_BUTTON, "Enviar Invitación");
+			model.addAttribute(Constants.PAGE_TITLE, "Reactivar usuario");
+			model.addAttribute(Constants.PARAM1, persona.getCurpPer());
+			model.addAttribute(Constants.PARAM2, idOrg);
+		}
 		return "confirm";
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	/**
@@ -449,11 +458,7 @@ public class OrganizacionController {
 		
 		Cliente cliente = clienteService.findByCurpPer(curpPer);
 		if(cliente != null) {
-			
-			
-			
-			
-			
+						
 			// Se almacena la relación entre la organización y la persona invitada, con un estado pendiente de aprobar.
 						
 			
@@ -518,7 +523,7 @@ public class OrganizacionController {
 	
 	/**
 	 * Confirmación de asociación de cliente existente a organización, enviado desde la URL en el email de confirmación de cuenta
-	 * @RequestMapping("/clienteaccount/{idCli}/confirm")
+	 * @RequestMapping("/org/{emailCli}/{idOrg}/invite/confirm")
 	 * */
 	@RequestMapping("/org/{emailCli}/{idOrg}/invite/confirm")
 	public String inputPassword(HttpSession session, Model model,  
@@ -531,7 +536,7 @@ public class OrganizacionController {
 		if(orgCli != null) {
 			if(orgCli.getStatusOC().equals(Constants.STATUS_PENDING)) {
 				
-				orgCli.setStatusOC(Constants.STATUS_MUST_ACTIVATE);
+				orgCli.setStatusOC(Constants.STATUS_ACTIVE);
 				organizacionClienteService.save(orgCli);
 				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_member_confirmed", 
 						new Object[]{organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
