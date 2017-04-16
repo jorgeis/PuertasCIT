@@ -12,7 +12,15 @@ public interface OrganizacionRepository extends CrudRepository<Organizacion, Int
 
 	public List<Organizacion> findBySiglasOrgLike (String siglasOrg);
 	
+	public List<Organizacion> findByNombreOrgLike (String nombreOrg);
+	
 	public List<Organizacion> findByorganizacionClienteSet_PkClienteIdCli(int idCli);
 	
 	public Page<Organizacion> findByorganizacionClienteSet_PkClienteIdCli(int idCli, Pageable pageable);
+	
+	public Page<Organizacion> findAll(Pageable pageable);
+	
+	public Page<Organizacion> findBySiglasOrgLikeOrNombreOrgLike(String param1, String param2, Pageable pageable);
+	
+	public List<Organizacion> findBySiglasOrgLikeOrNombreOrgLike(String param1, String param2);
 }

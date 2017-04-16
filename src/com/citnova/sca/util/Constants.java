@@ -32,4 +32,5 @@ public class Constants {
 	public static final String CUSTOM_MAPPING = "customMapping";
 	public static final String CONFIRM_BUTTON = "confirmButton";
 	public static final String PAGE_TITLE = "pageTitle";
+	public static final String JSON_SERVER = "jsonServer";
 }

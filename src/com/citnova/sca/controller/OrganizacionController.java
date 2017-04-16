@@ -100,12 +100,9 @@ public class OrganizacionController {
 	public String createOrganizacion(Model model, OrganizacionDireccionWrapper organizacionDireccionWrapper, 
 			HttpServletRequest request, RedirectAttributes ra, Principal principal) {
 		
-		Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
 		int idOrg = organizacionDireccionWrapper.getIdOrg();
-		//
+
 		// Guardar nuevo registro
-		//
-		
 		System.out.println("La organización traida es: " + idOrg);
 		
 		if(idOrg == 0){
@@ -135,51 +132,58 @@ public class OrganizacionController {
 			System.out.println(organizacion);
 			System.out.println(direccion);
 			
-			// Guardar los datos a través del servicio
+			// Guardar los datos de la nueva organización a través del servicio
 			organizacionService.saveOrUpdate(organizacion, direccion, municipio, sectorEmp);
-			
+	
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_saved", null, Locale.getDefault()));
+	
+			// Revisa si quien da de alta la organización es un cliente. De ser así, crea la relación OrganizaciónCliente 
+			// con el cliente autentificado en el sistema actualmente como Responsable de la Organización.
 			
-			
+			Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
 			System.out.println("El cliente es: " + cliente);
+			if(cliente != null) {
 			
-			// Genera un nuevo pass para passOC
-			List<Cliente> clienteList = clienteService.findAll();
-			List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
-			boolean passUsed;
-			String passOC;
-			do {
-				passUsed = false;
-				passOC = PassGen.generatePass();
-				System.out.println("\nPass generado: " + passOC);
-				for(Cliente cli : clienteList) {
-		            if(passOC.equals(cli.getPassAreaCli())) {
-		            	System.out.println("La contraseña ya existe");
-		            	passUsed = true;
-		            }
-		        }
-				for(OrganizacionCliente orgClie : orgCliList) {
-		            if(passOC.equals(orgClie.getPassOC())) {
-		            	System.out.println("La contraseña ya existe");
-		            	passUsed = true;
-		            }
-		        }
-				System.out.println(passUsed);
-			}
-			while (passUsed == true);
-			
-			System.out.println("El objeto cliente ha sido traido: " + cliente);
-			System.out.println("La organización ingresada es: " + organizacion);
-			OrganizacionCliente orgCli = new OrganizacionCliente();
-			orgCli.setOrganizacion(organizacion);
-			orgCli.setCliente(cliente);
-			orgCli.setCargoOC(Constants.ORG_RESPONSABLE);
-			orgCli.setPassOC(passOC);
-			orgCli.setStatusOC(Constants.STATUS_ACTIVE);
-			orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
-			
-			organizacionClienteService.save(orgCli);
+				// Genera un nuevo pass para passOC
+				List<Cliente> clienteList = clienteService.findAll();
+				List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
+				boolean passUsed;
+				String passOC;
+				do {
+					passUsed = false;
+					passOC = PassGen.generatePass();
+					System.out.println("\nPass generado: " + passOC);
+					for(Cliente cli : clienteList) {
+			            if(passOC.equals(cli.getPassAreaCli())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsed = true;
+			            }
+			        }
+					for(OrganizacionCliente orgClie : orgCliList) {
+			            if(passOC.equals(orgClie.getPassOC())) {
+			            	System.out.println("La contraseña ya existe");
+			            	passUsed = true;
+			            }
+			        }
+					System.out.println(passUsed);
+				}
+				while (passUsed == true);
 				
+				System.out.println("El objeto cliente ha sido traido: " + cliente);
+				System.out.println("La organización ingresada es: " + organizacion);
+				OrganizacionCliente orgCli = new OrganizacionCliente();
+				orgCli.setOrganizacion(organizacion);
+				orgCli.setCliente(cliente);
+				orgCli.setCargoOC(Constants.ORG_RESPONSABLE);
+				orgCli.setPassOC(passOC);
+				orgCli.setStatusOC(Constants.STATUS_ACTIVE);
+				orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
+				
+				organizacionClienteService.save(orgCli);
+			}
+			// En caso de que no se encuentre un cliente autentificado en el sistema significa que la Organización está
+			// siendo registrada por un Administrador, por lo que no crea la relación OrganizaciónCliente. Es posible designar
+			// un Responsable mas tarde a través de la administración de Organizacion.
 			return "redirect:/confirmscreen";
 		}
 		
@@ -382,14 +386,6 @@ public class OrganizacionController {
 	
 	
 	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * Cambiar el responsable de una organización
 	 * @RequestMapping(value="/org/orgresp", method=RequestMethod.POST)
 	 * */
@@ -399,7 +395,7 @@ public class OrganizacionController {
 			@RequestParam("param1") int idCli,  @RequestParam("param2") int idOrg) {
 		
 		OrganizacionCliente orgCliNewResp = organizacionClienteService.findOneByIdOrgAndIdCli(idOrg, idCli);		
-		Persona persona = clienteService.findOne(idOrg).getPersona();
+		Persona persona = clienteService.findOne(idCli).getPersona();
 		
 		if(orgCliNewResp.getCargoOC().equals(Constants.ORG_RESPONSABLE)) {
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("org_cliente_alreadyresp", 
@@ -407,10 +403,15 @@ public class OrganizacionController {
 							organizacionService.findOne(idOrg).getNombreOrg()}, Locale.getDefault()));
 		}
 		else {
-			// Buscar responsable de antes y cambiarlo a Miembro
+			/* Buscar responsable de antes y cambiarlo a Miembro */
 			OrganizacionCliente orgCliOldResp = organizacionClienteService.findOneByIdOrgAndCargoResp(idOrg);
-			orgCliOldResp.setCargoOC(Constants.ORG_MEMBER);
-			organizacionClienteService.save(orgCliOldResp);
+			
+			/* Revisa si el objeto buscado es nulo. De ser así, significa que no existe un Responsable anterior, 
+			   debido a que la Organización fue dada de alta por un administrador. */
+			if(orgCliOldResp != null) {
+				orgCliOldResp.setCargoOC(Constants.ORG_MEMBER);
+				organizacionClienteService.save(orgCliOldResp);
+			}
 			
 			// Hacer nuevo responsable al cliente seleccionado
 			orgCliNewResp.setCargoOC(Constants.ORG_RESPONSABLE);
@@ -428,7 +429,6 @@ public class OrganizacionController {
 		
 		return "confirm";
 	}
-	
 	
 	
 	/**
@@ -500,23 +500,37 @@ public class OrganizacionController {
 	
 	/**
 	 * Controlador para consulta de las organizaciones dadas de alta por el cliente identificado en el sistema
-	 * @RequestMapping("/org/queryown/{index}")
+	 * 
+	 *  - queryall: Devuelve todas las organizaciones
+	 *  - queryown: Consulta todas las organizaciones dadas de alta por el cliente identificado en el sistema
+	 * @RequestMapping("/org/query{searchParam}/{index}")
 	 */
-	@RequestMapping("/org/queryown/{index}")
+	@RequestMapping("/org/query{searchParam}/{index}")
 	public String queryOwn(Model model,
-			HttpSession session, Principal principal, @PathVariable("index") int index) {
+			HttpSession session, Principal principal, @PathVariable("index") int index, 
+			@PathVariable("searchParam") String searchParam) {
 		
-		int idCli = currentUser.getIdCliente(principal);
+		if(searchParam.equals(null)) { searchParam = "all";}
 		
-		Cliente cliente = clienteService.findOne(idCli);
-		Page<Organizacion> page = organizacionService.getPageByIdCli(cliente.getIdCli(), index);
-		List<Organizacion> list = organizacionService.findByIdCli(idCli);
+		Page<Organizacion> page = null;
 		
-		System.out.println("El tamaño de la página es: " + page.getSize());
-		System.out.println(page.getContent());
+		// Búsqueda de organizaciones propias
+		if(searchParam.equals("own")) {
+			
+			int idCli = currentUser.getIdCliente(principal);
+			Cliente cliente = clienteService.findOne(idCli);
+			page = organizacionService.getPageByIdCli(cliente.getIdCli(), index);
+			model.addAttribute("searchParam", "own");
+			model.addAttribute(Constants.PAGE_TITLE, "Buscar Organizaciones Propias");
+		}
 		
-		System.out.println("\n El tamaño de la lista es: " + list.size());
-		System.out.println(list);
+		// Búsqueda de todas las organizaciones
+		if(searchParam.equals("all")) {
+			page = organizacionService.findAllPage(index);
+			model.addAttribute("searchParam", "all");
+			model.addAttribute(Constants.PAGE_TITLE, "Consultar Organizaciones");
+		}
+
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -527,12 +541,76 @@ public class OrganizacionController {
 		model.addAttribute("currentIndex",currentIndex);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("orgList", page.getContent());
-		model.addAttribute("searchParam", "own");
+		
 		
 		model.addAttribute(Constants.SHOW_PAGES, true);
-		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, false);	
 		
 		return"organizacion_query";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar formulario búsqueda de Organizacion
+	 * @RequestMapping("/org/searchform")
+	 * */
+	@RequestMapping("/org/searchform")
+	public String showOrgSearch(Model model) {
+		
+		model.addAttribute(Constants.PAGE_TITLE, "Búsqueda de Organizaciones");
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/org/search");
+		model.addAttribute(Constants.JSON_SERVER, "/json/search/org");
+		
+		return "search";
+	}
+	
+	
+	/**
+	 * Controlador para mostrar los resultados de la búsqueda de un administador
+	 * @RequestMapping(value="/org/search", method=RequestMethod.POST)
+	 * */
+	@RequestMapping(value="/org/search", method=RequestMethod.POST)
+	public String search(@RequestParam("busqueda") String  busqueda,
+			RedirectAttributes ra, Model model, HttpSession session) {
+		
+		System.out.println("Parámetro de búsqueda: " + busqueda);
+		
+		List<Organizacion> listo = organizacionService.findBySiglasOrgLikeOrNombreOrgLike("%" + busqueda + "%");
+		System.out.println("Tamaño de la listilla: " + listo.size());
+		System.out.println("Listilla: " + listo);
+				
+		Page<Organizacion> page = organizacionService.findBySiglasOrgLikeOrNombreOrgLikePage(0, "%" + busqueda + "%");
+		System.out.println("/org/search ***** " + page.getTotalElements());
+		
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("org_query_all", null, Locale.getDefault()));
+		
+		if(page.getTotalElements() > 0){
+			
+			int currentIndex = page.getNumber() + 1;
+			int beginIndex = Math.max(1, currentIndex - 5);
+			int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+			
+			model.addAttribute("beginIndex",beginIndex);
+			model.addAttribute("endIndex",endIndex);
+			model.addAttribute("currentIndex",currentIndex);
+			model.addAttribute("totalPages", page.getTotalPages());
+			model.addAttribute("orgList", page.getContent());
+			
+			model.addAttribute(Constants.SHOW_PAGES, false);
+			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
+			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
+			model.addAttribute("busqueda", busqueda);
+			
+			return "organizacion_query";
+		}
+		else{
+			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("org_not_found", 
+					new Object[]{busqueda}, Locale.getDefault()));
+			
+				return "redirect:/org/queryall/1";
+		}		
 	}
 	
 	
@@ -646,19 +724,26 @@ public class OrganizacionController {
 	
 	/**
 	 * Servidor JSON para búsqueda de Organizaciones
-	 * @RequestMapping(value="/json/search/siglasorg", produces="application/json")
+	 * @RequestMapping(value="/json/search/org", produces="application/json")
 	 * */
-	@RequestMapping(value="/json/search/siglasorg", produces="application/json")
+	@RequestMapping(value="/json/search/org", produces="application/json")
 	@ResponseBody
 	public Map<String, Object> findOrganizacion(@RequestParam("term") String term) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		
-		List<Organizacion> organizacionList = organizacionService.findBySiglasOrgLike("%" + term + "%");
+		List<Organizacion> organizacionList1 = organizacionService.findBySiglasOrgLike("%" + term + "%");
+		List<Organizacion> organizacionList2 = organizacionService.findByNombreOrgLike("%" + term + "%");
 		
-		for (int j = 0; j < organizacionList.size(); j++) {
-			Organizacion org = organizacionList.get(j);
+		
+		for (int j = 0; j < organizacionList1.size(); j++) {
+			Organizacion org = organizacionList1.get(j);
 			map.put(String.valueOf(org.getIdOrg()),
 							org.getSiglasOrg());
+		}
+		for (int j = 0; j < organizacionList2.size(); j++) {
+			Organizacion org = organizacionList2.get(j);
+			map.put(String.valueOf(org.getIdOrg()) + organizacionList2.size(),
+							org.getNombreOrg());
 		}
 		
 		System.out.println(map.size());

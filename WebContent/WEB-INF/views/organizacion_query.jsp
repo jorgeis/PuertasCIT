@@ -38,7 +38,7 @@
 	<!-- Article - Formulario -->
 	<article class="featured"> 
 		<form>
-			<h1>Buscar Organizaciones Propias</h1>
+			<h1>${pageTitle}</h1>
 			<h2>${result}</h2>
 		</form>
 		

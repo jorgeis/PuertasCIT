@@ -29,6 +29,10 @@ public class OrganizacionService {
 		return organizacionRepository.findBySiglasOrgLike(siglasOrg);
 	}
 	
+	public List<Organizacion> findByNombreOrgLike(String nombreOrg) {
+		return organizacionRepository.findByNombreOrgLike(nombreOrg);
+	}
+	
 	public void saveOrUpdate(Organizacion organizacion, Direccion direccion, Municipio municipio, SectorEmp sectorEmp){
 		direccion.setMunicipio(municipio);
 		direccionRepository.save(direccion);
@@ -47,5 +51,17 @@ public class OrganizacionService {
 	
 	public Page<Organizacion> getPageByIdCli(int idCli, int index) {
 		return organizacionRepository.findByorganizacionClienteSet_PkClienteIdCli(idCli, new PageRequest(index-1, Constants.ITEMS_PER_PAGE, Direction.ASC, "idOrg"));
+	}
+	
+	public Page<Organizacion> findAllPage(int index) {
+		return organizacionRepository.findAll(new PageRequest(index-1, Constants.ITEMS_PER_PAGE, Direction.ASC, "idOrg"));
+	}
+	
+	public Page<Organizacion> findBySiglasOrgLikeOrNombreOrgLikePage(int index, String param) {
+		return organizacionRepository.findBySiglasOrgLikeOrNombreOrgLike(param, param, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idOrg"));
+	}
+	
+	public List<Organizacion>findBySiglasOrgLikeOrNombreOrgLike(String param) {
+		return organizacionRepository.findBySiglasOrgLikeOrNombreOrgLike(param, param);
 	}
 }

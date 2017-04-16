@@ -201,7 +201,11 @@ public class AdminController {
 	@RequestMapping("/admin/searchform")
 	public String showAdminSearch(Model model) {
 		
-		return "admin_search";
+		model.addAttribute(Constants.PAGE_TITLE, "Búsqueda de Administradores Activos");
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/admin/search");
+		model.addAttribute(Constants.JSON_SERVER, "/json/search/admin");
+		
+		return "search";
 	}
 	
 
@@ -373,13 +377,6 @@ public class AdminController {
 			
 				return "redirect:/admin/queryall/1";
 		}		
-		
-		
-		
-		
-		
-		
-		
 	}
 	
 

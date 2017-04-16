@@ -116,7 +116,11 @@ public class ClienteController {
 	@RequestMapping("/cliente/searchform")
 	public String showClienteSearch(Model model) {
 		
-		return "cliente_search";
+		model.addAttribute(Constants.PAGE_TITLE, "Búsqueda de Clientes Activos");
+		model.addAttribute(Constants.CUSTOM_MAPPING, "/cliente/search");
+		model.addAttribute(Constants.JSON_SERVER, "/json/search/cliente");
+		
+		return "search";
 	}
 	
 	

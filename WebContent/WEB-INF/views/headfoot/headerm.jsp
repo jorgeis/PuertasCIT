@@ -120,20 +120,28 @@
 													<li>
 														<span class="arrow">Administradores</span>
 														<ul>
-															<li><a href='<c:url value="/admin/form"/>'>Crear Nuevo</a></li>
-															<li><a href='<c:url value="/admin/searchform"/>'>Buscar Activos</a></li>
-															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar Activos</a></li>
-															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar Pendientes</a></li>
-															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar Borrados</a></li>
+															<li><a href='<c:url value="/admin/form"/>'>Crear nuevo</a></li>
+															<li><a href='<c:url value="/admin/searchform"/>'>Buscar activos</a></li>
+															<li><a href='<c:url value="/admin/queryall/1"/>'>Consultar activos</a></li>
+															<li><a href='<c:url value="/admin/querypending/1"/>'>Consultar pendientes</a></li>
+															<li><a href='<c:url value="/admin/querydeleted/1"/>'>Consultar borrados</a></li>
 														</ul>
 													</li>
 													<li>
 														<span class="arrow">Clientes</span>
 														<ul>
-															<li><a href='<c:url value="/cliente/searchform"/>'>Buscar Activos</a></li>
-															<li><a href='<c:url value="/cliente/queryall/1"/>'>Consultar Activos</a></li>
-															<li><a href='<c:url value="/cliente/querypending/1"/>'>Consultar Pendientes</a></li>
-															<li><a href='<c:url value="/cliente/querydeleted/1"/>'>Consultar Borrados</a></li>
+															<li><a href='<c:url value="/cliente/searchform"/>'>Buscar activos</a></li>
+															<li><a href='<c:url value="/cliente/queryall/1"/>'>Consultar activos</a></li>
+															<li><a href='<c:url value="/cliente/querypending/1"/>'>Consultar pendientes</a></li>
+															<li><a href='<c:url value="/cliente/querydeleted/1"/>'>Consultar borrados</a></li>
+														</ul>
+													</li>
+													<li>
+														<span class="arrow">Organizaciones</span>
+														<ul>
+															<li><a href='<c:url value="/org/searchform"/>'>Búsqueda por nombre</a></li>
+															<li><a href='<c:url value="/org/queryall/1"/>'>Consultar todas</a></li>
+															<li><a href='<c:url value="/orgform"/>'>Agregar nueva</a></li>
 														</ul>
 													</li>
 												</ul>
