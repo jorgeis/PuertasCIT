@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 <%@ page import="java.io.*,java.util.*"%>
@@ -51,105 +52,140 @@
 	<c:if test="${actionView != 'orgrespsc'}">
 		<article class="featured">		
 			<form method="post">
-				<h1>${siglasOrg}</h1>
-				<h2>${result}</h2>
+				<h1>Organización: <br />${siglasOrg}</h1>
+				<c:if test="${result != null}">
+					<h2>${result}</h2>
+				</c:if>
 			</form>		
 		
 			<br /><br />
 		
 			<form method="post" action="${pageContext.request.contextPath}/clienteform">
 				<h1>Miembros Activos</h1>
+				<c:set var='activo' value='false'/>
+				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+					<c:if test="${statusList[status.index] == 'Activo'}">
+						<c:set var='activo' value='true'/>
+					</c:if>
+				</c:forEach>
+				<c:if test="${activo eq 'false'}">
+					<h2>${message1}</h2>
+				</c:if>
 			</form>	
-			<div class="table1">
-				<table>
-					<tr style="border-radius: 5px;">
-						<td>Nombre(s)</td>
-						<td>Apellido Paterno</td>
-						<td>Apellido Materno</td>
-						<td>Correo electrónico</td>
-						<td>Nivel</td>
-						<td>Acción</td>
-					</tr>
-					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-						<c:if test="${statusList[status.index] == 'Activo'}">
-							<tr>
-								<td>${cliente.persona.nombrePer}</td>
-								<td>${cliente.persona.apPatPer}</td>
-								<td>${cliente.persona.apMatPer}</td>
-								<td>${cliente.persona.emailPer}</td>
-								<td>${cargoList[status.index]}</td>
-								<td>
-									<form method="post" action="${pageContext.request.contextPath}/org/deletemembersc" >
-									<input type="hidden" name="idOrgParam" value="${idOrg}"/>
-									<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
-									<button type="submit">Eliminar</button>
-								</form>	
-								</td>
-							</tr>
-						</c:if>
-					</c:forEach>
-				</table>
-			</div>
+			<c:if test="${activo eq 'true'}">
+				<div class="table1">
+					<table>
+						<tr style="border-radius: 5px;">
+							<td>Nombre(s)</td>
+							<td>Apellido Paterno</td>
+							<td>Apellido Materno</td>
+							<td>Correo electrónico</td>
+							<td>Nivel</td>
+							<td>Acción</td>
+						</tr>
+						<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+							<c:if test="${statusList[status.index] == 'Activo'}">
+								<tr>
+									<td>${cliente.persona.nombrePer}</td>
+									<td>${cliente.persona.apPatPer}</td>
+									<td>${cliente.persona.apMatPer}</td>
+									<td>${cliente.persona.emailPer}</td>
+									<td>${cargoList[status.index]}</td>
+									<td>
+										<form method="post" action="${pageContext.request.contextPath}/org/deletemembersc" >
+										<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+										<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
+										<button type="submit">Eliminar</button>
+									</form>	
+									</td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</table>
+				</div>
+			</c:if>
 			
 			<br /><br />
 			
 			<form method="post" action="${pageContext.request.contextPath}/clienteform">
 				<h1>Miembros Pendientes</h1>
+				<c:set var='pendiente' value='false'/>
+				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+					<c:if test="${statusList[status.index] == 'Pendiente'}">
+						<c:set var='pendiente' value='true'/>
+					</c:if>
+				</c:forEach>
+				<c:if test="${pendiente eq 'false'}">
+					<h2>${message1}</h2>
+				</c:if>
 			</form>	
-			<div class="table1">
-				<table>
-					<tr style="border-radius: 5px;">
-						<td>Nombre(s)</td>
-						<td>Apellido Paterno</td>
-						<td>Apellido Materno</td>
-						<td>Correo electrónico</td>
-					</tr>
-					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-						<c:if test="${statusList[status.index] == 'Pendiente'}">
-							<tr>
-								<td>${cliente.persona.nombrePer}</td>
-								<td>${cliente.persona.apPatPer}</td>
-								<td>${cliente.persona.apMatPer}</td>
-								<td>${cliente.persona.emailPer}</td>
-							</tr>
-						</c:if>
-					</c:forEach>
-				</table>
-			</div>
+			<c:if test="${pendiente eq 'true'}">
+				<div class="table1">
+					<table>
+						<tr style="border-radius: 5px;">
+							<td>Nombre(s)</td>
+							<td>Apellido Paterno</td>
+							<td>Apellido Materno</td>
+							<td>Correo electrónico</td>
+						</tr>
+						<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+							<c:if test="${statusList[status.index] == 'Pendiente'}">
+								<tr>
+									<td>${cliente.persona.nombrePer}</td>
+									<td>${cliente.persona.apPatPer}</td>
+									<td>${cliente.persona.apMatPer}</td>
+									<td>${cliente.persona.emailPer}</td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</table>
+				</div>
+			</c:if>
 			
 			<br /><br />
 			
 			<form method="post" action="${pageContext.request.contextPath}/clienteform">
 				<h1>Miembros Borrados</h1>
+			<c:set var='borrado' value='false'/>
+				<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+					<c:if test="${statusList[status.index] == 'Borrado'}">
+						<c:set var='borrado' value='true'/>
+					</c:if>
+				</c:forEach>
+				<c:if test="${borrado eq 'false'}">
+					<h2>${message1}</h2>
+				</c:if>
 			</form>	
-			<div class="table1">
-				<table>
-					<tr style="border-radius: 5px;">
-						<td>Nombre(s)</td>
-						<td>Apellido Paterno</td>
-						<td>Apellido Materno</td>
-						<td>Correo electrónico</td>
-						<td>Acción</td>
-					</tr>
-					<c:forEach var="cliente" items="${clienteList}" varStatus="status">
-						<c:if test="${statusList[status.index] == 'Borrado'}">
-							<tr>
-								<td>${cliente.persona.nombrePer}</td>
-								<td>${cliente.persona.apPatPer}</td>
-								<td>${cliente.persona.apMatPer}</td>
-								<td>${cliente.persona.emailPer}</td>
-								<td>
-									<form method="post" action="${pageContext.request.contextPath}/org/reinvitemembersc" >
-									<input type="hidden" name="idOrgParam" value="${idOrg}"/>
-									<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
-									<button type="submit">Reinvitar</button>
-								</form>	
-								</td>
-							</tr>
-						</c:if>
-					</c:forEach>
-				</table>
-			</div>
+			<c:if test="${borrado eq 'true'}">
+				<div class="table1">
+					<table>
+						<tr style="border-radius: 5px;">
+							<td>Nombre(s)</td>
+							<td>Apellido Paterno</td>
+							<td>Apellido Materno</td>
+							<td>Correo electrónico</td>
+							<td>Acción</td>
+						</tr>
+						<c:forEach var="cliente" items="${clienteList}" varStatus="status">
+							<c:if test="${statusList[status.index] == 'Borrado'}">
+								<tr>
+									<td>${cliente.persona.nombrePer}</td>
+									<td>${cliente.persona.apPatPer}</td>
+									<td>${cliente.persona.apMatPer}</td>
+									<td>${cliente.persona.emailPer}</td>
+									<td>
+										<form method="post" action="${pageContext.request.contextPath}/org/reinvitemembersc" >
+										<input type="hidden" name="idOrgParam" value="${idOrg}"/>
+										<input type="hidden" name="idCliParam" value="${cliente.idCli}"/>
+										<button type="submit">Reinvitar</button>
+									</form>	
+									</td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</table>
+				</div>
+			</c:if>
 			
 			<br /> <br />
 			

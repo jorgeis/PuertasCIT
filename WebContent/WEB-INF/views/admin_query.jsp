@@ -48,12 +48,15 @@
 <!-- 		</form>	 -->
 
 
-	<form method="post">
-
-		<h1>${pageTitle}</h1>
-		<h2>${result}</h2>
-		<h2>${message1}</h2>
-	</form>
+		<form>
+			<h1>${pageTitle}</h1>
+			<c:if test="${result != null}">
+				<h2>${result}</h2>
+			</c:if>
+			<c:if test="${message1 != null}">
+				<h2>${message1}</h2>
+			</c:if>
+		</form>
 
 
 		<div class = "table1">

@@ -27,7 +27,7 @@ public class Constants {
 			"Servicios Profesionales"};
 	
 	public static final String SHOW_PAGES_FROM_SEARCH = "showPagesFromSearch";
-	public static final String ADMIN_SEARCH_KEYWORD = "adminSearchKeyword";
+	public static final String SEARCH_KEYWORD = "searchKeyword";
 	
 	public static final String CUSTOM_MAPPING = "customMapping";
 	public static final String CONFIRM_BUTTON = "confirmButton";

@@ -305,13 +305,10 @@ public class AdminController {
 	public String searchPages(@PathVariable("index") int index,
 			HttpSession session, Model model) {
 		
-		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
+		String searchKeyword = (String) session.getAttribute(Constants.SEARCH_KEYWORD);
 		
 		Page<Admin> page = adminService.findByFullNameLikeAndStatusActivoPage(index - 1, "%" + searchKeyword + "%");
 		System.out.println("/admin/search/" + index  + " ****** " + page.getTotalElements());
-		
-		model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
-		String busqueda = (String) model.asMap().get("busqueda");
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -327,8 +324,7 @@ public class AdminController {
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
 		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
 		model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
-		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
-		model.addAttribute("busqueda", busqueda);
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{searchKeyword}, Locale.getDefault()));
 		
 		return "admin_query";
 	}
@@ -348,6 +344,7 @@ public class AdminController {
 		System.out.println("/admin/search ***** " + page.getTotalElements());
 		
 		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("admin_query_all", null, Locale.getDefault()));
+		model.addAttribute("busqueda", busqueda);
 		
 		if(page.getTotalElements() > 0){
 			
@@ -363,19 +360,18 @@ public class AdminController {
 			
 			model.addAttribute(Constants.SHOW_PAGES, false);
 			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
-			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
+			session.setAttribute(Constants.SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaAdminWrapper", new PersonaAdminWrapper());
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
-			model.addAttribute("busqueda", busqueda);
 			
 			return "admin_query";
 		}
 		else{
-			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("admin_not_found", 
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("admin_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
-				return "redirect:/admin/queryall/1";
+				return "redirect:/admin/searchform";
 		}		
 	}
 	

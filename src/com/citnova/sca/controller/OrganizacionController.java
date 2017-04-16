@@ -337,6 +337,7 @@ public class OrganizacionController {
 		model.addAttribute("clienteList", clienteList);
 		model.addAttribute("cargoList", cargoList);
 		model.addAttribute("statusList", statusList);
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("query_empty", null, Locale.getDefault()));
 		model.addAttribute("siglasOrg", organizacionService.findOne(idOrg).getSiglasOrg());
 		
 		// Atributo para que a vista sepa si mostrar exclusivamente la parte para cambiar el responsable
@@ -347,7 +348,6 @@ public class OrganizacionController {
 		}
 		
 		return "organizacion_members";
-		
 	}
 	
 	
@@ -566,6 +566,39 @@ public class OrganizacionController {
 	
 	
 	/**
+	 * Paginación como resultado de la búsqueda
+	 * @RequestMapping(value="/org/search/{index}")
+	 * */
+	@RequestMapping(value="/org/search/{index}")
+	public String searchPages(@PathVariable("index") int index,
+			HttpSession session, Model model) {
+		
+		String searchKeyword = (String) session.getAttribute(Constants.SEARCH_KEYWORD);
+		
+		Page<Organizacion> page = organizacionService.findBySiglasOrgLikeOrNombreOrgLikePage(index - 1, "%" + searchKeyword + "%");
+		System.out.println("/org/search/" + index  + " ****** " + page.getTotalElements());
+		
+		int currentIndex = page.getNumber() + 1;
+		int beginIndex = Math.max(1, currentIndex - 5);
+		int endIndex = Math.min(beginIndex + 10, page.getTotalPages());
+		
+		model.addAttribute("beginIndex",beginIndex);
+		model.addAttribute("endIndex",endIndex);
+		model.addAttribute("currentIndex",currentIndex);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("orgList", page.getContent());
+		
+		model.addAttribute(Constants.SHOW_PAGES, false);
+		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
+		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("org_query_all", null, Locale.getDefault()));
+		model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{searchKeyword}, Locale.getDefault()));
+		
+		return "organizacion_query";
+	}
+	
+	
+	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un administador
 	 * @RequestMapping(value="/org/search", method=RequestMethod.POST)
 	 * */
@@ -583,6 +616,7 @@ public class OrganizacionController {
 		System.out.println("/org/search ***** " + page.getTotalElements());
 		
 		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("org_query_all", null, Locale.getDefault()));
+		model.addAttribute("busqueda", busqueda);
 		
 		if(page.getTotalElements() > 0){
 			
@@ -598,18 +632,17 @@ public class OrganizacionController {
 			
 			model.addAttribute(Constants.SHOW_PAGES, false);
 			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
-			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
+			session.setAttribute(Constants.SEARCH_KEYWORD, busqueda);
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
-			model.addAttribute("busqueda", busqueda);
 			
 			return "organizacion_query";
 		}
 		else{
-			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("org_not_found", 
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("org_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
 			
-				return "redirect:/org/queryall/1";
+				return "redirect:/org/searchform";
 		}		
 	}
 	

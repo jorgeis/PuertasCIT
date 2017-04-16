@@ -484,7 +484,6 @@ public class ClienteController {
 	}
 	
 	
-	
 	/**
 	 * Actualizar un cliente en específico
 	 * @RequestMapping("/cliente/update/{idCli}")
@@ -562,9 +561,6 @@ public class ClienteController {
 		
 		return "cliente_form";
 	}
-	
-	
-	
 	
 	
 	/**
@@ -646,9 +642,6 @@ public class ClienteController {
 	}
 	
 	
-	
-	
-	
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado
 	 * @RequestMapping("/cliente/delete/{idCli}")
@@ -665,9 +658,7 @@ public class ClienteController {
 		
 		return "redirect:/cliente/queryall/1";
 	}
-	
 
-	
 	
 	/**
 	 * Controlador para mostrar pantalla de confirmación para cambiar status de Cliente a Borrado en cuenta propia
@@ -685,8 +676,6 @@ public class ClienteController {
 	}
 	
 
-	
-	
 	/**
 	 * Controlador para cambiar status de Cliente a Borrado en cuenta propia
 	 * @RequestMapping("/cliente/delete")
@@ -704,8 +693,6 @@ public class ClienteController {
 		
 		return "redirect:/logout";
 	}
-	
-	
 	
 	
 	/**
@@ -740,8 +727,6 @@ public class ClienteController {
 	}
 	
 	
-	
-	
 	/**
 	 * Controlador para mostrar los resultados de la búsqueda de un cliente
 	 * @RequestMapping(value="/cliente/search", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
@@ -755,6 +740,7 @@ public class ClienteController {
 		Page<Cliente> page = clienteService.findByFullNameLikeAndStatusActivoPage(0, busqueda);
 		
 		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_all", null, Locale.getDefault()));
+		model.addAttribute("busqueda", busqueda);
 		
 		if(page.getTotalElements() > 0){
 			
@@ -770,23 +756,21 @@ public class ClienteController {
 			
 			model.addAttribute(Constants.SHOW_PAGES, false);
 			session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
-			session.setAttribute(Constants.ADMIN_SEARCH_KEYWORD, busqueda);
+			session.setAttribute(Constants.SEARCH_KEYWORD, busqueda);
 			model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
 			
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 			model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
-			model.addAttribute("busqueda", busqueda);
 			
 			return "cliente_query";
 		}
 		else{
-			ra.addFlashAttribute(Constants.MESSAGE1, messageSource.getMessage("cliente_not_found", 
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("cliente_not_found", 
 					new Object[]{busqueda}, Locale.getDefault()));
-			return "redirect:/cliente/queryall/1";
+			
+			return "redirect:/cliente/searchform";
 		}		
 	}
-	
-	
 	
 	
 	/**
@@ -797,13 +781,10 @@ public class ClienteController {
 	public String searchPages(@PathVariable("index") int index,
 			HttpSession session, Model model) {
 		
-		String searchKeyword = (String) session.getAttribute(Constants.ADMIN_SEARCH_KEYWORD);
+		String searchKeyword = (String) session.getAttribute(Constants.SEARCH_KEYWORD);
 		
 		Page<Cliente> page = clienteService.findByFullNameLikeAndStatusActivoPage(index - 1, "%" + searchKeyword + "%");
 		System.out.println("/cliente/search/" + index  + " ****** " + page.getTotalElements());
-		
-		model.addAttribute("personaClienteDireccionWrapper", new PersonaClienteDireccionWrapper());
-		String busqueda = (String) model.asMap().get("busqueda");
 		
 		int currentIndex = page.getNumber() + 1;
 		int beginIndex = Math.max(1, currentIndex - 5);
@@ -819,17 +800,12 @@ public class ClienteController {
 		session.setAttribute(Constants.SHOW_PAGES_FROM_SEARCH, true);
 		model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("cliente_query_all", null, Locale.getDefault()));
 		model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
-		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{busqueda}, Locale.getDefault()));
-		model.addAttribute("busqueda", busqueda);
-		
-		
-		
+		model.addAttribute(Constants.MESSAGE1, messageSource.getMessage("search_matches", new Object[]{searchKeyword}, Locale.getDefault()));
+			
 		return "cliente_query";
 	}
 	
-	
-	
-	
+		
 	/**
 	 * Controlador para cambiar status de Cliente a Activo
 	 * @RequestMapping("/cliente/activate/{idCli}")
@@ -896,10 +872,6 @@ public class ClienteController {
 	}
 	
 	
-	
-	
-	
-	
 	/**
 	 * Servidor JSON para búsqueda de Municipios
 	 * @RequestMapping(value="/json/search/mun", produces="application/json")
@@ -925,8 +897,6 @@ public class ClienteController {
 		return map;
 	}
 
-	
-	
 	
 	/**
 	 * Servidor JSON para búsqueda de Clientes con statusCli='Activo'
