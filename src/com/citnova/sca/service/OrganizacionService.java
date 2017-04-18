@@ -64,4 +64,8 @@ public class OrganizacionService {
 	public List<Organizacion>findBySiglasOrgLikeOrNombreOrgLike(String param) {
 		return organizacionRepository.findBySiglasOrgLikeOrNombreOrgLike(param, param);
 	}
+	
+	public List<Organizacion>findBySiglasOrgAndNombreOrg(String siglasOrg, String nombreOrg) {
+		return organizacionRepository.findBySiglasOrgAndNombreOrg(siglasOrg, nombreOrg);
+	}
 }

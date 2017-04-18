@@ -6,121 +6,51 @@
 <%@ page import="java.io.*,java.util.*"%>
 <%@ page import="java.text.*"%>
 
+<!DOCTYPE>
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<script src='<c:url value = "/res/js/jquery-1.8.1.min.js" />'></script>
+<link href='http://fonts.googleapis.com/css?family=Nunito:400,300'	rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic" rel="stylesheet" type="text/css" />	
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-
-<link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
-<c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
-<c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
-<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<c:import url="/res/js/dateScript.txt" />
+<link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/jquery.datetimepicker.css" />' />
+<link rel="stylesheet" media="all" type="text/css" href='<c:url value="/res/css/validationEngine.jquery.css" />' />
+<script src='<c:url value = "/res/css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=40&amp;mobileUI.openerWidth=60" />'></script>
+<script src='<c:url value = "/res/js/jquery.dropotron-1.1.js" />'></script>
+<script src='<c:url value = "/res/js/jquery.slidertron-1.2.js" />'></script>
+<script src='<c:url value = "/res/js/init.js" />'></script>
+<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
+<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+<script type="text/javascript" src='<c:url value="/res/js/jquery.datetimepicker.full.js" />'></script>
+<link rel="stylesheet" href='<c:url value = "/res/css/mainform.css" />' />
 
-<!-- Script para ocultar y mostrar campo dependiendo de opción seleccionada en <select> -->
-<script>
-$(function() {
-    $('#otroOcupacion').hide(); 
-    $('#ocupacionCli').change(function(){
-        if($('#ocupacionCli').val() == 'Otro') {
-            $('#otroOcupacion').show(200); 
-        } else {
-            $('#otroOcupacion').hide(200); 
-        } 
-    });
-    if($('#ocupacionCli').val() == 'Otro') {
-        $('#otroOcupacion').show(); 
-    } else {
-        $('#otroOcupacion').hide(); 
-    } 
-});
-</script>
-
-
-
-<!-- Script para hacer consultas asíncronas a través de JSON. Necesita servidor 
-	 JSON ubicado en controlador -->
- <script type="text/javascript">
-// 	jQuery(document).ready(function(){
-//  		$('#ajaxSearch').click(function(event) {
-//  		   var path = $("#path").val();
-//             var url = path + "/json/search/mun";
-//             $.ajax({ 
-//                  url: url, 
-//                  data: { term: $("#ajaxText").val()}, 
-//                  success: function (data) { 
-//                  	$('#ajaxResult').empty();
-//                      $.each(data, function(index, element) {
-//                      	$('#ajaxResult').append(index, ': <b>' + element + '</b><br/>');
-//                      });
-//                  }
-//              });
-//          });
-//  	});
-</script>
-
-<!-- Script para llenar un select dependiendo de opción seleccionada en <select>, a través de una consulta a un servidor JSON 
-	 En este caso es llenar los municipios dependiendo del estado seleccionado -->
 <script type="text/javascript">
-$(document).ready(function() {
-    $(".select-estado select").change(function() {
-	$(".select-municipio select").empty();
-	var path = $("#path").val();
-    var url = path + "/json/search/mun";
-	$.ajax({ 
-        url: url, 
-        data: { term: $("#estadoSel").val()}, 
-        success: function (data) {
-            $.each(data, function(index, element) {
-            	$(".select-municipio select").append('<option value="'+ index +'">'+ element +'</option>');
-            });
-        }
-    });
-    });
-});
-</script>
-
-<!-- Script para llenar los select de estado y municipio automáticamente cuando se redirija al mismo formulario y persistir los datos -->
-<script>
-$(function() {	
-	var perEst = $('.persistEst').val();
-	var perMun = $('.persistMun').val();
-	
-	if (perEst == 0) {
-	    perEst = 1;
-	}
-	if (perMun == 0) {
-	    perMun = 1;
-	}
-	
-	$('#estadoSel').find('option:nth-child(' + perEst + ')').prop('selected',true).trigger('change');
-		
-	setTimeout(function(){
-		$('#municipioSel').find('option[value="' + perMun + '"]').prop('selected',true).trigger('change');
-	}, 200); 
-});
-</script>
-
-<script>
-	jQuery(document).ready(function(){
-		var path = $("#path").val();
-		jQuery("#siglas").autocomplete({
-			source: path + "/json/search/siglasorg",
+	jQuery(document).ready(function() {
+		$("#valid").validationEngine();
+		$(".datepicker").datepicker({
+			changeYear : true,
+			changeMonth : true,
+			dateFormat : "yy-mm-dd",
+			yearRange : "1930:2100"
 		});
 	});
 </script>
 
-
-
-<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine-es.js" />'></script>
-<script type="text/javascript" src='<c:url value="/res/js/jquery.validationEngine.js" />'></script>
+<c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
+<c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
 
 <!-- Article - Formulario -->
 <article class="featured">
 
-	<input type="hidden" id="path" value=${pageContext.request.contextPath} />
+	<input type="hidden" id="path" value="${pageContext.request.contextPath}" />
 	
 	<sf:form method="post" id="valid"
-		action="${pageContext.request.contextPath}/gratuitosave"
+		action="${pageContext.request.contextPath}/gratuitorg"
  		commandName="gratuito"> 
 		
 	<h1>Solicitud de reserva de espacio gratuito</h1>
@@ -165,9 +95,9 @@ $(function() {
 			<label class="light">Número de Asistentes</label>	
 				<sf:input type="number" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numAsistEveGra" />
 			<label class="light">Fecha y hora de inicio del Evento</label>
-				<sf:input type="text" id="datepicker" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="fhInicioEveGra" />
+				<sf:input type="text" class="validate[required] datetimepicker" data-prompt-position="bottomLeft:20,5" path="fhInicioEveGra" />
 			<label class="light">Fecha y hora de fin del Evento</label>
-				<sf:input type="text" id="datepicker" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="fhFinEveGra" />
+				<sf:input type="text" class="validate[required] datetimepicker" data-prompt-position="bottomLeft:20,5" path="fhFinEveGra" />
 			<label class="light">Población objetivo</label>	
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
 			</fieldset>
@@ -196,16 +126,34 @@ $(function() {
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="cargoRespGra" />
 		</fieldset>
 		
-		
-		
 		<button type="submit">Guardar</button>
 	</sf:form>
 			
 	<br/><br/>
-		
-	
-	
 </article>
 					
 <c:import url="/WEB-INF/views/headfoot/footer_form.jsp" />	
 <c:import url="/WEB-INF/views/headfoot/footerm.jsp" />
+
+<script>
+	function disabledWeekdays(date) {
+	    var day = date.getDay();
+	    //0 is Sunday, 1 is Monday, 2 is Tuesday , 3 is Wednesday, 4 is Thursday, 5 is Friday and 6 is Saturday
+	    if (day == 0) {
+	        return [false] ; 
+	    } else { 
+	        return [true] ;
+	    }
+	}
+
+	$.datetimepicker.setLocale('es');
+	var today = new Date();
+	var myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+	
+	$('.datetimepicker').datetimepicker({
+		format : 'd/M/Y H:i',
+		value : myToday, 
+		beforeShowDay: disabledWeekdays,
+		minDate: "1"}
+		);
+</script>

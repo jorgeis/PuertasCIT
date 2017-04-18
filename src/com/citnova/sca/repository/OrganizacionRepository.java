@@ -23,4 +23,6 @@ public interface OrganizacionRepository extends CrudRepository<Organizacion, Int
 	public Page<Organizacion> findBySiglasOrgLikeOrNombreOrgLike(String param1, String param2, Pageable pageable);
 	
 	public List<Organizacion> findBySiglasOrgLikeOrNombreOrgLike(String param1, String param2);
+
+	public List<Organizacion> findBySiglasOrgAndNombreOrg(String siglasOrg, String nombreOrg);
 }

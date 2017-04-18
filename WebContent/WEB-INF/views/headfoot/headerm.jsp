@@ -7,31 +7,17 @@
 <%@ page import="java.io.*,java.util.*"%>
 <%@ page import="java.text.*"%>
 
-<!DOCTYPE>
-<html>
-	<head>
-		<title></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="description" content="" />
-		<meta name="keywords" content="" />
-		<link href='http://fonts.googleapis.com/css?family=Nunito:400,300'	rel='stylesheet' type='text/css'>
-		<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic" rel="stylesheet" type="text/css" />	
-		<script src='<c:url value = "/res/js/jquery-1.8.1.min.js" />'></script>
-		<script src='<c:url value = "/res/css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=40&amp;mobileUI.openerWidth=60" />'></script>
-		<script src='<c:url value = "/res/js/jquery.dropotron-1.1.js" />'></script>
-		<script src='<c:url value = "/res/js/jquery.slidertron-1.2.js" />'></script>
-		<script src='<c:url value = "/res/js/init.js" />'></script>
 
-<!-- 		DESCOMENTAR!!!!!
+		
 
-			<noscript> -->
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core.css" />' /> --%>
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-desktop.css" />' /> --%>
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-1200px.css" />' /> --%>
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-noscript.css" />' /> --%>
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/style.css" />' /> --%>
-<%-- 			<link rel="stylesheet" href='<c:url value = "/res/css/style-desktop.css" />' /> --%>
-<!-- 		</noscript> -->
+			<noscript>
+			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core.css" />' />
+			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-desktop.css" />' />
+			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-1200px.css" />' />
+			<link rel="stylesheet" href='<c:url value = "/res/css/5grid/core-noscript.css" />' />
+			<link rel="stylesheet" href='<c:url value = "/res/css/style.css" />' />
+			<link rel="stylesheet" href='<c:url value = "/res/css/style-desktop.css" />' />
+	 		</noscript>
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
 		<!--[if lte IE 7]><link rel="stylesheet" href="css/ie7.css" /><![endif]-->
 		
@@ -73,7 +59,7 @@
 									  		<li>
 												<a href="" class="arrow">Planes y Servicios</a>
 												<ul>
-													<li><a href="#">Gratuito</a></li>
+													<li><a href='<c:url value="/gratuitoform"/>'>Gratuito</a></li>
 													<li><a href="#">Individual</a></li>
 													<li><a href="#">Empresarial</a></li>
 													<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>

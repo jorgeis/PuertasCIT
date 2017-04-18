@@ -49,6 +49,13 @@ public class IndexController {
 		return "index";
 	}
 	
+	
+	@RequestMapping("/datepick")
+	public String showDatepick() {
+		return "datepick";
+	}
+	
+	
 
 	/**
 	 * Controlador para pantalla de acceso al sistema 

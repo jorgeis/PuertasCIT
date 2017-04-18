@@ -75,7 +75,7 @@ public class OrganizacionController {
 	 * @RequestMapping(value="/orgform")
 	 * */
 	@RequestMapping(value="/orgform")
-	public String showOrganizacionForm(Model model) {
+	public String showOrganizacionForm(Model model, HttpSession session) {
 		
 		// Consulta los sectores empresariales dados de alta en base de datos
 		List<SectorEmp> sectorEmpList = sectorEmpService.findAll();
@@ -86,6 +86,14 @@ public class OrganizacionController {
 		model.addAttribute("estadoList", estadoList);
 		
 		model.addAttribute("organizacionDireccionWrapper", new OrganizacionDireccionWrapper());
+		
+		// Revisa si hay un objeto llamado "gratuito" en la sesión. Si existe, quiere decir que se está mostrando el
+		// formulario de registro de nueva organización por parte de un usuario que está haciendo un a reservación
+		// de espacio gratuito con de una organización que apenas va a darse de alta, es decir, que no existe. El mecanismo
+		// para darse cuenta si la organización existe o no está en @RequestMapping(value="/gratuitorg") 
+		if(session.getAttribute("gratuito") != null) {
+			
+		}
 		
 		return "organizacion_form";
 	}
@@ -777,6 +785,31 @@ public class OrganizacionController {
 			Organizacion org = organizacionList2.get(j);
 			map.put(String.valueOf(org.getIdOrg()) + organizacionList2.size(),
 							org.getNombreOrg());
+		}
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
+		return map;
+	}
+	
+	
+	/**
+	 * Servidor JSON para búsqueda de Organizaciones por siglasOrg
+	 * @RequestMapping(value="/json/search/org", produces="application/json")
+	 * */
+	@RequestMapping(value="/json/search/siglasorg", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findOrganizacionBySiglasOrg(@RequestParam("term") String term) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		List<Organizacion> organizacionList1 = organizacionService.findBySiglasOrgLike("%" + term + "%");
+		
+		
+		for (int j = 0; j < organizacionList1.size(); j++) {
+			Organizacion org = organizacionList1.get(j);
+			map.put(String.valueOf(org.getIdOrg()),
+							org.getSiglasOrg());
 		}
 		
 		System.out.println(map.size());

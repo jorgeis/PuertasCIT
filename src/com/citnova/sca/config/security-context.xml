@@ -14,6 +14,7 @@
 		
 		<security:intercept-url pattern="/formex" access="permitAll" />
 		<security:intercept-url pattern="/json/search/mun" access="permitAll" />
+		<security:intercept-url pattern="/datepick" access="permitAll" />
 		
 		<security:intercept-url pattern="/adminaccount/**" access="permitAll" />
 		<security:intercept-url pattern="/clienteaccount/**" access="permitAll" />
@@ -22,6 +23,7 @@
 		<security:intercept-url pattern="/cliente/queryall" access="permitAll" />
 		
 		<security:intercept-url pattern="/gratuitoform" access="permitAll" />
+		<security:intercept-url pattern="/gratuitorg" access="permitAll" />
 		<security:intercept-url pattern="/confirmscreen" access="permitAll" />
 		<security:intercept-url pattern="/orgsave" access="permitAll" />
 		
