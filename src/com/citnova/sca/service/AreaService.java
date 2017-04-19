@@ -17,4 +17,8 @@ public class AreaService {
 	public List<Area> findAreaGratuitaActiva() {
 		return areaRepository.findByTipoAreaAndStatusArea("Gratuito", "Activa");
 	}
+	
+	public Area findByIdArea(int idArea) {
+		return areaRepository.findByIdArea(idArea);
+	}
 }

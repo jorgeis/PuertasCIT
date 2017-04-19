@@ -87,17 +87,19 @@
 			<label class="light">Impacto</label>	
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="impactoEveGra" />
 			<label>Área solicitada para el evento</label>
-				<sf:select class="validate[required]" data-prompt-position="bottomLeft:20,5" path="area">
+				<select class="validate[required]" data-prompt-position="bottomLeft:20,5" name="idArea">
 					<c:forEach var="area" items="${areaGratuitaList}"> 
-						<sf:option value="${area.idArea}"> ${area.nombreArea} </sf:option>
+						<option value="${area.idArea}"> ${area.nombreArea} </option>
 					</c:forEach> 
-				</sf:select>
+				</select>
 			<label class="light">Número de Asistentes</label>	
 				<sf:input type="number" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numAsistEveGra" />
-			<label class="light">Fecha y hora de inicio del Evento</label>
-				<sf:input type="text" class="validate[required] datetimepicker" data-prompt-position="bottomLeft:20,5" path="fhInicioEveGra" />
-			<label class="light">Fecha y hora de fin del Evento</label>
-				<sf:input type="text" class="validate[required] datetimepicker" data-prompt-position="bottomLeft:20,5" path="fhFinEveGra" />
+			<label class="light">Fecha del Evento</label>
+				<input type="text" class="validate[required] datetimepicker1" data-prompt-position="bottomLeft:20,5" name="fInicioEveGra" />
+			<label class="light">Hora de inicio del Evento</label>
+				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" name="hInicioEveGra" />
+			<label class="light">Hora de fin del Evento</label>
+				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" name="hFinEveGra" />
 			<label class="light">Población objetivo</label>	
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
 			</fieldset>
@@ -107,9 +109,9 @@
 				<span class="number">&nbsp;</span>&nbsp;Datos de la organización
 			</legend>
 			<label class="light">Siglas</label>
-				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="siglasOrg" />
+				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="siglasOrg" />
 			<label class="light">Nombre</label>
-				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="nombreOrg" />
+				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" name="nombreOrg" />
 		</fieldset>
 		
 		<fieldset>
@@ -155,5 +157,18 @@
 		value : myToday, 
 		beforeShowDay: disabledWeekdays,
 		minDate: "1"}
+		);
+	
+	$('.datetimepicker1').datetimepicker({
+		timepicker : false,
+		format : 'd/m/Y',
+		value : myToday, 
+		beforeShowDay: disabledWeekdays,
+		minDate: "1"}
+		);
+	
+	$('.datetimepicker2').datetimepicker({
+		datepicker : false,
+		format : 'H:i'}
 		);
 </script>

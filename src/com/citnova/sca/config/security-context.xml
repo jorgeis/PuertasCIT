@@ -26,12 +26,13 @@
 		<security:intercept-url pattern="/gratuitorg" access="permitAll" />
 		<security:intercept-url pattern="/confirmscreen" access="permitAll" />
 		<security:intercept-url pattern="/orgsave" access="permitAll" />
+		<security:intercept-url pattern="/orgformgra" access="permitAll" />
 		
+		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
 		<security:intercept-url pattern="/afterlogin" access="isAuthenticated()" />
 		
 		<security:intercept-url pattern="/org/**" access="isAuthenticated()" />
-		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
-		<security:intercept-url pattern="/orgsave" access="isAuthenticated()" />
+		
 		
 		<security:intercept-url pattern="/json/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/admin/**" access="isAuthenticated()" />

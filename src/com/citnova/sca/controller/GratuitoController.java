@@ -1,5 +1,8 @@
 package com.citnova.sca.controller;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,36 +19,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Area;
-import com.citnova.sca.domain.Cliente;
-import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
 import com.citnova.sca.domain.Gratuito;
-import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
-import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.service.AreaService;
 import com.citnova.sca.service.EstadoService;
+import com.citnova.sca.service.GratuitoService;
 import com.citnova.sca.service.OrganizacionService;
 import com.citnova.sca.service.SectorEmpService;
 import com.citnova.sca.util.Constants;
-import com.citnova.sca.util.PassGen;
 
 @Controller
 public class GratuitoController {
 	
 	@Autowired
 	private AreaService areaService;
-	
 	@Autowired
 	private SectorEmpService sectorEmpService;
-	
 	@Autowired
 	private EstadoService estadoService;
-	
 	@Autowired
 	private OrganizacionService organizacionService;
-	
+	@Autowired
+	private MessageSource messageSource;
+	@Autowired
+	private GratuitoService gratuitoService;
 
 	/**
 	 * Formulario de solicitud de reserva de espacio gratuito
@@ -76,13 +76,32 @@ public class GratuitoController {
 	 * 
 	 * */
 	@RequestMapping(value="/gratuitorg", method=RequestMethod.POST)
-	public String createCliente(Model model, RedirectAttributes ra, Gratuito gratuito, HttpSession session, 
-			@RequestParam("siglasOrg") String siglasOrg, 
+	public String redirectGratuitoOrg(Model model, RedirectAttributes ra, Gratuito gratuito, 
+			@RequestParam("siglasOrg") String siglasOrg, @RequestParam("idArea") int idArea, 
+			@RequestParam("fInicioEveGra") String fInicioEveGra, @RequestParam("hInicioEveGra") String hInicioEveGra,
+			@RequestParam("hFinEveGra") String hFinEveGra, 
 			@RequestParam("nombreOrg") String nombreOrg, HttpServletRequest request) {
 		
 		// Consulta los Estados dados de alta en base de datos
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
+		
+		// Coloca la fecha y hora en formato correcto y los introduce al objeto Gratuito
+		Timestamp fhInicioEveGra = null;
+		Timestamp fhFinEveGra = null;
+		try{
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		    Date parsedDate = dateFormat.parse(fInicioEveGra + " " + hInicioEveGra);
+		    fhInicioEveGra = new java.sql.Timestamp(parsedDate.getTime());
+		    parsedDate = dateFormat.parse(fInicioEveGra + " " + hFinEveGra);
+		    fhFinEveGra = new java.sql.Timestamp(parsedDate.getTime());
+		}catch(Exception e){
+			System.out.println("Error al procesar la fecha");
+		}
+		
+		gratuito.setFhInicioEveGra(fhInicioEveGra);
+		gratuito.setFhFinEveGra(fhFinEveGra);
+		gratuito.setArea(areaService.findByIdArea(idArea));
 		
 		// Revisa si los datos ingresados de Organización coinciden con algun registro en base de datos. 
 		// Si coinciden, automáticamente coloca los datos de esa organización. De lo contrario solicita al usuario
@@ -90,14 +109,22 @@ public class GratuitoController {
 		
 		// A revisar: El método del servicio trae una lista, pero en teoría debe de traer solo una organizacion. 
 		// Puede existir mas de una organización con siglas y/o nombre iguales?
-		Organizacion organizacion = organizacionService.findBySiglasOrgAndNombreOrg(siglasOrg, nombreOrg).get(0);
+		List<Organizacion> orgList = organizacionService.findBySiglasOrgAndNombreOrg(siglasOrg, nombreOrg);
 		
-		if(organizacion != null) {
-			gratuito.setOrganizacion(organizacion);
-			return "redirect:/";
+		if(orgList.size() != 0) {
+			Organizacion org = orgList.get(0);
+			gratuito.setOrganizacion(org);
+			gratuito.setStatusGra(Constants.STATUS_PENDING);
+			gratuitoService.save(gratuito);
+			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("gratuito_saved", null, Locale.getDefault()));
+			return "redirect:/confirmscreen";
 		}
 		else {
-			return "redirect:/orgform";
+			System.out.println("Se llegó hasta aqui");
+			ra.addFlashAttribute("siglasOrg", siglasOrg);
+			ra.addFlashAttribute("nombreOrg", nombreOrg);
+			ra.addFlashAttribute("gratuito", gratuito);
+			return "redirect:/orgformgra";
 		}
 	}
 }

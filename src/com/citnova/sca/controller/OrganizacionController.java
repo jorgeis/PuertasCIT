@@ -28,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.citnova.sca.domain.Cliente;
 import com.citnova.sca.domain.Direccion;
 import com.citnova.sca.domain.Estado;
+import com.citnova.sca.domain.Gratuito;
 import com.citnova.sca.domain.Municipio;
 import com.citnova.sca.domain.Organizacion;
 import com.citnova.sca.domain.OrganizacionCliente;
@@ -36,6 +37,7 @@ import com.citnova.sca.domain.Persona;
 import com.citnova.sca.domain.SectorEmp;
 import com.citnova.sca.service.ClienteService;
 import com.citnova.sca.service.EstadoService;
+import com.citnova.sca.service.GratuitoService;
 import com.citnova.sca.service.MunicipioService;
 import com.citnova.sca.service.OrganizacionClienteService;
 import com.citnova.sca.service.OrganizacionService;
@@ -62,6 +64,8 @@ public class OrganizacionController {
 	@Autowired
 	private MunicipioService municipioService;
 	@Autowired
+	private GratuitoService gratuitoService;
+	@Autowired
 	private MessageSource messageSource;
 	@Autowired
 	private CurrentSessionUserRetriever currentUser;
@@ -70,12 +74,15 @@ public class OrganizacionController {
 	@Autowired
 	private Util util;
 	
+	
 	/**
-	 * Formulario de alta de organización
-	 * @RequestMapping(value="/orgform")
+	 * Formulario de alta de organización para evento gratuito
+	 * @RequestMapping(value="/orgformgra")
 	 * */
-	@RequestMapping(value="/orgform")
-	public String showOrganizacionForm(Model model, HttpSession session) {
+	@RequestMapping(value="/orgformgra")
+	public String showOrganizacionFormGra(Model model, HttpSession session, RedirectAttributes ra) {
+		
+		System.out.println(model.asMap().get("cosa"));
 		
 		// Consulta los sectores empresariales dados de alta en base de datos
 		List<SectorEmp> sectorEmpList = sectorEmpService.findAll();
@@ -85,16 +92,55 @@ public class OrganizacionController {
 		List<Estado> estadoList = estadoService.findAll();
 		model.addAttribute("estadoList", estadoList);
 		
-		model.addAttribute("organizacionDireccionWrapper", new OrganizacionDireccionWrapper());
+		OrganizacionDireccionWrapper organizacionDireccionWrapper = new OrganizacionDireccionWrapper();
 		
-		// Revisa si hay un objeto llamado "gratuito" en la sesión. Si existe, quiere decir que se está mostrando el
+		// Revisa si hay un objeto llamado "gratuito" como atributo. Si existe, quiere decir que se está mostrando el
 		// formulario de registro de nueva organización por parte de un usuario que está haciendo un a reservación
 		// de espacio gratuito con de una organización que apenas va a darse de alta, es decir, que no existe. El mecanismo
 		// para darse cuenta si la organización existe o no está en @RequestMapping(value="/gratuitorg") 
+		if(model.asMap().get("gratuito") != null) {
+			organizacionDireccionWrapper.setNombreOrg((String) model.asMap().get("nombreOrg"));
+			organizacionDireccionWrapper.setSiglasOrg((String) model.asMap().get("siglasOrg"));
+			System.out.println("Se trajo un objeto de tipo Gratuito!");
+			session.setAttribute("gratuito", model.asMap().get("gratuito"));
+		}
+		model.addAttribute("organizacionDireccionWrapper", organizacionDireccionWrapper);
+		return "organizacion_form";
+	}
+	
+	
+	
+	/**
+	 * Formulario de alta de organización
+	 * @RequestMapping(value="/orgform")
+	 * */
+	@RequestMapping(value="/orgform")
+	public String showOrganizacionForm(Model model, HttpSession session, RedirectAttributes ra) {
+		
+		System.out.println(model.asMap().get("cosa"));
+		
+		// Consulta los sectores empresariales dados de alta en base de datos
+		List<SectorEmp> sectorEmpList = sectorEmpService.findAll();
+		model.addAttribute("sectorEmpList", sectorEmpList);
+		
+		// Consulta los Estados dados de alta en base de datos
+		List<Estado> estadoList = estadoService.findAll();
+		model.addAttribute("estadoList", estadoList);
+		
+		OrganizacionDireccionWrapper organizacionDireccionWrapper = new OrganizacionDireccionWrapper();
+		
+		// Revisa si hay un objeto gratuito en la sesión. En /orgsave se revisa si existe este objeto, y si existe, agrega la 
+		// organizacion que se está dando de alta a este objeto y se guarda una nueva reservacion de espacio gratuito. En caso
+		// de que se muestre el formulario con @RequestMapping(value="/orgformgra"), significa que el objeto gratuito debe existir.
+		// si se muestra el formulario desde @RequestMapping(value="/orgform"), pero antes se habia llamado a 
+		// @RequestMapping(value="/orgformgra"), el objeto gratuito aun existe, por lo que en el siguiente bloque de código se
+		// elimina si es que existe, para evitar redireccionamientos erroneos.
 		if(session.getAttribute("gratuito") != null) {
-			
+			System.out.println("Había un objeto gratuito, pero se ha eliminado");
+			session.removeAttribute("gratuito");
 		}
 		
+		model.addAttribute("organizacionDireccionWrapper", organizacionDireccionWrapper);
 		return "organizacion_form";
 	}
 	
@@ -106,7 +152,7 @@ public class OrganizacionController {
 	@RequestMapping(value="/orgsave", method=RequestMethod.POST)
 	@Transactional(readOnly = true)
 	public String createOrganizacion(Model model, OrganizacionDireccionWrapper organizacionDireccionWrapper, 
-			HttpServletRequest request, RedirectAttributes ra, Principal principal) {
+			HttpServletRequest request, RedirectAttributes ra, Principal principal, HttpSession session) {
 		
 		int idOrg = organizacionDireccionWrapper.getIdOrg();
 
@@ -147,51 +193,65 @@ public class OrganizacionController {
 	
 			// Revisa si quien da de alta la organización es un cliente. De ser así, crea la relación OrganizaciónCliente 
 			// con el cliente autentificado en el sistema actualmente como Responsable de la Organización.
-			
-			Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
-			System.out.println("El cliente es: " + cliente);
-			if(cliente != null) {
-			
-				// Genera un nuevo pass para passOC
-				List<Cliente> clienteList = clienteService.findAll();
-				List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
-				boolean passUsed;
-				String passOC;
-				do {
-					passUsed = false;
-					passOC = PassGen.generatePass();
-					System.out.println("\nPass generado: " + passOC);
-					for(Cliente cli : clienteList) {
-			            if(passOC.equals(cli.getPassAreaCli())) {
-			            	System.out.println("La contraseña ya existe");
-			            	passUsed = true;
-			            }
-			        }
-					for(OrganizacionCliente orgClie : orgCliList) {
-			            if(passOC.equals(orgClie.getPassOC())) {
-			            	System.out.println("La contraseña ya existe");
-			            	passUsed = true;
-			            }
-			        }
-					System.out.println(passUsed);
+			if(principal != null) {
+				Cliente cliente = clienteService.findOne(currentUser.getIdCliente(principal));
+				System.out.println("El cliente es: " + cliente);
+				if(cliente != null) {
+				
+					// Genera un nuevo pass para passOC
+					List<Cliente> clienteList = clienteService.findAll();
+					List<OrganizacionCliente> orgCliList = organizacionClienteService.findAll();
+					boolean passUsed;
+					String passOC;
+					do {
+						passUsed = false;
+						passOC = PassGen.generatePass();
+						System.out.println("\nPass generado: " + passOC);
+						for(Cliente cli : clienteList) {
+				            if(passOC.equals(cli.getPassAreaCli())) {
+				            	System.out.println("La contraseña ya existe");
+				            	passUsed = true;
+				            }
+				        }
+						for(OrganizacionCliente orgClie : orgCliList) {
+				            if(passOC.equals(orgClie.getPassOC())) {
+				            	System.out.println("La contraseña ya existe");
+				            	passUsed = true;
+				            }
+				        }
+						System.out.println(passUsed);
+					}
+					while (passUsed == true);
+					
+					System.out.println("El objeto cliente ha sido traido: " + cliente);
+					System.out.println("La organización ingresada es: " + organizacion);
+					OrganizacionCliente orgCli = new OrganizacionCliente();
+					orgCli.setOrganizacion(organizacion);
+					orgCli.setCliente(cliente);
+					orgCli.setCargoOC(Constants.ORG_RESPONSABLE);
+					orgCli.setPassOC(passOC);
+					orgCli.setStatusOC(Constants.STATUS_ACTIVE);
+					orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
+					
+					organizacionClienteService.save(orgCli);
 				}
-				while (passUsed == true);
-				
-				System.out.println("El objeto cliente ha sido traido: " + cliente);
-				System.out.println("La organización ingresada es: " + organizacion);
-				OrganizacionCliente orgCli = new OrganizacionCliente();
-				orgCli.setOrganizacion(organizacion);
-				orgCli.setCliente(cliente);
-				orgCli.setCargoOC(Constants.ORG_RESPONSABLE);
-				orgCli.setPassOC(passOC);
-				orgCli.setStatusOC(Constants.STATUS_ACTIVE);
-				orgCli.setFhCreaOC(new Timestamp(new Date().getTime()));
-				
-				organizacionClienteService.save(orgCli);
 			}
+			
 			// En caso de que no se encuentre un cliente autentificado en el sistema significa que la Organización está
 			// siendo registrada por un Administrador, por lo que no crea la relación OrganizaciónCliente. Es posible designar
 			// un Responsable mas tarde a través de la administración de Organizacion.
+			
+			// Se revisa si hay un objeto en session de tipo Gratuito. De ser así, significa que se está dando de alta una
+			// Organización nueva para la reservación de un espacio gratuito, proveniente del controlador 
+			// @RequestMapping(value="/orgform")
+			if(session.getAttribute("gratuito") != null) {
+				Gratuito gratuito = (Gratuito) session.getAttribute("gratuito");
+				gratuito.setOrganizacion(organizacion);
+				gratuitoService.save(gratuito);
+				
+				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("gratuito_saved", null, Locale.getDefault()));
+			}
+			
 			return "redirect:/confirmscreen";
 		}
 		
