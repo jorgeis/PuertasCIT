@@ -41,6 +41,27 @@
 	});
 </script>
 
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#fInicioEveGra").change(function() {
+	$(".select-municipio select").empty();
+	var path = $("#path").val();
+    var url = path + "/json/search/daygratuito";
+	$.ajax({ 
+        url: url, 
+        data: { term: $("#fInicioEveGra").val()}, 
+        success: function (data) {
+            $.each(data, function(index, element) {
+            	$(".select-municipio select").append('<option value="'+ index +'">'+ element +'</option>');
+            });
+        }
+    });
+    });
+});
+</script>
+
+
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
 
@@ -59,6 +80,11 @@
 			<legend>
 				<span class="number">&nbsp;</span>&nbsp;Datos del Solicitante
 			</legend>
+			<label>Municipio</label>
+				<div class="select-municipio" >
+					<select name="nombreMun" id="municipioSel" class="validate[required]" data-prompt-position="bottomLeft:20,5">
+					</select>
+				</div>
 			<label class="light">Nombre(s)</label>
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombreUsrGra" />
 			<label class="light">Apellido Paterno</label>
@@ -95,13 +121,21 @@
 			<label class="light">Número de Asistentes</label>	
 				<sf:input type="number" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="numAsistEveGra" />
 			<label class="light">Fecha del Evento</label>
-				<input type="text" class="validate[required] datetimepicker1" data-prompt-position="bottomLeft:20,5" name="fInicioEveGra" />
+				<input type="text" class="validate[required] datetimepicker1" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="fInicioEveGra" id="fInicioEveGra"/>
 			<label class="light">Hora de inicio del Evento</label>
-				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" name="hInicioEveGra" />
+				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hInicioEveGra" />
 			<label class="light">Hora de fin del Evento</label>
-				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" name="hFinEveGra" />
-			<label class="light">Población objetivo</label>	
+				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hFinEveGra" />
+			<label class="light">Población objetivo</label>
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
+			<label class="light">Dia objetivo</label>
+				<input type="text" id="dia1" />		
+			<label class="light">Mes objetivo</label>
+				<input type="text" id="mes1" />		
+			<label class="light">Año objetivo</label>
+				<input type="text" id="anio1" />
+			<label class="light">Full objetivo</label>
+				<input type="text" id="full1" />			
 			</fieldset>
 		
 		<fieldset>
@@ -151,6 +185,7 @@
 	$.datetimepicker.setLocale('es');
 	var today = new Date();
 	var myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+	var myMinTime = 0;
 	
 	$('.datetimepicker').datetimepicker({
 		format : 'd/M/Y H:i',
@@ -162,13 +197,35 @@
 	$('.datetimepicker1').datetimepicker({
 		timepicker : false,
 		format : 'd/m/Y',
-		value : myToday, 
 		beforeShowDay: disabledWeekdays,
-		minDate: "1"}
+		minDate:0, 
+		onSelectDate: function(ct) {
+			myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+			var selectedDay = new Date(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0)
+			var year = ct.getFullYear();
+			var month = ct.getMonth() + 1;
+			var day = ct.getDate();
+			$('#dia1').val(selectedDay);
+			$('#mes1').val(myToday);
+	        if(		selectedDay.getDate() == myToday.getDate() && 
+	        		selectedDay.getMonth() == myToday.getMonth() &&
+	        		selectedDay.getFullYear() == myToday.getFullYear()) {
+	        	 $('#anio1').val("Si son iguales");
+	        	myMinTime = 0;
+	        }
+	        else {
+	        	 $('#anio1').val("No son iguales");
+	        	myMinTime = false; 
+	        }
+	        $('#full1').val(myMinTime);
+	        $('.datetimepicker2').datetimepicker('reset');
+	        $('.datetimepicker2').datetimepicker('setOptions', {minTime : myMinTime});
+	    }}
 		);
 	
 	$('.datetimepicker2').datetimepicker({
 		datepicker : false,
-		format : 'H:i'}
+		format : 'H:i',
+		minTime : myMinTime}
 		);
 </script>

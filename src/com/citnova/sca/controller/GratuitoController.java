@@ -3,8 +3,10 @@ package com.citnova.sca.controller;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.citnova.sca.domain.Area;
@@ -92,9 +95,9 @@ public class GratuitoController {
 		try{
 		    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		    Date parsedDate = dateFormat.parse(fInicioEveGra + " " + hInicioEveGra);
-		    fhInicioEveGra = new java.sql.Timestamp(parsedDate.getTime());
+		    fhInicioEveGra = new Timestamp(parsedDate.getTime());
 		    parsedDate = dateFormat.parse(fInicioEveGra + " " + hFinEveGra);
-		    fhFinEveGra = new java.sql.Timestamp(parsedDate.getTime());
+		    fhFinEveGra = new Timestamp(parsedDate.getTime());
 		}catch(Exception e){
 			System.out.println("Error al procesar la fecha");
 		}
@@ -127,4 +130,32 @@ public class GratuitoController {
 			return "redirect:/orgformgra";
 		}
 	}
+	
+	
+
+	/**
+	 * Servidor JSON para búsqueda de reservaciones e Gratuito por día
+	 * @RequestMapping(value="/json/search/org", produces="application/json")
+	 * */
+	@RequestMapping(value="/json/search/daygratuito", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findGratuitoByDay(@RequestParam("term") String term) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		
+		
+		List<Gratuito> gratuitoList = gratuitoService.findByDay(term);
+		
+		for (int j = 0; j < gratuitoList.size(); j++) {
+			Gratuito gratuito = gratuitoList.get(j);
+			map.put(String.valueOf(gratuito.getIdGra()),
+					gratuito.getFhInicioEveGra() + "?" + gratuito.getFhFinEveGra());
+		}
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
+		return map;
+	}
+	
 }

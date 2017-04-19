@@ -2209,8 +2209,8 @@ var DateFormatter;
 								classes.push('xdsoft_disabled');
 							} else if (options.disabledWeekDays.indexOf(day) !== -1) {
 								classes.push('xdsoft_disabled');
-							}else if (input.is('[readonly]')) {
-								classes.push('xdsoft_disabled');
+//							}else if (input.is('[readonly]')) {
+//								classes.push('xdsoft_disabled');
 							}
 
 							if (customDateSettings && customDateSettings[1] !== "") {
@@ -2289,8 +2289,8 @@ var DateFormatter;
 								classes.push('xdsoft_disabled');
 							} else if ((options.minDateTime !== false && options.minDateTime > optionDateTime) || ((options.disabledMinTime !== false && now.getTime() > _xdsoft_datetime.strtotime(options.disabledMinTime).getTime()) && (options.disabledMaxTime !== false && now.getTime() < _xdsoft_datetime.strtotime(options.disabledMaxTime).getTime()))) {
 								classes.push('xdsoft_disabled');
-							} else if (input.is('[readonly]')) {
-								classes.push('xdsoft_disabled');
+//							} else if (input.is('[readonly]')) {
+//								classes.push('xdsoft_disabled');
 							}
 
 							current_time = new Date(_xdsoft_datetime.currentTime);

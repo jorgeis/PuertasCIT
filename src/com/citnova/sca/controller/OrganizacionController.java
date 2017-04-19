@@ -245,7 +245,7 @@ public class OrganizacionController {
 			// Organización nueva para la reservación de un espacio gratuito, proveniente del controlador 
 			// @RequestMapping(value="/orgform")
 			if(session.getAttribute("gratuito") != null) {
-				Gratuito gratuito = (Gratuito) session.getAttribute("gratuito");
+				Gratuito gratuito = (Gratuito)session.getAttribute("gratuito");
 				gratuito.setOrganizacion(organizacion);
 				gratuitoService.save(gratuito);
 				
