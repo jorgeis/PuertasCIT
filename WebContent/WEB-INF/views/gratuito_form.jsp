@@ -10,6 +10,18 @@
 <html>
 <head>
 <title></title>
+
+<style>
+ .xdsoft_timepicker .xdsoft_time_box .xdsoft_time.disabled:hover {
+    color:white !important;
+    background: red !important;
+}
+.xdsoft_timepicker .xdsoft_time_box .xdsoft_time.disabled {
+	color: white;
+	background-color: red;
+}
+</style>
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
@@ -40,27 +52,6 @@
 		});
 	});
 </script>
-
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $("#fInicioEveGra").change(function() {
-	$(".select-municipio select").empty();
-	var path = $("#path").val();
-    var url = path + "/json/search/daygratuito";
-	$.ajax({ 
-        url: url, 
-        data: { term: $("#fInicioEveGra").val()}, 
-        success: function (data) {
-            $.each(data, function(index, element) {
-            	$(".select-municipio select").append('<option value="'+ index +'">'+ element +'</option>');
-            });
-        }
-    });
-    });
-});
-</script>
-
 
 <c:import url="/WEB-INF/views/headfoot/headerm.jsp" />
 <c:import url="/WEB-INF/views/headfoot/header_form.jsp" />
@@ -128,10 +119,10 @@ $(document).ready(function() {
 				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hFinEveGra" />
 			<label class="light">Población objetivo</label>
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
-			<label class="light">Dia objetivo</label>
-				<input type="text" id="dia1" />		
-			<label class="light">Mes objetivo</label>
-				<input type="text" id="mes1" />		
+<!-- 			<label class="light">Dia objetivo</label> -->
+<!-- 				<input type="text" id="dia1" />		 -->
+<!-- 			<label class="light">Mes objetivo</label> -->
+<!-- 				<input type="text" id="mes1" />		 -->
 			<label class="light">Año objetivo</label>
 				<input type="text" id="anio1" />
 			<label class="light">Full objetivo</label>
@@ -187,6 +178,11 @@ $(document).ready(function() {
 	var myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
 	var myMinTime = 0;
 	
+	var specificDates = [];
+	var hoursToTakeAway = [[14,15],[17]];
+	var ind = -1;
+
+	
 	$('.datetimepicker').datetimepicker({
 		format : 'd/M/Y H:i',
 		value : myToday, 
@@ -198,34 +194,80 @@ $(document).ready(function() {
 		timepicker : false,
 		format : 'd/m/Y',
 		beforeShowDay: disabledWeekdays,
-		minDate:0, 
+		minDate : 0, 
+		scrollInput : false,
 		onSelectDate: function(ct) {
 			myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
-			var selectedDay = new Date(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0)
+			var selectedDay = new Date(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0);
 			var year = ct.getFullYear();
 			var month = ct.getMonth() + 1;
 			var day = ct.getDate();
 			$('#dia1').val(selectedDay);
 			$('#mes1').val(myToday);
+			
+			// Hora mínima segun el día
 	        if(		selectedDay.getDate() == myToday.getDate() && 
 	        		selectedDay.getMonth() == myToday.getMonth() &&
 	        		selectedDay.getFullYear() == myToday.getFullYear()) {
-	        	 $('#anio1').val("Si son iguales");
+// 	        	 $('#anio1').val("Si son iguales");
 	        	myMinTime = 0;
 	        }
 	        else {
-	        	 $('#anio1').val("No son iguales");
+// 	        	 $('#anio1').val("No son iguales");
 	        	myMinTime = false; 
 	        }
-	        $('#full1').val(myMinTime);
-	        $('.datetimepicker2').datetimepicker('reset');
+	        
+	        // Reservaciones hechas
+	        var diaBien = ("0" + ct.getDate()).slice(-2) + "/" + ("0" + (ct.getMonth() + 1)).slice(-2) + "/" + ct.getFullYear();
+	        specificDates = [diaBien];
+	        ind = specificDates.indexOf(diaBien);
+			
+			// Consultar horas reservadas en día seleccionado
+			
+			var path = $("#path").val();
+   		 	var url = path + "/json/search/daygratuito";
+   		 	$.ajax({ 
+	   	        url: url, 
+	   	        data: { term: diaBien}, 
+   	        	success: function (data) {
+   	        		hoursToTakeAway = [];
+   	            	$.each(data, function(index, element) {
+   	            	$(".select-municipio select").append('<option value="'+ index +'">'+ element +'</option>');
+   	            	hoursToTakeAway.push([element]);
+   	            	});
+   	       		}
+   		 	});
+   		 	
+			$('.datetimepicker2').datetimepicker('reset');
 	        $('.datetimepicker2').datetimepicker('setOptions', {minTime : myMinTime});
 	    }}
 		);
 	
+// 	Deshabilitar segun sertvidor JSON en @RequestMapping(value="/json/search/org", produces="application/json")
+	
 	$('.datetimepicker2').datetimepicker({
 		datepicker : false,
 		format : 'H:i',
-		minTime : myMinTime}
-		);
+		minTime : myMinTime, 
+		
+		// Bloquear horas reservadas
+		onGenerate:function(ct,$i){
+			$('.xdsoft_time_variant .xdsoft_time').show();
+			$('#anio1').val(hoursToTakeAway);
+			$('#full1').val(specificDates);
+			
+			if(ind !== -1) {
+				$('.xdsoft_time_variant .xdsoft_time').each(function(index){
+					for(i=0; i<hoursToTakeAway.length; i++) {
+						if(hoursToTakeAway[i].indexOf(parseInt($(this).text())) !== -1) {
+							$(this).addClass('disabled');
+			                $(this).fadeTo(1,.3);
+			                $(this).prop('disabled',true);
+						}
+					}
+	          });
+			}
+		}
+	}
+	);
 </script>

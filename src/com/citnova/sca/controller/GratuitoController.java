@@ -2,6 +2,7 @@ package com.citnova.sca.controller;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -134,28 +134,72 @@ public class GratuitoController {
 	
 
 	/**
-	 * Servidor JSON para búsqueda de reservaciones e Gratuito por día
-	 * @RequestMapping(value="/json/search/org", produces="application/json")
+	 * Servidor JSON que devuelve las horas que ya están ocupadas por reservaciones de Gratuito
+	 * @RequestMapping(value="/json/search/daygratuito, produces="application/json")
 	 * */
 	@RequestMapping(value="/json/search/daygratuito", produces="application/json")
 	@ResponseBody
 	public Map<String, Object> findGratuitoByDay(@RequestParam("term") String term) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		
+		int index = 0;
+		List<Gratuito> gratuitoList = gratuitoService.findByDay(term);
 		
+		for (int j = 0; j < gratuitoList.size(); j++) {
+			Gratuito gratuito = gratuitoList.get(j);
+			
+			Calendar inicio = Calendar.getInstance();
+			inicio.setTime(gratuito.getFhInicioEveGra());
+			
+			Calendar fin = Calendar.getInstance();
+			fin.setTime(gratuito.getFhFinEveGra());
+			
+			for(int i=inicio.get(Calendar.HOUR_OF_DAY); i<fin.get(Calendar.HOUR_OF_DAY); i++) {
+				map.put(String.valueOf(index), i);
+				index++;
+			}
+		}
+		
+		System.out.println("Tamaño del mapa JSON: " + map.size());
+		System.out.println("Cadena JSON: " + map);
+		
+		return map;
+	}
+	
+	
+	
+	/**
+	 * Servidor JSON para búsqueda de reservaciones e Gratuito por día
+	 * @RequestMapping(value="/json/search/daygratuito, produces="application/json")
+	 * */
+	@RequestMapping(value="/json/search/daygratuitor", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findGratuitoByDayR(@RequestParam("term") String term) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		
 		List<Gratuito> gratuitoList = gratuitoService.findByDay(term);
 		
 		for (int j = 0; j < gratuitoList.size(); j++) {
 			Gratuito gratuito = gratuitoList.get(j);
+			
+			Calendar inicio = Calendar.getInstance();
+			inicio.setTime(gratuito.getFhInicioEveGra());
+			
+			Calendar fin = Calendar.getInstance();
+			fin.setTime(gratuito.getFhFinEveGra());
+			
+			System.out.println("Hora de inicio: " + inicio.get(Calendar.HOUR_OF_DAY));
+			System.out.println("Hora de fin: " + fin.get(Calendar.HOUR_OF_DAY));
+			
 			map.put(String.valueOf(gratuito.getIdGra()),
-					gratuito.getFhInicioEveGra() + "?" + gratuito.getFhFinEveGra());
+					inicio.get(Calendar.HOUR_OF_DAY) + "?" + fin.get(Calendar.HOUR_OF_DAY));
 		}
 		
-		System.out.println(map.size());
-		System.out.println(map);
+		System.out.println("Tamaño del mala JSON: " + map.size());
+		System.out.println("Cadena JSON: " + map);
 		
 		return map;
 	}
+	
 	
 }
