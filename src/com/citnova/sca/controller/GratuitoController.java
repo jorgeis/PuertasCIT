@@ -202,12 +202,12 @@ public class GratuitoController {
 		}
 		else if(searchParam.equals("accepted")) {
 			page = gratuitoService.getPageByDecision(Constants.DESITION_ACCEPTED, index - 1);
-			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_deleted", null, Locale.getDefault()));
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_accepted", null, Locale.getDefault()));
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("rejected")) {
 			page = gratuitoService.getPageByDecision(Constants.DESITION_REJECTED, index - 1);
-			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_deleted", null, Locale.getDefault()));
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_rejected", null, Locale.getDefault()));
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("week")) {
@@ -224,7 +224,7 @@ public class GratuitoController {
 			
 			System.out.println("Lista: " + list);
 			
-			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_deleted", null, Locale.getDefault()));
+			model.addAttribute(Constants.PAGE_TITLE, messageSource.getMessage("gratuito_query_last_week", null, Locale.getDefault()));
 			model.addAttribute(Constants.RESULT, messageSource.getMessage("search_result", null, Locale.getDefault()));
 		}
 		else if(searchParam.equals("pending")) {
