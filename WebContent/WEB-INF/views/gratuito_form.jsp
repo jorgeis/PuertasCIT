@@ -20,6 +20,7 @@
 	color: white;
 	background-color: red;
 }
+
 </style>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -71,11 +72,6 @@
 			<legend>
 				<span class="number">&nbsp;</span>&nbsp;Datos del Solicitante
 			</legend>
-			<label>Municipio</label>
-				<div class="select-municipio" >
-					<select name="nombreMun" id="municipioSel" class="validate[required]" data-prompt-position="bottomLeft:20,5">
-					</select>
-				</div>
 			<label class="light">Nombre(s)</label>
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="nombreUsrGra" />
 			<label class="light">Apellido Paterno</label>
@@ -114,19 +110,14 @@
 			<label class="light">Fecha del Evento</label>
 				<input type="text" class="validate[required] datetimepicker1" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="fInicioEveGra" id="fInicioEveGra"/>
 			<label class="light">Hora de inicio del Evento</label>
-				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hInicioEveGra" />
+				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hInicioEveGra" id="hInicioEveGra"/>
 			<label class="light">Hora de fin del Evento</label>
-				<input type="text" class="validate[required] datetimepicker2" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hFinEveGra" />
+				<input type="text" class="validate[required] datetimepicker3" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hFinEveGra" id="hFinEveGra"/>
 			<label class="light">Población objetivo</label>
-				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />
-<!-- 			<label class="light">Dia objetivo</label> -->
-<!-- 				<input type="text" id="dia1" />		 -->
-<!-- 			<label class="light">Mes objetivo</label> -->
-<!-- 				<input type="text" id="mes1" />		 -->
-			<label class="light">Año objetivo</label>
-				<input type="text" id="anio1" />
-			<label class="light">Full objetivo</label>
-				<input type="text" id="full1" />			
+				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />	
+			<label class="light">Extra</label>
+				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="extra" name="extra" />	
+			
 			</fieldset>
 		
 		<fieldset>
@@ -181,6 +172,10 @@
 	var specificDates = [];
 	var hoursToTakeAway = [[14,15],[17]];
 	var ind = -1;
+	
+	var startTime = 0;
+	var turn = false;
+	var maxTime = 50;
 
 	
 	$('.datetimepicker').datetimepicker({
@@ -195,25 +190,22 @@
 		format : 'd/m/Y',
 		beforeShowDay: disabledWeekdays,
 		minDate : 0, 
+		inline: false,
 		scrollInput : false,
 		onSelectDate: function(ct) {
 			myToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
 			var selectedDay = new Date(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0);
 			var year = ct.getFullYear();
 			var month = ct.getMonth() + 1;
-			var day = ct.getDate();
-			$('#dia1').val(selectedDay);
-			$('#mes1').val(myToday);
+			var day = ct.getDate();		
 			
 			// Hora mínima segun el día
 	        if(		selectedDay.getDate() == myToday.getDate() && 
 	        		selectedDay.getMonth() == myToday.getMonth() &&
 	        		selectedDay.getFullYear() == myToday.getFullYear()) {
-// 	        	 $('#anio1').val("Si son iguales");
 	        	myMinTime = 0;
 	        }
 	        else {
-// 	        	 $('#anio1').val("No son iguales");
 	        	myMinTime = false; 
 	        }
 	        
@@ -223,7 +215,6 @@
 	        ind = specificDates.indexOf(diaBien);
 			
 			// Consultar horas reservadas en día seleccionado
-			
 			var path = $("#path").val();
    		 	var url = path + "/json/search/daygratuito";
    		 	$.ajax({ 
@@ -232,14 +223,14 @@
    	        	success: function (data) {
    	        		hoursToTakeAway = [];
    	            	$.each(data, function(index, element) {
-   	            	$(".select-municipio select").append('<option value="'+ index +'">'+ element +'</option>');
-   	            	hoursToTakeAway.push([element]);
+   	            		hoursToTakeAway.push([element]);
    	            	});
    	       		}
    		 	});
-   		 	
 			$('.datetimepicker2').datetimepicker('reset');
 	        $('.datetimepicker2').datetimepicker('setOptions', {minTime : myMinTime});
+	        $('.datetimepicker3').datetimepicker('reset');
+	        $('.datetimepicker3').datetimepicker('setOptions', {minTime : myMinTime});
 	    }}
 		);
 	
@@ -248,14 +239,10 @@
 	$('.datetimepicker2').datetimepicker({
 		datepicker : false,
 		format : 'H:i',
-		minTime : myMinTime, 
-		
+		minTime : myMinTime,
 		// Bloquear horas reservadas
 		onGenerate:function(ct,$i){
 			$('.xdsoft_time_variant .xdsoft_time').show();
-			$('#anio1').val(hoursToTakeAway);
-			$('#full1').val(specificDates);
-			
 			if(ind !== -1) {
 				$('.xdsoft_time_variant .xdsoft_time').each(function(index){
 					for(i=0; i<hoursToTakeAway.length; i++) {
@@ -263,6 +250,83 @@
 							$(this).addClass('disabled');
 			                $(this).fadeTo(1,.3);
 			                $(this).prop('disabled',true);
+						}
+					}
+	          });
+			}
+		},
+		
+		onSelectTime:function(ct,$i){
+			startTime = $("#hInicioEveGra").val().slice(0,2);
+			$("#extra").val(startTime);
+			turn = false;
+			maxTime = 50;
+			
+			
+			$('.datetimepicker3').datetimepicker('reset');
+	        $('.datetimepicker3').datetimepicker('setOptions', {minTime : myMinTime});
+		}, 
+	}
+	);
+	
+	
+	$('.datetimepicker3').datetimepicker({
+		datepicker : false,
+		format : 'H:i',
+		minTime : myMinTime,
+		
+		// Bloquear horas reservadas
+		onGenerate:function(ct,$i){
+			$('.xdsoft_time_variant .xdsoft_time').show();
+			if(ind !== -1) {
+				turn = false;
+				maxTime = 50;
+				console.log("Vamos a entrar a each index");
+				
+				// Habilita todas las horas, quitando las propiedades modificadas en la selección anterior por parte del usuario
+				$('.xdsoft_time_variant .xdsoft_time').each(function(index){
+					$(this).removeClass('disabled');
+	                $(this).fadeTo(1,1);
+	                $(this).prop('disabled',false);
+				});
+				
+				// Bloquea las horas mas una, de las reservaciones hechas. Esto para colocar en este cuadro las horas a las 
+				// que puede terminar el evento, no comenzar, a diferencia del cuadro anterior
+				$('.xdsoft_time_variant .xdsoft_time').each(function(index){
+					for(i=0; i<hoursToTakeAway.length; i++) {
+						if(hoursToTakeAway[i].indexOf(parseInt($(this).text())-1) !== -1) {
+							$(this).addClass('disabled');
+			                $(this).fadeTo(1,.3);
+			                $(this).prop('disabled',true);
+						} 
+					
+					}
+					
+					// Bloquea las horas anteriores a la hora de inicio de reservación
+					if(parseInt($(this).text()) <= startTime) {
+		                $(this).fadeTo(1,.3);
+		                $(this).prop('disabled',true);
+					}
+					
+					// Identifica la hora en la que ya existe una reservación, a partir de la hora de inicio seleccionada
+					// en el cuadro anterior
+					else if(parseInt($(this).text()) >= startTime && turn==false) {
+						if($(this).prop('disabled')) {
+							turn = true;
+							console.log("Aqui inicia los deshabilitado con " + turn + ", " + $(this).text());
+							maxTime = $(this).text().slice(0,2);
+							console.log("maxTime " + maxTime);
+						}
+					}
+					
+					// Deshabilita las horas disponibles a partir de la siguiente hora de reservacion agendada previamente.
+					// Esto para evitar que se seleccionen un periodo de tiempo que contenga a otro ya reservado.
+					// Ej: Esto evita que se seleccione de 4 a 10, cuando ya existe una reservacion de 6 a 8.
+					for(i=maxTime; i<24; i++) {
+						if(parseInt($(this).text()) == i) {
+							console.log("Se debe deshabilitar " + $(this).text());
+							$(this).fadeTo(1,.3);
+							$(this).prop('disabled',true);
 						}
 					}
 	          });
