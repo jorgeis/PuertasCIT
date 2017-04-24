@@ -130,6 +130,16 @@
 															<li><a href='<c:url value="/orgform"/>'>Agregar nueva</a></li>
 														</ul>
 													</li>
+													<li>
+														<span class="arrow">Reservaciones gratuitas</span>
+														<ul>
+															<li><a href='<c:url value="/gra/querypending/1"/>'>Consultar pendientes</a></li>
+															<li><a href='<c:url value="/gra/queryall/1"/>'>Consultar todas</a></li>
+															<li><a href='<c:url value="/gra/queryaccepted/1"/>'>Consultar aceptadas</a></li>
+															<li><a href='<c:url value="/gra/queryrejected/1"/>'>Consultar rechazadas</a></li>
+															<li><a href='<c:url value="/gra/queryweek/1"/>'>Consultar semana</a></li>
+														</ul>
+													</li>
 												</ul>
 											</li>
 											</sec:authorize>

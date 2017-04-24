@@ -115,9 +115,6 @@
 				<input type="text" class="validate[required] datetimepicker3" data-prompt-position="bottomLeft:20,5" readonly="readonly" name="hFinEveGra" id="hFinEveGra"/>
 			<label class="light">Población objetivo</label>
 				<sf:input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" path="poblacionObjEveGra" />	
-			<label class="light">Extra</label>
-				<input type="text" class="validate[required]" data-prompt-position="bottomLeft:20,5" id="extra" name="extra" />	
-			
 			</fieldset>
 		
 		<fieldset>
@@ -238,6 +235,7 @@
 	
 	$('.datetimepicker2').datetimepicker({
 		datepicker : false,
+		scrollInput : false,
 		format : 'H:i',
 		minTime : myMinTime,
 		// Bloquear horas reservadas
@@ -262,7 +260,6 @@
 			turn = false;
 			maxTime = 50;
 			
-			
 			$('.datetimepicker3').datetimepicker('reset');
 	        $('.datetimepicker3').datetimepicker('setOptions', {minTime : myMinTime});
 		}, 
@@ -274,6 +271,7 @@
 		datepicker : false,
 		format : 'H:i',
 		minTime : myMinTime,
+		scrollInput : false,
 		
 		// Bloquear horas reservadas
 		onGenerate:function(ct,$i){

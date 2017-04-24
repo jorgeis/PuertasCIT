@@ -7,6 +7,11 @@ public class Constants {
 	public static final String STATUS_DELETED = "Borrado";
 	public static final String STATUS_MUST_ACTIVATE = "Activar";
 	public static final String STATUS_PENDING = "Pendiente";
+	public static final String TO_BE_PERFORMED = "Por realizar";
+	public static final String ALREADY_PERFORMED = "Realizado";
+	public static final String BEING_PERFORMED = "Ejecutándose";
+	public static final String DESITION_ACCEPTED = "Aceptada";
+	public static final String DESITION_REJECTED = "Rechazada";
 	public static final String RESULT = "result";
 	public static final String MESSAGE1 = "message1";
 	public static final String PARAM1 = "param1";

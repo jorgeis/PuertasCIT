@@ -1,5 +1,8 @@
 package com.citnova.sca.util;
 
+import java.text.DecimalFormat;
+import java.util.Calendar;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -8,6 +11,8 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+
+import com.citnova.sca.domain.Gratuito;
 
 @Component("mailManager")
 public class MailManager {
@@ -150,4 +155,111 @@ public class MailManager {
 			return false;
 		}
 	}
+	
+	
+	public void sendEmailReservacionGratuita(String destino, Gratuito gratuito) {
+		MimeMessage mime = mailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+			helper.setFrom(correoEmisor);
+			helper.setTo(destino);
+			helper.setSubject("Solicitud de reservación - CITNOVA");
+			
+			Calendar ci = Calendar.getInstance();
+			Calendar cf = Calendar.getInstance();
+			ci.setTime(gratuito.getFhInicioEveGra());
+			cf.setTime(gratuito.getFhFinEveGra());
+			DecimalFormat formatter = new DecimalFormat("00");
+			
+			String htmlText = "<h1>Has realizado una solicitud de reservación de espacio</h1>"
+					+ "<br/>"
+					+ "Has realizado una reservación con los siguientes datos:"
+					+ "<br/>"
+					+ "<br/>"
+					+ "- Solicitante: " + gratuito.getNombreUsrGra() + " " + gratuito.getApPatUsrGra() + " " + gratuito.getApMatUsrGra()
+					+ "<br/>"
+					+ "- Evento: " + gratuito.getNombreEveGra()
+					+ "<br/>"
+					+ "- Área solicitada: " + gratuito.getArea().getNombreArea()
+					+ "<br/>"
+					+ "- Fecha: " + ci.get(Calendar.DATE) + "/" + formatter.format((double)ci.get(Calendar.MONTH)+1) + "/" + ci.get(Calendar.YEAR)
+					+ "<br/>"
+					+ "- Hora de inicio: " + formatter.format((double)ci.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+					+ "<br/>"
+					+ "- Hora de terminación: " + formatter.format((double)cf.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+					+ "<br/>"
+					+ "- Organización solicitante: " + gratuito.getOrganizacion().getNombreOrg()
+					+ "<br/>"
+					+ "- Responsable del evento: " + gratuito.getNombreRespGra() + " " + gratuito.getApPatRespGra() + " " + gratuito.getApMatRespGra()
+					+ "<br/>"
+					+ "<br/>"
+					+ "La presente solicitud no asegura que la reservación está confirmada. Ponto recibirás un correo electrónico a "
+					+ "esta dirección para informarte del resultado de tu solicitud. ";
+			helper.setText(htmlText, true);
+			mailSender.send(mime);
+		}
+		catch (MailException e) {
+			e.printStackTrace();
+		}
+		catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void sendEmailConfirmaReservacionGratuita(String destino, Gratuito gratuito) {
+		MimeMessage mime = mailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+			helper.setFrom(correoEmisor);
+			helper.setTo(destino);
+			helper.setSubject("Resultado de reservación - CITNOVA");
+			
+			Calendar ci = Calendar.getInstance();
+			Calendar cf = Calendar.getInstance();
+			ci.setTime(gratuito.getFhInicioEveGra());
+			cf.setTime(gratuito.getFhFinEveGra());
+			DecimalFormat formatter = new DecimalFormat("00");
+			
+			String htmlText = "<h1>Tenemos el resultado de tu solicitud de reservación</h1>"
+					+ "<br/>"
+					+ "La reservación que realizaste con los siguientes datos:"
+					+ "<br/>"
+					+ "<br/>"
+					+ "- Solicitante: " + gratuito.getNombreUsrGra() + " " + gratuito.getApPatUsrGra() + " " + gratuito.getApMatUsrGra()
+					+ "<br/>"
+					+ "- Evento: " + gratuito.getNombreEveGra()
+					+ "<br/>"
+					+ "- Área solicitada: " + gratuito.getArea().getNombreArea()
+					+ "<br/>"
+					+ "- Fecha: " + ci.get(Calendar.DATE) + "/" + formatter.format((double)ci.get(Calendar.MONTH)+1) + "/" + ci.get(Calendar.YEAR)
+					+ "<br/>"
+					+ "- Hora de inicio: " + formatter.format((double)ci.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+					+ "<br/>"
+					+ "- Hora de terminación: " + formatter.format((double)cf.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+					+ "<br/>"
+					+ "- Organización solicitante: " + gratuito.getOrganizacion().getNombreOrg()
+					+ "<br/>"
+					+ "- Responsable del evento: " + gratuito.getNombreRespGra() + " " + gratuito.getApPatRespGra() + " " + gratuito.getApMatRespGra()
+					+ "<br/>"
+					+ "<br/>"
+					+ "Ha sido: " + gratuito.getDesicionGra() + "." 
+					+ "<br/>"
+					+ "<br/>"
+					+ "Se han hecho los siguientes comentarios: "
+					+ gratuito.getComentariosGra()
+					+ "<br/>"
+					+ "Cualquier duda o comentario contáctanos a correo@correo.com(colocar correo de contacto)."
+					;
+			helper.setText(htmlText, true);
+			mailSender.send(mime);
+		}
+		catch (MailException e) {
+			e.printStackTrace();
+		}
+		catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

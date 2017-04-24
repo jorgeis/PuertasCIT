@@ -8,10 +8,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.citnova.sca.domain.Gratuito;
 import com.citnova.sca.repository.GratuitoRepository;
+import com.citnova.sca.util.Constants;
 
 @Service
 public class GratuitoService {
@@ -52,6 +56,30 @@ public class GratuitoService {
 		System.out.println("Fecha completa Date: " + parsedDate);
 		System.out.println("Fecha completa Timestamp: " + end);
 		
+		return gratuitoRepository.findByFhInicioEveGraBetween(start, end);
+	}
+
+	public Page<Gratuito> getPageByStatus(String statusGra, int index) {
+		return gratuitoRepository.findByStatusGra(statusGra, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idGra"));
+	}
+	
+	public Page<Gratuito> getPageByDecision(String decisionGra, int index) {
+		return gratuitoRepository.findByDecisionGra(decisionGra, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idGra"));
+	}
+	
+	public Page<Gratuito> getAllPage(int index) {
+		return gratuitoRepository.findAll(new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idGra"));
+	}
+
+	public Gratuito findOne(int idGra) {
+		return gratuitoRepository.findOne(idGra);
+	}
+	
+	public Page<Gratuito> getPageByFechaInicioBetween(Timestamp start, Timestamp end, int index) {
+		return gratuitoRepository.findByFhInicioEveGraBetween(start, end, new PageRequest(index, Constants.ITEMS_PER_PAGE, Direction.ASC, "idGra"));
+	}
+	
+	public List<Gratuito> getByFechaInicioBetween(Timestamp start, Timestamp end) {
 		return gratuitoRepository.findByFhInicioEveGraBetween(start, end);
 	}
 }

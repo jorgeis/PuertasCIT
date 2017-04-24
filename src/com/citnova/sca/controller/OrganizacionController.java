@@ -109,7 +109,6 @@ public class OrganizacionController {
 	}
 	
 	
-	
 	/**
 	 * Formulario de alta de organización
 	 * @RequestMapping(value="/orgform")
@@ -248,6 +247,9 @@ public class OrganizacionController {
 				Gratuito gratuito = (Gratuito)session.getAttribute("gratuito");
 				gratuito.setOrganizacion(organizacion);
 				gratuitoService.save(gratuito);
+				
+				// Enviar correo de confirmación de reservación de espacio gratuito
+				mailManager.sendEmailReservacionGratuita(gratuito.getEmailUsrGra(), gratuito);
 				
 				ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("gratuito_saved", null, Locale.getDefault()));
 			}

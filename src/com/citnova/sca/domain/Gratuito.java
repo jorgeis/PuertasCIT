@@ -39,7 +39,7 @@ public class Gratuito {
 	private String cargoRespGra;
 	private String statusGra;
 	private String comentariosGra;
-	private String desicionGra;
+	private String decisionGra;
 	
 	@ManyToOne
 	@JoinColumn(name = "idOrg")
@@ -221,12 +221,12 @@ public class Gratuito {
 		this.comentariosGra = comentariosGra;
 	}
 
-	public String getDesicionGra() {
-		return desicionGra;
+	public String getDecisionGra() {
+		return decisionGra;
 	}
 
-	public void setDesicionGra(String desicionGra) {
-		this.desicionGra = desicionGra;
+	public void setDecisionGra(String decisionGra) {
+		this.decisionGra = decisionGra;
 	}
 
 	public Organizacion getOrganizacion() {
