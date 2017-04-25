@@ -28,6 +28,8 @@
 		<security:intercept-url pattern="/orgformgra" access="permitAll" />
 		<security:intercept-url pattern="/json/search/daygratuito" access="permitAll" />
 		
+		<security:intercept-url pattern="/catpaquetes" access="permitAll" />
+		
 		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
 		<security:intercept-url pattern="/afterlogin" access="isAuthenticated()" />
 		

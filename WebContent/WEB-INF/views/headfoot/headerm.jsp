@@ -60,8 +60,7 @@
 												<a href="" class="arrow">Planes y Servicios</a>
 												<ul>
 													<li><a href='<c:url value="/gratuitoform"/>'>Gratuito</a></li>
-													<li><a href="#">Individual</a></li>
-													<li><a href="#">Empresarial</a></li>
+													<li><a href='<c:url value="/catpaquetes"/>'>Membresías</a></li>
 													<li><a href='<c:url value="/twocolumn1"/>'>Instalaciones</a></li>
 												</ul>
 											</li>

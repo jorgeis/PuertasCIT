@@ -33,4 +33,22 @@ public class Constants {
 	public static final String PAGE_TITLE = "pageTitle";
 	public static final String JSON_SERVER = "jsonServer";
 	
+	public static final String COWORKING_FREELANCER = "Coworking Freelancer";
+	public static final String COWORKING_EMPRESARIAL = "Coworking Empresarial";
+	public static final String COWORKING_UNIVERSITARIO = "Coworking Universitario";
+	public static final String MAKER_FREELANCER = "Maker Freelancer";
+	public static final String MAKER_EMPRESARIAL = "Maker Empresarial";
+	public static final String DECISION_THEATER = "Decision Theater";
+	public static final String ESPACIO_DEDICADO = "Espacio Dedicado";
+	public static final String TRAINING_ROOM = "Training Room";
+	public static final String SHOW_ROOM = "Show Room";
+	public static final String SALA_DE_JUNTAS = "Sala de Juntas";
+	public static final String MEMBRESIA_BLACK = "Membresía Black";
+	public static final String MEMBRESIA_PLATINUM = "Membresía Platinum";
+	public static final String MEMBRESIA_GOLD = "Membresía Gold";
+	public static final String MEMBRESIA_PREMIUM = "Membresía Premium";
+	public static final String PRINTER = "Printer";
+	public static final String MAKER_BASIC = "Maker Basic";
+	public static final String MAKER_ASSEMBLER = "Maker Assembler";
+	public static final String MAKER_C = "Maker C++";
 }

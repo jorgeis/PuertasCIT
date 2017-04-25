@@ -100,7 +100,6 @@
 				<input type="text" readonly="readonly" name="hFinEveGra" id="hFinEveGra" value="${hFinEveGra}" />
 			<label class="light">Población objetivo</label>
 				<sf:input type="text" readonly="true" path="poblacionObjEveGra" />	
-	
 			</fieldset>
 		
 		<fieldset>

@@ -243,7 +243,7 @@ public class MailManager {
 					+ "- Responsable del evento: " + gratuito.getNombreRespGra() + " " + gratuito.getApPatRespGra() + " " + gratuito.getApMatRespGra()
 					+ "<br/>"
 					+ "<br/>"
-					+ "Ha sido: " + gratuito.getDesicionGra() + "." 
+					+ "Ha sido: " + gratuito.getDecisionGra() + "." 
 					+ "<br/>"
 					+ "<br/>"
 					+ "Se han hecho los siguientes comentarios: "

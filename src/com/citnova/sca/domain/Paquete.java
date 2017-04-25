@@ -79,6 +79,13 @@ public class Paquete {
 		this.statusPaq = statusPaq;
 	}
 
+	@Override
+	public String toString() {
+		return "Paquete [idPaq=" + idPaq + ", nombrePaq=" + nombrePaq + ", costo1Paq=" + costo1Paq + ", costo2Paq="
+				+ costo2Paq + ", costo3Paq=" + costo3Paq + ", descripcionPaq=" + descripcionPaq + ", statusPaq="
+				+ statusPaq + "]";
+	}
+
 	
 	
 	
