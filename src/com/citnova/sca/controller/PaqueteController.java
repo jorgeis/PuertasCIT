@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.citnova.sca.domain.CMembresia;
 import com.citnova.sca.domain.Paquete;
+import com.citnova.sca.service.CMembresiaService;
 import com.citnova.sca.service.PaqueteService;
 import com.citnova.sca.util.Constants;
 
@@ -20,6 +22,8 @@ public class PaqueteController {
 	private PaqueteService paqueteService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CMembresiaService cMembresiaService;
 
 	/**
 	 * Controlador para mostrar el catálogo de paquetes
@@ -29,7 +33,8 @@ public class PaqueteController {
 	public String showDatepick(Model model) {
 		
 		
-		
+		List<CMembresia> membresiasIniciales = cMembresiaService.findByTipoAndStatusActivo(Constants.INDIVIDUAL);
+						 membresiasIniciales.addAll(cMembresiaService.findByTipoAndStatusActivo(Constants.EMPRESARIAL));
 		List<Paquete> coworkingFreelancer = paqueteService.findByNombreLikeAndStatusActivo(Constants.COWORKING_FREELANCER);
 		List<Paquete> coworkingEmpresarial = paqueteService.findByNombreLikeAndStatusActivo(Constants.COWORKING_EMPRESARIAL);
 		List<Paquete> coworkingUniversitario = paqueteService.findByNombreLikeAndStatusActivo(Constants.COWORKING_UNIVERSITARIO);
@@ -49,8 +54,7 @@ public class PaqueteController {
 		List<Paquete> membresiaPremium = paqueteService.findByNombreLikeAndStatusActivo(Constants.MEMBRESIA_PREMIUM);
 		List<Paquete> printer = paqueteService.findByNombreLikeAndStatusActivo(Constants.PRINTER);
 		
-		System.out.println("Lista: " + coworkingFreelancer);
-		
+		model.addAttribute("membresiasIniciales", membresiasIniciales);
 		model.addAttribute("coworkingFreelancer", coworkingFreelancer);
 		model.addAttribute("coworkingEmpresarial", coworkingEmpresarial);
 		model.addAttribute("coworkingUniversitario", coworkingUniversitario);

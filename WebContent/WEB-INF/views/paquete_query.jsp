@@ -73,10 +73,45 @@
 		
 		<c:set var="backslash" value="\\"/>
 		
+		<div class = "table1">
+		
+		<form>
+			<h1>Membresías Iniciales</h1>
+		</form>
+			<table>
+				<tr >
+					<td colspan=5>Membresías Iniciales</td>
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<td>Membresía</td>
+					<td>Descripción</td>
+					<td>Costo Anual</td>
+					<td></td>
+					
+				</tr>
+				<c:forEach var="paq" items="${membresiasIniciales}">
+					<tr>
+						<td>${paq.nombreCMem} </td>
+						<c:set var="descripcion" value="${fn:replace(paq.descripcionCMem, backslash, '<br />')}" />
+						<td>${descripcion}</td>
+						<td>${paq.costoCMem}0 MXN</td>
+						<td><a href='<c:url value="/contmem/${fn:toLowerCase(fn:replace(fn:replace(paq.nombreCMem, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
+					</tr>
+				</c:forEach>
+				<tr>
+					<td colspan=4 style="font-weight: bold;">IMPORTANTE: Se requiere la contratación de una de <br />las membresías iniciales para la contratación de alguna
+						<br /> de las siguientes membresías.</td>
+				</tr>
+			</table>
+			
+			<br /><br />
+		
 		<form>
 			<h1>Membresías Coworking</h1>
 		</form>
-		<div class = "table1">
+		
 			<table>
 				<tr >
 					<td colspan=5>Membresía ${coworkingFreelancerTit}</td>
@@ -89,6 +124,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${coworkingFreelancer}">
 					<tr>
@@ -97,11 +133,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -121,6 +159,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${coworkingEmpresarial}">
 					<tr>
@@ -129,11 +168,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -153,6 +194,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${coworkingUniversitario}">
 					<tr>
@@ -161,11 +203,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -188,6 +232,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${makerFreelancer}">
 					<tr>
@@ -196,11 +241,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -220,6 +267,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${makerEmpresarial}">
 					<tr>
@@ -228,11 +276,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -252,6 +302,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${makerOtro}">
 					<tr>
@@ -260,11 +311,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -287,6 +340,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${decisionTheater}">
 					<tr>
@@ -295,11 +349,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -322,6 +378,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${espacioDedicado}">
 					<tr>
@@ -330,11 +387,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -357,6 +416,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${trainingRoom}">
 					<tr>
@@ -365,11 +425,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -393,6 +455,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${showRoom}">
 					<tr>
@@ -401,11 +464,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -428,6 +493,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${salaDeJuntas}">
 					<tr>
@@ -436,11 +502,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -453,7 +521,7 @@
 		</form>
 			<table>
 				<tr >
-					<td colspan=5>Membresía ${membresiaBlackTit}</td>
+					<td colspan=5>${membresiaBlackTit}</td>
 				</tr>
 			</table>
 			<table>
@@ -463,6 +531,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${membresiaBlack}">
 					<tr>
@@ -471,11 +540,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -488,7 +559,7 @@
 		</form>
 			<table>
 				<tr >
-					<td colspan=5>Membresía ${membresiaPlatinumTit}</td>
+					<td colspan=5>${membresiaPlatinumTit}</td>
 				</tr>
 			</table>
 			<table>
@@ -498,6 +569,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${membresiaPlatinum}">
 					<tr>
@@ -506,11 +578,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -523,7 +597,7 @@
 		</form>
 			<table>
 				<tr >
-					<td colspan=5>Membresía ${membresiaGoldTit}</td>
+					<td colspan=5>${membresiaGoldTit}</td>
 				</tr>
 			</table>
 			<table>
@@ -533,6 +607,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${membresiaGold}">
 					<tr>
@@ -541,11 +616,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -558,7 +635,7 @@
 		</form>
 			<table>
 				<tr >
-					<td colspan=5>Membresía ${membresiaPremiumTit}</td>
+					<td colspan=5>${membresiaPremiumTit}</td>
 				</tr>
 			</table>
 			<table>
@@ -568,6 +645,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${membresiaPremium}">
 					<tr>
@@ -576,11 +654,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>
@@ -603,6 +683,7 @@
 					<td>Costo Mes 1</td>
 					<td>Costo Mes 3</td>
 					<td>Costo Mes 6</td>
+					<td></td>
 				</tr>
 				<c:forEach var="paq" items="${printer}">
 					<tr>
@@ -611,11 +692,13 @@
 						<td>${descripcion}</td>
 						<c:if test="${paq.costo2Paq == 0 && paq.costo3Paq == 0}">
 							<td colspan="3">${paq.costo1Paq}0 MXN por hora</td>
+							<td><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 						<c:if test="${paq.costo2Paq != 0}">
 							<td>${paq.costo1Paq}0 MXN</td>
 							<td>${paq.costo2Paq}0 MXN</td>
 							<td>${paq.costo3Paq}0 MXN</td>
+							<td style="padding: 20px 0"><a href='<c:url value="/contpaq/${fn:toLowerCase(fn:replace(fn:replace(paq.nombrePaq, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 						</c:if>
 					</tr>
 				</c:forEach>

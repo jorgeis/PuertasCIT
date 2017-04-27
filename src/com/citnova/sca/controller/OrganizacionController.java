@@ -879,4 +879,28 @@ public class OrganizacionController {
 		
 		return map;
 	}
+	
+	
+	/**
+	 * EXTRA
+	 * */
+	@RequestMapping(value="/json2", produces="application/json")
+	@ResponseBody
+	public Map<String, Object> findOrganizacionBBBySiglasOrg(@RequestParam("term") String term) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		
+		List<Organizacion> organizacionList1 = organizacionService.findBySiglasOrgLike("%" + term + "%");
+		
+		
+		for (int j = 0; j < organizacionList1.size(); j++) {
+			Organizacion org = organizacionList1.get(j);
+			map.put(String.valueOf(org.getIdOrg()),
+							org.getSiglasOrg());
+		}
+		
+		System.out.println(map.size());
+		System.out.println(map);
+		
+		return map;
+	}
 }

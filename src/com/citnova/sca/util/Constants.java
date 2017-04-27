@@ -51,4 +51,7 @@ public class Constants {
 	public static final String MAKER_BASIC = "Maker Basic";
 	public static final String MAKER_ASSEMBLER = "Maker Assembler";
 	public static final String MAKER_C = "Maker C++";
+	
+	public static final String INDIVIDUAL = "Individual";
+	public static final String EMPRESARIAL = "Empresarial";
 }

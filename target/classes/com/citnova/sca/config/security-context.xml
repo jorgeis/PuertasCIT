@@ -20,6 +20,7 @@
 		<security:intercept-url pattern="/clienteform" access="permitAll" />
 		<security:intercept-url pattern="/clientesave" access="permitAll" />
 		<security:intercept-url pattern="/cliente/queryall" access="permitAll" />
+		<security:intercept-url pattern="/json2" access="permitAll" />
 		
 		<security:intercept-url pattern="/gratuitoform" access="permitAll" />
 		<security:intercept-url pattern="/gratuitorg" access="permitAll" />
@@ -29,6 +30,7 @@
 		<security:intercept-url pattern="/json/search/daygratuito" access="permitAll" />
 		
 		<security:intercept-url pattern="/catpaquetes" access="permitAll" />
+		<security:intercept-url pattern="/contmem/**" access="permitAll" />
 		
 		<security:intercept-url pattern="/orgform" access="isAuthenticated()" />
 		<security:intercept-url pattern="/afterlogin" access="isAuthenticated()" />

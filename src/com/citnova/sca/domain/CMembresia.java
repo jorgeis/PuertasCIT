@@ -88,6 +88,13 @@ public class CMembresia {
 	public void setMembresiaSet(Set<Membresia> membresiaSet) {
 		this.membresiaSet = membresiaSet;
 	}
+
+	@Override
+	public String toString() {
+		return "CMembresia [idCMem=" + idCMem + ", nombreCMem=" + nombreCMem + ", tipoCMem=" + tipoCMem
+				+ ", descripcionCMem=" + descripcionCMem + ", costoCMem=" + costoCMem + ", fhCreaCMem=" + fhCreaCMem
+				+ ", statusCMem=" + statusCMem + "]";
+	}
 	
 	
 }
