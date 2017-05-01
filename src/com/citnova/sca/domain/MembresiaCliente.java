@@ -53,6 +53,11 @@ public class MembresiaCliente {
 	public void setCliente(Cliente cliente) {
 		getPk().setCliente(cliente);
 	}
+
+	@Override
+	public String toString() {
+		return "MembresiaCliente [pk=" + pk + ", statusMC=" + statusMC + "]";
+	}
 	
 	
 	

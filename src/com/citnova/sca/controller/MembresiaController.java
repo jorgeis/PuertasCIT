@@ -171,11 +171,12 @@ public class MembresiaController {
 					refCont);
 			
 			// Setea la relación muchos a muchos entre Membresía y Contratación
-			List<Contratacion> listaContratacion = new ArrayList<Contratacion>();
+			List<Contratacion> listaContratacion = membresia.getContratacionList();
 			listaContratacion.add(contratacion);
 			membresia.setContratacionList(listaContratacion);
 			
-			List<Membresia> listaMembresia = new ArrayList<Membresia>();
+			// Debe ir este código?
+			List<Membresia> listaMembresia = contratacion.getMembresiaList();
 			listaMembresia.add(membresia);
 			contratacion.setMembresiaList(listaMembresia);
 			
@@ -187,9 +188,10 @@ public class MembresiaController {
 			membresiaCliente.setStatusMC(Constants.PENDING_PAYMENT);
 			
 			System.out.println("El objeto a guardar es: " + membresia);
-			
 			membresiaService.save(membresia);
-			contratacionService.save(contratacion);
+			// Como la relación es identificada, solamente con hacer el set de ContratacionList en Membresía, 
+			// el objeto Contratación se almacena en BD, por lo que no es necesaria la siguiente línea:
+//			contratacionService.save(contratacion);
 			membresiaClienteService.save(membresiaCliente);
 			
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("membresia_saved", null, Locale.getDefault()));

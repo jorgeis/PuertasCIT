@@ -34,4 +34,11 @@ public class MembresiaClienteId implements Serializable {
 		this.cliente = cliente;
 	}
 
+	@Override
+	public String toString() {
+		return "MembresiaClienteId [Id de Membresia=" + membresia.getIdMem() + ", Id de Cliente=" + cliente.getIdCli() + "]";
+	}
+
+	
+	
 }
