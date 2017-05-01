@@ -22,4 +22,8 @@ public class CMembresiaService {
 	public List<CMembresia> findByStatusCMem(String statusCMem) {
 		return cMembresiaRepository.findByStatusCMem(statusCMem);
 	}
+	
+	public CMembresia findByNombreCMem(String nombreCMem) {
+		return cMembresiaRepository.findByNombreCMem(nombreCMem);
+	}
 }

@@ -53,6 +53,20 @@ public class Membresia {
 	@JoinColumn(name = "Admin_idAd")
 	private Admin admin;
 
+	
+	public Membresia() {
+		
+	}
+	
+	
+	public Membresia(String statusMem, String codigoMem, Timestamp fhCreaMem, CMembresia cMembresia) {
+		super();
+		this.statusMem = statusMem;
+		this.codigoMem = codigoMem;
+		this.fhCreaMem = fhCreaMem;
+		this.cMembresia = cMembresia;
+	}
+
 
 	public int getIdMem() {
 		return idMem;
@@ -151,6 +165,13 @@ public class Membresia {
 
 	public void setAdmin(Admin admin) {
 		this.admin = admin;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Membresia [idMem=" + idMem + ", statusMem=" + statusMem + ", codigoMem=" + codigoMem + ", fhCreaMem="
+				+ fhCreaMem + ", fhValidaMem=" + fhValidaMem + "]";
 	}
 	
 	

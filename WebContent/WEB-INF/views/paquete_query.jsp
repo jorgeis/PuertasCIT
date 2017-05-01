@@ -97,7 +97,7 @@
 						<c:set var="descripcion" value="${fn:replace(paq.descripcionCMem, backslash, '<br />')}" />
 						<td>${descripcion}</td>
 						<td>${paq.costoCMem}0 MXN</td>
-						<td><a href='<c:url value="/contmem/${fn:toLowerCase(fn:replace(fn:replace(paq.nombreCMem, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
+						<td><a href='<c:url value="/mem/contmem/${fn:toLowerCase(fn:replace(fn:replace(paq.nombreCMem, 'í', 'i'), ' ', ''))}"/>'>Contratar</a></td>
 					</tr>
 				</c:forEach>
 				<tr>

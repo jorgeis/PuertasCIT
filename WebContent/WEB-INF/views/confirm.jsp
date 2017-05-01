@@ -41,6 +41,7 @@
 		<h1>${pageTitle}</h1>
 		<h2>${result}</h2>
 		<h2>${message1}</h2>
+		<br />
 		<input type="hidden" name="param1" value="${param1}" />
 		<input type="hidden" name="param2" value="${param2}" />
 		<button type="submit">${confirmButton}</button>

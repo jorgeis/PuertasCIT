@@ -32,6 +32,20 @@ public class Contratacion {
 	@JoinColumn(name = "idCli")
 	private Cliente cliente;
 
+	
+	public Contratacion() {
+		
+	}
+
+	public Contratacion(Cliente cliente, Timestamp fhCont, float costoCont, float ivaCont, String refCont) {
+		super();
+		this.cliente = cliente;
+		this.fhCont = fhCont;
+		this.costoCont = costoCont;
+		this.ivaCont = ivaCont;
+		this.refCont = refCont;
+	}
+
 
 	public int getIdCont() {
 		return idCont;

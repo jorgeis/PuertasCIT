@@ -10,5 +10,5 @@ public interface CMembresiaRepository extends CrudRepository<CMembresia, Integer
 
 	public List<CMembresia> findByTipoCMemAndStatusCMem(String match, String statusCMem);
 	public List<CMembresia> findByStatusCMem(String statusCMem);
-	
+	public CMembresia findByNombreCMem(String nombreCMem);
 }
