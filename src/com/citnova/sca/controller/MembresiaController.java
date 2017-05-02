@@ -31,6 +31,7 @@ import com.citnova.sca.service.MembresiaService;
 import com.citnova.sca.service.PaqueteService;
 import com.citnova.sca.util.Constants;
 import com.citnova.sca.util.CurrentSessionUserRetriever;
+import com.citnova.sca.util.MailManager;
 import com.citnova.sca.util.PassGen;
 
 @Controller
@@ -52,6 +53,8 @@ public class MembresiaController {
 	private MembresiaClienteService membresiaClienteService;
 	@Autowired
 	private CurrentSessionUserRetriever currentUser;
+	@Autowired
+	private MailManager mailManager;
 
 	/**
 	 * Controlador para mostrar el catálogo de paquetes
@@ -180,7 +183,6 @@ public class MembresiaController {
 			listaMembresia.add(membresia);
 			contratacion.setMembresiaList(listaMembresia);
 			
-			
 			// Crea la relación muchos a muchos entre Membresía y Cliente
 			MembresiaCliente membresiaCliente = new MembresiaCliente();
 			membresiaCliente.setMembresia(membresia);
@@ -189,14 +191,21 @@ public class MembresiaController {
 			
 			System.out.println("El objeto a guardar es: " + membresia);
 			membresiaService.save(membresia);
+			
 			// Como la relación es identificada, solamente con hacer el set de ContratacionList en Membresía, 
 			// el objeto Contratación se almacena en BD, por lo que no es necesaria la siguiente línea:
 //			contratacionService.save(contratacion);
+			
 			membresiaClienteService.save(membresiaCliente);
+			
+			// Enviar correo de confirmación de resultado de espacio gratuito
+			mailManager.sendEmailSolicitudMembresia(cliente.getPersona().getEmailPer(), membresiaCliente, contratacion);
+			
+			// Generar PDF de orden de pago con los datos correspondientes:
+			
 			
 			ra.addFlashAttribute(Constants.RESULT, messageSource.getMessage("membresia_saved", null, Locale.getDefault()));
 			return "redirect:/confirmscreen";
-			
 			
 		// Si no es un cliente identificado en sistema quien solicita esta acción:
 		} else {
@@ -204,10 +213,5 @@ public class MembresiaController {
 			
 			return "notifications";
 		}
-		
-		
 	}
-	
-	
-	
 }

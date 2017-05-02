@@ -12,7 +12,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import com.citnova.sca.domain.Contratacion;
 import com.citnova.sca.domain.Gratuito;
+import com.citnova.sca.domain.MembresiaCliente;
 
 @Component("mailManager")
 public class MailManager {
@@ -261,5 +263,56 @@ public class MailManager {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void sendEmailSolicitudMembresia(String destino, MembresiaCliente membresiaCliente, Contratacion contratacion) {
+		MimeMessage mime = mailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+			helper.setFrom(correoEmisor);
+			helper.setTo(destino);
+			helper.setSubject("Solicitud de Membresía - CITNOVA");
+			
+			String htmlText = "<h1>Has realizado una solicitud de membresía</h1>"
+					+ "<br/>"
+					+ "Para completar el proceso, sigue los siguentes pasos:"
+					+ "<br/>"
+					+ "<br/>"
+					+ "- Acude a tu sucursal bancaria y haz el pago correspondiente y blah blah blah..."
+//					+ "<br/>"
+//					+ "- Evento: " + gratuito.getNombreEveGra()
+//					+ "<br/>"
+//					+ "- Área solicitada: " + gratuito.getArea().getNombreArea()
+//					+ "<br/>"
+//					+ "- Fecha: " + ci.get(Calendar.DATE) + "/" + formatter.format((double)ci.get(Calendar.MONTH)+1) + "/" + ci.get(Calendar.YEAR)
+//					+ "<br/>"
+//					+ "- Hora de inicio: " + formatter.format((double)ci.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+//					+ "<br/>"
+//					+ "- Hora de terminación: " + formatter.format((double)cf.get(Calendar.HOUR_OF_DAY)) + ":00 Hrs"
+//					+ "<br/>"
+//					+ "- Organización solicitante: " + gratuito.getOrganizacion().getNombreOrg()
+//					+ "<br/>"
+//					+ "- Responsable del evento: " + gratuito.getNombreRespGra() + " " + gratuito.getApPatRespGra() + " " + gratuito.getApMatRespGra()
+//					+ "<br/>"
+//					+ "<br/>"
+//					+ "Ha sido: " + gratuito.getDecisionGra() + "." 
+//					+ "<br/>"
+//					+ "<br/>"
+//					+ "Se han hecho los siguientes comentarios: "
+//					+ gratuito.getComentariosGra()
+					+ "<br/>"
+					+ "Cualquier duda o comentario contáctanos a correo@correo.com(colocar correo de contacto)."
+					;
+			helper.setText(htmlText, true);
+			mailSender.send(mime);
+		}
+		catch (MailException e) {
+			e.printStackTrace();
+		}
+		catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 }
