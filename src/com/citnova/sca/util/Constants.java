@@ -56,6 +56,9 @@ public class Constants {
 	public static final String EMPRESARIAL = "Empresarial";
 	
 	public static final String PENDING_PAYMENT = "Pendiente de pago";
+	public static final String STRING_TEST = "Cadena de prueba";
+	
+	
 	
 	
 }
